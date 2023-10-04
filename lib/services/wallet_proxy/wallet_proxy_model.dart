@@ -2,13 +2,13 @@ import 'package:json_annotation/json_annotation.dart';
 part 'wallet_proxy_model.g.dart';
 
 @JsonSerializable()
-class Toc {
+class Tac {
   final String url;
   final String version;
 
-  Toc(this.url, this.version);
+  Tac(this.url, this.version);
 
-  factory Toc.fromJson(Map<String, dynamic> json) => _$TocFromJson(json);
+  factory Tac.fromJson(Map<String, dynamic> json) => _$TacFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TocToJson(this);
+  Map<String, dynamic> toJson() => _$TacToJson(this);
 }

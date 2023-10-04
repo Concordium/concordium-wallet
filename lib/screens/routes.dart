@@ -1,5 +1,5 @@
-import 'package:concordium_wallet/screens/toc/toc_screen.dart';
+import 'package:concordium_wallet/screens/tac/tac_screen.dart';
 
 final appRoutes = {
-  '/': (context) => const TocScreen(),
+  '/': (context) => const TacScreen(),
 };

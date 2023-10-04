@@ -6,11 +6,17 @@ import 'package:concordium_wallet/services/wallet_proxy/wallet_proxy_model.dart'
 class WalletProxyConfig {
   final String baseUrl;
   final int port;
-  final paths = {
-    'toc': '/toc',
-  };
 
   WalletProxyConfig({required this.baseUrl, required this.port});
+}
+
+enum WalletProxyEndpoint {
+  tacVersion('/v0/termsAndConditionsVersion'),
+  ;
+
+  final String path;
+
+  const WalletProxyEndpoint(this.path);
 }
 
 class WalletProxyService {
@@ -19,10 +25,10 @@ class WalletProxyService {
 
   WalletProxyService({required this.config, required this.client});
 
-  Future<Toc> getToc() async {
-    final req = await client.get(config.baseUrl, config.port, '/v0/termsAndConditionsVersion');
+  Future<Tac> getTac() async {
+    final req = await client.get(config.baseUrl, config.port, WalletProxyEndpoint.tacVersion.path);
     final res = await req.close();
     final str = await res.transform(utf8.decoder).join();
-    return Toc.fromJson(json.decode(str));
+    return Tac.fromJson(json.decode(str));
   }
 }

@@ -1,16 +1,21 @@
-# concordium_wallet
+# Concordium Wallet
 
-A new Flutter project.
+Concordium's reference wallet for mobile and web, written in Flutter.
 
-## Getting Started
+## JSON models
 
-This project is a starting point for a Flutter application.
+The JSON models used to deserialize the responses from Wallet Proxy are generated using
+[`json_serializable`](https://pub.dev/packages/json_serializable).
+It works by specifying the data model as plain Dart classes
+along with a little special syntax for the `fromJson` and `toJson` methods.
+When running the command
+```shell
+dart run build_runner build
+```
+the library will expand this syntax into appropriate implementations of these methods
+in a new file declared with the `part` directive.
 
-A few resources to get you started if this is your first Flutter project:
+See for example [`wallet_proxy_service.dart`](./lib/services/wallet_proxy/wallet_proxy_model.dart)
+which expands into [`wallet_proxy_service.g.dart`](./lib/services/wallet_proxy/wallet_proxy_model.g.dart).
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The generated class is checked into the repo, but imports always refer to the original one.
