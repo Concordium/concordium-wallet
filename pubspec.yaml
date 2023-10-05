@@ -38,6 +38,8 @@ dependencies:
   json_annotation: ^4.8.1
   build_runner: ^2.4.6
   provider: ^6.0.5
+  flutter_svg: ^2.0.7
+  url_launcher: ^6.1.14
 
 dev_dependencies:
   flutter_test:
@@ -92,3 +94,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/graphics/

@@ -30,11 +30,11 @@ class WalletProxyService {
 
   WalletProxyService({required this.config, required this.client});
 
-  Future<Tac> getTac() async {
+  Future<TermsAndConditions> getTac() async {
     final url = config.urlOf(WalletProxyEndpoint.tacVersion);
     final req = await client.getUrl(url);
     final res = await req.close();
     final str = await res.transform(utf8.decoder).join();
-    return Tac.fromJson(json.decode(str));
+    return TermsAndConditions.fromJson(json.decode(str));
   }
 }

@@ -6,12 +6,14 @@ part of 'wallet_proxy_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Tac _$TacFromJson(Map<String, dynamic> json) => Tac(
-      json['url'] as String,
+TermsAndConditions _$TermsAndConditionsFromJson(Map<String, dynamic> json) =>
+    TermsAndConditions(
+      Uri.parse(json['url'] as String),
       json['version'] as String,
     );
 
-Map<String, dynamic> _$TacToJson(Tac instance) => <String, dynamic>{
-      'url': instance.url,
+Map<String, dynamic> _$TermsAndConditionsToJson(TermsAndConditions instance) =>
+    <String, dynamic>{
+      'url': instance.url.toString(),
       'version': instance.version,
     };

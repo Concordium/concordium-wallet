@@ -1,4 +1,5 @@
 import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:concordium_wallet/screens/routes.dart';
@@ -17,10 +18,7 @@ class App extends StatelessWidget {
       create: (context) => AppState(),
       child: MaterialApp(
         routes: appRoutes,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
+        theme: concordiumTheme(),
       ),
     );
   }
