@@ -30,4 +30,13 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <!-- Allow 'url_launcher' to open HTTP and HTTPS links (used by Terms and Conditions):
+         https://pub.dev/packages/url_launcher#android -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+    </queries>
 </manifest>
