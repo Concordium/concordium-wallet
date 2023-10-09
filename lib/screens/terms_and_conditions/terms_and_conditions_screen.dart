@@ -1,9 +1,18 @@
+import 'package:concordium_wallet/screens/terms_and_conditions/toggle_widget.dart';
 import 'package:concordium_wallet/services/wallet_proxy/wallet_proxy_model.dart';
 import 'package:concordium_wallet/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+class TermsAndConditionsViewModel {
+  const TermsAndConditionsViewModel();
+
+  void userAccepted() {
+    print('TODO: Handle user accepted!');
+  }
+}
 
 class TermsAndConditionsScreen extends StatelessWidget {
   const TermsAndConditionsScreen({super.key});
@@ -12,31 +21,47 @@ class TermsAndConditionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     return Scaffold(
-        body: Container(
-      padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
-      child: FutureBuilder<TermsAndConditions>(
-        future: state.walletProxyService.getTac(),
-        builder: (context, snapshot) {
-          final err = snapshot.error;
-          if (err != null) {
-            // TODO What to do here?
-            return Text('Cannot fetch terms and conditions: $err.');
-          }
-          final tac = snapshot.data;
-          if (tac != null) {
-            return TermsAndConditionsContent(tac);
-          }
-          return const CircularProgressIndicator();
-        },
+      body: Container(
+        padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
+        child: FutureBuilder<TermsAndConditions>(
+          future: state.walletProxyService.getTac(),
+          builder: (context, snapshot) {
+            final err = snapshot.error;
+            if (err != null) {
+              // TODO What to do here?
+              return Text('Cannot fetch terms and conditions: $err.');
+            }
+            final tac = snapshot.data;
+            if (tac != null) {
+              return TermsAndConditionsContent(tac);
+            }
+            return const CircularProgressIndicator();
+          },
+        ),
       ),
-    ));
+    );
   }
 }
 
-class TermsAndConditionsContent extends StatelessWidget {
+class TermsAndConditionsContent extends StatefulWidget {
+  final viewModel = const TermsAndConditionsViewModel();
   final TermsAndConditions data;
 
   const TermsAndConditionsContent(this.data, {super.key});
+
+  @override
+  State<TermsAndConditionsContent> createState() =>
+      _TermsAndConditionsContentState();
+}
+
+class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
+  bool isAccepted = false;
+
+  void _setAccepted(bool val) {
+    setState(() {
+      isAccepted = val;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +73,11 @@ class TermsAndConditionsContent extends StatelessWidget {
               Stack(
                 children: [
                   Center(
-                      child: SvgPicture.asset(
-                    'assets/graphics/background_squares.svg',
-                    semanticsLabel: 'Background squares',
-                  )),
+                    child: SvgPicture.asset(
+                      'assets/graphics/background_squares.svg',
+                      semanticsLabel: 'Background squares',
+                    ),
+                  ),
                   Center(
                     child: SvgPicture.asset(
                       'assets/graphics/padlock_shield.svg',
@@ -91,7 +117,7 @@ class TermsAndConditionsContent extends StatelessWidget {
                 Flexible(
                   child: GestureDetector(
                     onTap: () {
-                      _launchUrl(data.url);
+                      _launchUrl(widget.data.url);
                     },
                     child: RichText(
                       text: TextSpan(
@@ -110,12 +136,15 @@ class TermsAndConditionsContent extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text('<TOGGLE>'),
+                ToggleAcceptedWidget(
+                  isAccepted: isAccepted,
+                  setAccepted: _setAccepted,
+                ),
               ],
             ),
             const SizedBox(height: 9),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: isAccepted ? widget.viewModel.userAccepted : null,
               child: const Text('Create password'),
             ),
           ],
@@ -128,6 +157,7 @@ class TermsAndConditionsContent extends StatelessWidget {
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
+      // TODO If this fails, open a dialog with the URL so the user can visit it manually.
       throw 'Could not launch $url';
     }
   }
