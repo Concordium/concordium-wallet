@@ -7,47 +7,22 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TermsAndConditionsViewModel {
-  const TermsAndConditionsViewModel();
+  final TermsAndConditions currentTac;
+  final void Function(BuildContext context) onAccept;
 
-  void userAccepted() {
-    print('TODO: Handle user accepted!');
-  }
-}
+  const TermsAndConditionsViewModel(this.currentTac, this.onAccept);
 
-class TermsAndConditionsScreen extends StatelessWidget {
-  const TermsAndConditionsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final state = context.watch<AppState>();
-    return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
-        child: FutureBuilder<TermsAndConditions>(
-          future: state.walletProxyService.getTac(),
-          builder: (context, snapshot) {
-            final err = snapshot.error;
-            if (err != null) {
-              // TODO What to do here?
-              return Text('Cannot fetch terms and conditions: $err.');
-            }
-            final tac = snapshot.data;
-            if (tac != null) {
-              return TermsAndConditionsContent(tac);
-            }
-            return const CircularProgressIndicator();
-          },
-        ),
-      ),
-    );
+  void userAccepted(BuildContext context) {
+    final state = context.read<AppState>();
+    state.sharedPreferences.setString("tac:accepted_version", currentTac.version);
+    onAccept(context);
   }
 }
 
 class TermsAndConditionsContent extends StatefulWidget {
-  final viewModel = const TermsAndConditionsViewModel();
-  final TermsAndConditions data;
+  final TermsAndConditionsViewModel viewModel;
 
-  const TermsAndConditionsContent(this.data, {super.key});
+  const TermsAndConditionsContent(this.viewModel, {super.key});
 
   @override
   State<TermsAndConditionsContent> createState() =>
@@ -87,12 +62,10 @@ class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
                 ],
               ),
               const SizedBox(height: 24),
-              Container(
-                child: Center(
-                  child: Text(
-                    'Before you begin',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
+              Center(
+                child: Text(
+                  'Before you begin',
+                  style: Theme.of(context).textTheme.displaySmall,
                 ),
               ),
               Container(
@@ -117,7 +90,7 @@ class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
                 Flexible(
                   child: GestureDetector(
                     onTap: () {
-                      _launchUrl(widget.data.url);
+                      _launchUrl(widget.viewModel.currentTac.url);
                     },
                     child: RichText(
                       text: TextSpan(
@@ -144,13 +117,20 @@ class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
             ),
             const SizedBox(height: 9),
             ElevatedButton(
-              onPressed: isAccepted ? widget.viewModel.userAccepted : null,
+              onPressed: _onAcceptButtonPressed(context),
               child: const Text('Create password'),
             ),
           ],
         ),
       ],
     );
+  }
+
+  Function()? _onAcceptButtonPressed(BuildContext context) {
+    if (isAccepted) {
+      return () => widget.viewModel.userAccepted(context);
+    }
+    return null;
   }
 
   void _launchUrl(Uri url) async {
