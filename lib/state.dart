@@ -16,6 +16,20 @@ final testnet = Network(
   ),
 );
 
+class AppSharedPreferences { // TODO: Extend ChangeNotifier?
+  static const _tacAcceptedVersionKey = 'tac:accepted_version';
+
+  final SharedPreferences _prefs;
+
+  AppSharedPreferences(this._prefs);
+
+  get termsAndConditionsAcceptedVersion => _prefs.getString(_tacAcceptedVersionKey);
+
+  void setTermsAndConditionsAcceptedVersion(String v) {
+    _prefs.setString(_tacAcceptedVersionKey, v);
+  }
+}
+
 class AppState extends ChangeNotifier {
   final network = testnet;
   final walletProxyService = WalletProxyService(
@@ -25,6 +39,7 @@ class AppState extends ChangeNotifier {
 
   var _tacLastCheckedAt = DateTime.fromMicrosecondsSinceEpoch(0); // force recheck when starting app
 
+  /// The most recent time it was ensured that the currently valid T&C has been accepted.
   DateTime get tacLastCheckedAt => _tacLastCheckedAt;
 
   void setTacLastCheckedAt(DateTime v) {
@@ -32,7 +47,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final SharedPreferences sharedPreferences;
+  final AppSharedPreferences sharedPreferences;
 
   AppState(this.sharedPreferences);
 }

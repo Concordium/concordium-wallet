@@ -14,7 +14,7 @@ class TermsAndConditionsViewModel {
 
   void userAccepted(BuildContext context) {
     final state = context.read<AppState>();
-    state.sharedPreferences.setString("tac:accepted_version", currentTac.version);
+    state.sharedPreferences.setTermsAndConditionsAcceptedVersion(currentTac.version);
     onAccept(context);
   }
 }
@@ -94,7 +94,7 @@ class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
                     },
                     child: RichText(
                       text: TextSpan(
-                          style: DefaultTextStyle.of(context).style,
+                          style: Theme.of(context).textTheme.bodySmall,
                           children: const [
                             TextSpan(text: 'I have read and agree to the '),
                             TextSpan(

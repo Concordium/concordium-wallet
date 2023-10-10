@@ -14,8 +14,7 @@ class HomeScreen extends StatelessWidget {
 
     // Temporary...
     final state = context.watch<AppState>();
-    var lastAcceptedVersion =
-        state.sharedPreferences.getString('tac:accepted_version');
+    var lastAcceptedVersion = state.sharedPreferences.termsAndConditionsAcceptedVersion;
     // print('lastAcceptedVersion: $lastAcceptedVersion');
 
     // Force recheck after 1 min.
@@ -33,14 +32,13 @@ class HomeScreen extends StatelessWidget {
             Text('Last T&C version accepted: $lastAcceptedVersion'),
             ElevatedButton(
               onPressed: () {
-                state.setTacLastCheckedAt(
-                    DateTime.fromMillisecondsSinceEpoch(0));
+                state.setTacLastCheckedAt(DateTime.fromMillisecondsSinceEpoch(0));
               },
               child: const Text('Reset check time'),
             ),
             ElevatedButton(
               onPressed: () {
-                state.sharedPreferences.setString("tac:accepted_version", "0");
+                state.sharedPreferences.setTermsAndConditionsAcceptedVersion('0');
               },
               child: const Text('Reset accepted version'),
             ),
@@ -62,8 +60,7 @@ class RefreshTermsAndConditionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    final acceptedTacVersion =
-        state.sharedPreferences.getString("tac:accepted_version");
+    final acceptedTacVersion = state.sharedPreferences.termsAndConditionsAcceptedVersion;
 
     return Scaffold(
       body: Container(
@@ -85,12 +82,18 @@ class RefreshTermsAndConditionsScreen extends StatelessWidget {
                 // TODO Is this the right way to do that call?
                 Future.microtask(() => _markTacCheckPerformed(context));
               } else {
-                return TermsAndConditionsContent(TermsAndConditionsViewModel(
-                    currentTac, _markTacCheckPerformed));
+                return TermsAndConditionsContent(
+                  TermsAndConditionsViewModel(
+                    currentTac,
+                    _markTacCheckPerformed,
+                  ),
+                );
               }
             }
             // Loading current T&C version.
-            return const CircularProgressIndicator();
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           },
         ),
       ),

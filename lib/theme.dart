@@ -7,6 +7,7 @@ ThemeData concordiumTheme() {
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
     textTheme: const TextTheme(
+      bodySmall: TextStyle(fontSize: 14, height: 1.25),
       bodyMedium: textBodyMedium,
       displaySmall: textDisplaySmall,
     ),

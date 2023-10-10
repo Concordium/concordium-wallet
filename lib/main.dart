@@ -16,21 +16,21 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<SharedPreferences>(
-        future: SharedPreferences.getInstance(),
-        builder: (context, snapshot) {
-          final prefs = snapshot.data;
-          if (prefs == null) {
-            // Loading preferences.
-            return const CircularProgressIndicator();
-          }
-          return ChangeNotifierProvider(
-            create: (context) => AppState(prefs),
-            child: MaterialApp(
-              routes: appRoutes,
-              theme: concordiumTheme(),
-            ),
-          );
+      future: SharedPreferences.getInstance(),
+      builder: (context, snapshot) {
+        final prefs = snapshot.data;
+        if (prefs == null) {
+          // Loading preferences.
+          return const CircularProgressIndicator();
         }
+        return ChangeNotifierProvider(
+          create: (context) => AppState(AppSharedPreferences(prefs)),
+          child: MaterialApp(
+            routes: appRoutes,
+            theme: concordiumTheme(),
+          ),
+        );
+      },
     );
   }
 }
