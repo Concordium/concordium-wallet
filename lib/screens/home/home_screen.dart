@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tacLastCheckedAt = context.select((AppState state) => state.tacLastCheckedAt);
+    final tacLastCheckedAt = context.select((AppState state) => state.termsAndConditionsLastVerifiedAt);
     print('tacLastCheckedAt: $tacLastCheckedAt');
 
     // Temporary...
@@ -28,14 +28,21 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
         child: Column(
           children: [
-            Text('T&C last checked at $tacLastCheckedAt.'),
-            Text('Last T&C version accepted: $lastAcceptedVersion'),
+            Expanded(
+              child: Column(
+                children: [
+                  Text('T&C last checked at $tacLastCheckedAt.'),
+                  Text('Last T&C version accepted: $lastAcceptedVersion'),
+                ],
+              ),
+            ),
             ElevatedButton(
               onPressed: () {
-                state.setTacLastCheckedAt(DateTime.fromMillisecondsSinceEpoch(0));
+                state.setTermsAndConditionsLastVerifiedAt(DateTime.fromMillisecondsSinceEpoch(0));
               },
               child: const Text('Reset check time'),
             ),
+            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () {
                 state.sharedPreferences.setTermsAndConditionsAcceptedVersion('0');
@@ -54,7 +61,7 @@ class RefreshTermsAndConditionsScreen extends StatelessWidget {
 
   void _markTacCheckPerformed(BuildContext context) {
     // Updating timestamp of checking T&C.
-    context.read<AppState>().setTacLastCheckedAt(DateTime.now());
+    context.read<AppState>().setTermsAndConditionsLastVerifiedAt(DateTime.now());
   }
 
   @override

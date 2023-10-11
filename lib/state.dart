@@ -37,13 +37,13 @@ class AppState extends ChangeNotifier {
     client: HttpClient(),
   );
 
-  var _tacLastCheckedAt = DateTime.fromMicrosecondsSinceEpoch(0); // force recheck when starting app
+  var _termsAndConditionsLastVerifiedAt = DateTime.fromMicrosecondsSinceEpoch(0); // force recheck when starting app
 
   /// The most recent time it was ensured that the currently valid T&C has been accepted.
-  DateTime get tacLastCheckedAt => _tacLastCheckedAt;
+  DateTime get termsAndConditionsLastVerifiedAt => _termsAndConditionsLastVerifiedAt;
 
-  void setTacLastCheckedAt(DateTime v) {
-    _tacLastCheckedAt = v;
+  void setTermsAndConditionsLastVerifiedAt(DateTime v) {
+    _termsAndConditionsLastVerifiedAt = v;
     notifyListeners();
   }
 

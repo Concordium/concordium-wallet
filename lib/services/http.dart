@@ -4,6 +4,4 @@ class HttpService {
   final HttpClient client;
 
   HttpService({required this.client});
-
-
 }
