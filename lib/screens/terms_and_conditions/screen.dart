@@ -1,5 +1,5 @@
-import 'package:concordium_wallet/screens/terms_and_conditions/toggle_widget.dart';
-import 'package:concordium_wallet/services/wallet_proxy/wallet_proxy_model.dart';
+import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
+import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,9 +8,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class TermsAndConditionsViewModel {
   final TermsAndConditions currentTac;
+  final String? acceptedTacVersion;
   final void Function(BuildContext context) onAccept;
 
-  const TermsAndConditionsViewModel(this.currentTac, this.onAccept);
+  const TermsAndConditionsViewModel(this.currentTac, this.acceptedTacVersion, this.onAccept);
 
   void userAccepted(BuildContext context) {
     final state = context.read<AppState>();
@@ -19,17 +20,16 @@ class TermsAndConditionsViewModel {
   }
 }
 
-class TermsAndConditionsContent extends StatefulWidget {
+class TermsAndConditionsScreen extends StatefulWidget {
   final TermsAndConditionsViewModel viewModel;
 
-  const TermsAndConditionsContent(this.viewModel, {super.key});
+  const TermsAndConditionsScreen(this.viewModel, {super.key});
 
   @override
-  State<TermsAndConditionsContent> createState() =>
-      _TermsAndConditionsContentState();
+  State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
 }
 
-class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
+class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   bool isAccepted = false;
 
   void _setAccepted(bool val) {
@@ -72,8 +72,7 @@ class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
                 padding: const EdgeInsets.all(16),
                 child: const Column(
                   children: [
-                    Text(
-                        'Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.'),
+                    Text('Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.'),
                     SizedBox(height: 9),
                     Text(
                         'It is very important that you keep your passcode safe, because it is the only way to access your accounts. Concordium is not able to change your passcode or help you unlock your wallet if you lose your passcode.'),
@@ -94,18 +93,25 @@ class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
                     },
                     child: RichText(
                       text: TextSpan(
-                          style: Theme.of(context).textTheme.bodySmall,
-                          children: const [
-                            TextSpan(text: 'I have read and agree to the '),
-                            TextSpan(
-                              text: 'Terms and Conditions',
-                              style: TextStyle(
-                                color: Colors.indigo,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        style: Theme.of(context).textTheme.bodySmall,
+                        children: [
+                          const TextSpan(text: 'I have read and agree to the '),
+                          TextSpan(
+                            text: 'Terms and Conditions v${widget.viewModel.currentTac.version}',
+                            style: const TextStyle(
+                              color: Colors.indigo,
+                              fontWeight: FontWeight.bold,
                             ),
-                            TextSpan(text: '.'),
-                          ]),
+                          ),
+                          switch (widget.viewModel.acceptedTacVersion) {
+                            null => const TextSpan(text: '.'),
+                            String v => TextSpan(
+                                text: ' (you previously accepted version $v).',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                          },
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -118,7 +124,7 @@ class _TermsAndConditionsContentState extends State<TermsAndConditionsContent> {
             const SizedBox(height: 9),
             ElevatedButton(
               onPressed: _onAcceptButtonPressed(context),
-              child: const Text('Create password'),
+              child: const Text('Continue'),
             ),
           ],
         ),

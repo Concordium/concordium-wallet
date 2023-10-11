@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'wallet_proxy_model.dart';
+part of 'model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

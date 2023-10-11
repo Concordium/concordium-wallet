@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:concordium_wallet/services/wallet_proxy/wallet_proxy_model.dart';
+import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 
 enum WalletProxyEndpoint {
   tacVersion('/v0/termsAndConditionsVersion'),
