@@ -58,7 +58,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                       'assets/graphics/padlock_shield.svg',
                       semanticsLabel: 'Padlock shield',
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
