@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +33,7 @@ class AppState extends ChangeNotifier {
   final network = testnet;
   final walletProxyService = WalletProxyService(
     config: testnet.walletProxyConfig,
-    client: HttpClient(),
+    httpService: HttpService(),
   );
 
   var _termsAndConditionsLastVerifiedAt = DateTime.fromMicrosecondsSinceEpoch(0); // force recheck when starting app

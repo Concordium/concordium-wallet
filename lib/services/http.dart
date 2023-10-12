@@ -1,7 +1,9 @@
-import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class HttpService {
-  final HttpClient client;
+  HttpService();
 
-  HttpService({required this.client});
+  Future<http.Response> get(Uri url) async {
+    return http.get(url);
+  }
 }
