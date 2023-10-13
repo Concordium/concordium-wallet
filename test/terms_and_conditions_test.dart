@@ -1,14 +1,13 @@
 import 'package:concordium_wallet/state.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
-@GenerateMocks([AppSharedPreferences])
-import 'terms_and_conditions_test.mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+
+class MockAppSharedPreferences extends Mock implements AppSharedPreferences {}
 
 class MockAppState extends Mock implements AppState {
   @override
