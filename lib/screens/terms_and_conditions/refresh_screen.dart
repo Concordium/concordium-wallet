@@ -1,4 +1,5 @@
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
+import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class RefreshTermsAndConditionsScreen extends StatelessWidget {
                     acceptedTacVersion,
                     _markCheckPerformed,
                   ),
+                  UrlLauncher(),
                 );
               }
             }
