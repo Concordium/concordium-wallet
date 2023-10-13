@@ -88,6 +88,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               children: [
                 Flexible(
                   child: GestureDetector(
+                    key: const Key("TermsAndConditionsText"),
                     onTap: () {
                       _launchUrl(widget.viewModel.currentTac.url);
                     },
@@ -123,6 +124,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             const SizedBox(height: 9),
             ElevatedButton(
+              key: const Key("Continue"),
               onPressed: _onAcceptButtonPressed(context),
               child: const Text('Continue'),
             ),
