@@ -1,7 +1,7 @@
-import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
+import 'package:concordium_wallet/features/terms_and_conditions/terms_and_conditions_screen.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
-import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/shell/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

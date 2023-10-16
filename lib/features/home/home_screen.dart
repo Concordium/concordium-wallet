@@ -1,5 +1,5 @@
-import 'package:concordium_wallet/screens/terms_and_conditions/refresh_screen.dart';
-import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/features/terms_and_conditions/refresh_screen.dart';
+import 'package:concordium_wallet/shell/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
