@@ -17,6 +17,7 @@ class MockAppState extends Mock implements AppState {
 
 class MockUrlLauncher extends Mock implements UrlLauncher {}
 
+/// Wrap MaterialApp and a Mocked App State around the given widget.
 Widget makeTestableWidget({required Widget? child}) => MaterialApp(
       home: ChangeNotifierProvider<AppState>(
         create: (_) => MockAppState(),
