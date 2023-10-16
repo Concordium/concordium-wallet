@@ -3,7 +3,7 @@ import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 
 enum WalletProxyEndpoint {
-  tacVersion('/v0/termsAndConditionsVersion');
+  tacVersion('v0/termsAndConditionsVersion');
 
   final String path;
 

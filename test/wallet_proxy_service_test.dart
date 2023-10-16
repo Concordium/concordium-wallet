@@ -1,5 +1,6 @@
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
+import 'package:concordium_wallet/state.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -24,9 +25,7 @@ void main() {
 
     var httpClient = MockHttpService(rawData);
 
-    var service = WalletProxyService(
-        config: WalletProxyConfig(baseUrl: 'http://test.com'),
-        httpService: httpClient);
+    var service = WalletProxyService(config: WalletProxyConfig(baseUrl: 'http://test.com'), httpService: httpClient);
 
     // Act
     var tac = await service.getTac();
@@ -34,5 +33,9 @@ void main() {
     // Assert
     expect(tac.url.toString(), tacUrl);
     expect(tac.version, tacVersion);
+  });
+
+  test('WalletProxyConfig for testnet merges base and path correctly for terms and conditions', () {
+    expect(testnet.walletProxyConfig.urlOf(WalletProxyEndpoint.tacVersion).toString(), 'https://wallet-proxy.testnet.concordium.com/v0/termsAndConditionsVersion');
   });
 }
