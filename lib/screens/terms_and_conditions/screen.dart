@@ -1,29 +1,18 @@
 import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
-import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/states/inherited_tac.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class TermsAndConditionsViewModel {
-  final TermsAndConditions currentTac;
-  final String? acceptedTacVersion;
-  final void Function(BuildContext context) onAccept;
-
-  const TermsAndConditionsViewModel(this.currentTac, this.acceptedTacVersion, this.onAccept);
-
-  void userAccepted(BuildContext context) {
-    final state = context.read<AppState>();
-    state.sharedPreferences.setTermsAndConditionsAcceptedVersion(currentTac.version);
-    onAccept(context);
-  }
-}
-
 class TermsAndConditionsScreen extends StatefulWidget {
-  final TermsAndConditionsViewModel viewModel;
+  final TermsAndConditions currentTac;
 
-  const TermsAndConditionsScreen(this.viewModel, {super.key});
+  const TermsAndConditionsScreen(this.currentTac, {super.key});
+
+  void userAccepted(TacState tacState) {
+    tacState.setTermsAndConditionsLastVerifiedAt(DateTime.now(), currentTac.version);
+  }
 
   @override
   State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
@@ -40,6 +29,8 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tacState = context.tacState;
+
     return Column(
       children: [
         Expanded(
@@ -89,7 +80,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                 Flexible(
                   child: GestureDetector(
                     onTap: () {
-                      _launchUrl(widget.viewModel.currentTac.url);
+                      _launchUrl(widget.currentTac.url);
                     },
                     child: RichText(
                       text: TextSpan(
@@ -97,13 +88,13 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                         children: [
                           const TextSpan(text: 'I have read and agree to the '),
                           TextSpan(
-                            text: 'Terms and Conditions v${widget.viewModel.currentTac.version}',
+                            text: 'Terms and Conditions v${widget.currentTac.version}',
                             style: const TextStyle(
                               color: Colors.indigo,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          switch (widget.viewModel.acceptedTacVersion) {
+                          switch (tacState.version) {
                             null => const TextSpan(text: '.'),
                             String v => TextSpan(
                                 text: ' (you previously accepted version $v).',
@@ -123,7 +114,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             const SizedBox(height: 9),
             ElevatedButton(
-              onPressed: _onAcceptButtonPressed(context),
+              onPressed: _onAcceptButtonPressed(tacState),
               child: const Text('Continue'),
             ),
           ],
@@ -132,9 +123,9 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     );
   }
 
-  Function()? _onAcceptButtonPressed(BuildContext context) {
+  Function()? _onAcceptButtonPressed(TacState tacState) {
     if (isAccepted) {
-      return () => widget.viewModel.userAccepted(context);
+      return () => widget.userAccepted(tacState);
     }
     return null;
   }

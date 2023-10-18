@@ -21,6 +21,10 @@ class WalletProxyConfig {
     // as none of the endpoints have special characters.
     return Uri.parse('$baseUrl/${e.path}');
   }
+
+  static WalletProxyConfig get testnet => WalletProxyConfig(
+        baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+      );
 }
 
 class WalletProxyService {
