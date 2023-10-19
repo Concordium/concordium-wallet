@@ -44,7 +44,7 @@ class TacState extends ChangeNotifier {
   factory TacState.instance(AppSharedPreferences sharedPreferences) {
     final version = sharedPreferences.termsAndConditionsAcceptedVersion;
     final latest = sharedPreferences.termsAndConditionsLastAccepted;
-    final shouldRefresh = (latest == null || version == null || DateTime.now().difference(latest!).inMinutes > 2);
+    final shouldRefresh = (latest == null || version == null || DateTime.now().difference(latest).inMinutes > 2);
 
     return TacState(
       sharedPreferences: sharedPreferences,
