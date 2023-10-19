@@ -1,10 +1,11 @@
-import 'package:concordium_wallet/states/inherited_shared_prefs.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class InheritedTac extends InheritedWidget {
   final TacState tacState;
 
-  const InheritedTac({
+  InheritedTac({
     super.key,
     required this.tacState,
     required super.child
@@ -26,36 +27,50 @@ extension BuildContextExt on BuildContext {
   TacState get tacState => InheritedTac.of(this).tacState;
 }
 
+
+class RestorableTacState extends RestorableChangeNotifier<TacState> {
+  @override
+  TacState createDefaultValue() {
+    return TacState();
+  }
+  
+  @override
+  TacState fromPrimitives(Object? data) {
+    if (data != null) {
+      Map<String, dynamic> tacStateMap = jsonDecode(data as String);
+      return TacState.fromJson(tacStateMap);
+    }
+    return TacState();
+  }
+  
+  @override
+  Object? toPrimitives() {
+    String json = jsonEncode(this);
+    return json;
+  }
+}
+
 class TacState extends ChangeNotifier {
   DateTime? _termsAndConditionsLastVerifiedAt;
   String? _termsAndConditionsAcceptedVersion;
-  bool refreshTac;
-  final AppSharedPreferences sharedPreferences;
-
-  TacState({
-      required this.sharedPreferences,
-      required this.refreshTac,
-      required String? termsAndConditionsAcceptedVersion,
-      required DateTime? termsAndConditionsLastVerifiedAt,
-    }) :
-    _termsAndConditionsAcceptedVersion = termsAndConditionsAcceptedVersion,
-    _termsAndConditionsLastVerifiedAt = termsAndConditionsLastVerifiedAt;
-
-  factory TacState.instance(AppSharedPreferences sharedPreferences) {
-    final version = sharedPreferences.termsAndConditionsAcceptedVersion;
-    final latest = sharedPreferences.termsAndConditionsLastAccepted;
-    final shouldRefresh = (latest == null || version == null || DateTime.now().difference(latest).inMinutes > 2);
-
-    return TacState(
-      sharedPreferences: sharedPreferences,
-      refreshTac: shouldRefresh,
-      termsAndConditionsAcceptedVersion: version,
-      termsAndConditionsLastVerifiedAt: latest
-    );
-  }
+  bool _refreshTac = true;
 
   DateTime? get tacLastVerifiedAt => _termsAndConditionsLastVerifiedAt;
   String? get version => _termsAndConditionsAcceptedVersion;
+  bool get refreshTac => _refreshTac;
+
+  TacState();
+
+  TacState.fromJson(Map<String, dynamic> json)
+    : _termsAndConditionsLastVerifiedAt = json['verified'],
+      _termsAndConditionsAcceptedVersion = json['version'],
+      _refreshTac = json['refresh'];
+  
+  Map<String, dynamic> toJson() => {
+    'verified': _termsAndConditionsLastVerifiedAt,
+    'version': _termsAndConditionsAcceptedVersion,
+    'refresh': refreshTac
+  };
 
   Future<void> setTermsAndConditionsLastVerifiedAt(DateTime verified, String version) {
     return _setTermsAndConditionsLastVerifiedAt(verified, version);
@@ -70,9 +85,7 @@ class TacState extends ChangeNotifier {
   }
 
   Future<void> _setTermsAndConditionsLastVerifiedAt(DateTime? verified, String? version) async {
-    refreshTac = _shouldRefreshTacAfterUpdate(verified, version);
-
-    await sharedPreferences.update(verified, version);
+    _refreshTac = _shouldRefreshTacAfterUpdate(verified, version);
 
     _termsAndConditionsLastVerifiedAt = verified;
     _termsAndConditionsAcceptedVersion = version;

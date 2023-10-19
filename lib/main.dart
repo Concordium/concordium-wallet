@@ -1,33 +1,35 @@
-import 'package:concordium_wallet/states/inherited_shared_prefs.dart';
+import 'package:concordium_wallet/states/inherited_tac.dart';
 import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:concordium_wallet/screens/routes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(const App());
+  runApp(const RestorationScope(restorationId: "initial", child: App()));
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
 
   @override
+  State<StatefulWidget> createState() => AppState();
+}
+
+class AppState extends State<App> with RestorationMixin {
+  @override
+  String? get restorationId => "App";
+  final tacState = RestorableTacState();
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(tacState, "tacState");
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(
-      future: SharedPreferences.getInstance(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        }
-        return InheritedSharedPreferences(
-          prefs: snapshot.data!,
-          child: MaterialApp(
-            routes: appRoutes,
-            theme: concordiumTheme(),
-          )
-        );
-      }
-    );
+      return InheritedTac(tacState: tacState.value, child: MaterialApp(
+        routes: appRoutes,
+        theme: concordiumTheme(),
+    ));
   }
 }
