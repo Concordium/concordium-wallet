@@ -10,8 +10,8 @@ class TermsAndConditionsScreen extends StatefulWidget {
 
   const TermsAndConditionsScreen(this.currentTac, {super.key});
 
-  void userAccepted(TacState tacState) {
-    tacState.setTermsAndConditionsLastVerifiedAt(DateTime.now(), currentTac.version);
+  Future<void> userAccepted(TacState tacState) {
+    return tacState.setTermsAndConditionsLastVerifiedAt(DateTime.now(), currentTac.version);
   }
 
   @override
@@ -114,8 +114,10 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             const SizedBox(height: 9),
             ElevatedButton(
+              // onPressed: () async => await widget.userAccepted(tacState),
               onPressed: _onAcceptButtonPressed(tacState),
               child: const Text('Continue'),
+              
             ),
           ],
         ),
@@ -125,7 +127,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
   Function()? _onAcceptButtonPressed(TacState tacState) {
     if (isAccepted) {
-      return () => widget.userAccepted(tacState);
+      return () async => await widget.userAccepted(tacState);
     }
     return null;
   }

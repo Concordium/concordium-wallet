@@ -13,6 +13,7 @@ class HomeScreen extends StatelessWidget {
       listenable: tacState,
       builder: (context, _) {
         tacState.printDiff();
+        
         if (tacState.refreshTac) {
           return RefreshTermsAndConditionsScreen();
         }
