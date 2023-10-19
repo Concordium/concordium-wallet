@@ -114,7 +114,6 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             const SizedBox(height: 9),
             ElevatedButton(
-              // onPressed: () async => await widget.userAccepted(tacState),
               onPressed: _onAcceptButtonPressed(tacState),
               child: const Text('Continue'),
               
