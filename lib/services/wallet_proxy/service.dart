@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
-
+import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 
 enum WalletProxyEndpoint {
-  tacVersion('/v0/termsAndConditionsVersion'),
+  tacVersion('v0/termsAndConditionsVersion'),
   ;
 
   final String path;
@@ -26,15 +25,15 @@ class WalletProxyConfig {
 
 class WalletProxyService {
   final WalletProxyConfig config;
-  final HttpClient client;
+  final HttpService httpService;
 
-  WalletProxyService({required this.config, required this.client});
+  WalletProxyService({required this.config, required this.httpService});
 
+  /// Retrieves the terms and conditions from the wallet-proxy.
   Future<TermsAndConditions> getTac() async {
     final url = config.urlOf(WalletProxyEndpoint.tacVersion);
-    final req = await client.getUrl(url);
-    final res = await req.close();
-    final str = await res.transform(utf8.decoder).join();
-    return TermsAndConditions.fromJson(json.decode(str));
+    final response = await httpService.get(url);
+    final jsonResponse = jsonDecode(response.body);
+    return TermsAndConditions.fromJson(jsonResponse);
   }
 }
