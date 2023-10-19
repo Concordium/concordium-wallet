@@ -2,6 +2,7 @@ import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/state/inherited_url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -22,9 +23,8 @@ class TermsAndConditionsViewModel {
 
 class TermsAndConditionsScreen extends StatefulWidget {
   final TermsAndConditionsViewModel viewModel;
-  final UrlLauncher urlLauncher;
 
-  const TermsAndConditionsScreen(this.viewModel, this.urlLauncher, {super.key});
+  const TermsAndConditionsScreen(this.viewModel, {super.key});
 
   @override
   State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
@@ -41,6 +41,8 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final urlLancher = InheritedUrl.of(context).urlLauncher;
+
     return Column(
       children: [
         Expanded(
@@ -91,7 +93,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   child: GestureDetector(
                     key: const Key("TermsAndConditionsText"),
                     onTap: () {
-                      _launchUrl(widget.viewModel.currentTac.url);
+                      _launchUrl(urlLancher);
                     },
                     child: RichText(
                       text: TextSpan(
@@ -142,9 +144,10 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     return null;
   }
 
-  void _launchUrl(Uri url) async {
-    if (await widget.urlLauncher.canLaunch(url)) {
-      await widget.urlLauncher.launch(url);
+  void _launchUrl(UrlLauncher launcher) async {
+    final url = widget.viewModel.currentTac.url;
+    if (await launcher.canLaunch(url)) {
+      await launcher.launch(url);
     } else {
       // TODO If this fails, open a dialog with the URL so the user can visit it manually.
       throw 'Could not launch $url';

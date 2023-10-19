@@ -1,5 +1,6 @@
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/state/inherited_url.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
@@ -28,20 +29,27 @@ Widget makeTestableWidget({required Widget? child}) => MaterialApp(
     );
 
 void main() {
+
+   Widget? build({UrlLauncher? urlLauncher, void Function(BuildContext)? onAccept}) {
+     return InheritedUrl(
+       urlLauncher: urlLauncher ?? MockUrlLauncher(),
+       // Build the terms and condition screen we wish to test
+       child: TermsAndConditionsScreen(
+         TermsAndConditionsViewModel(
+           TermsAndConditions(Uri.parse("localhost"), "1.1.0"),
+           "1.0.0",
+           onAccept ?? (context) => (),
+         )));
+   }  
+
   group("Terms and conditions screen", () {
     bool checked = false;
-    TermsAndConditionsScreen? tacScreen;
+    Widget? tacScreen;
 
     setUp(() {
       checked = false;
+      tacScreen = build(onAccept: (context) => checked = true);
       // Build the terms and condition screen we wish to test
-      tacScreen = TermsAndConditionsScreen(
-          TermsAndConditionsViewModel(
-            TermsAndConditions(Uri.parse("localhost"), "1.1.0"),
-            "1.0.0",
-            (context) => checked = true,
-          ),
-          MockUrlLauncher());
     });
 
     testWidgets('Pressing continue does not perform check', (WidgetTester tester) async {
@@ -54,6 +62,7 @@ void main() {
     });
 
     testWidgets('Pressing continue, after toggling accept, performs check', (WidgetTester tester) async {
+      
       await tester.pumpWidget(makeTestableWidget(child: tacScreen));
 
       await tester.tap(find.byType(ToggleAcceptedWidget));
@@ -73,13 +82,7 @@ void main() {
     var launcher = MockUrlLauncher();
 
     // Build the terms and condition screen we wish to test
-    var tacScreen = TermsAndConditionsScreen(
-        TermsAndConditionsViewModel(
-          TermsAndConditions(uri, "1.1.0"),
-          "1.0.0",
-          (context) {},
-        ),
-        launcher);
+    var tacScreen = build(urlLauncher: launcher);
 
     await tester.pumpWidget(makeTestableWidget(child: tacScreen));
 

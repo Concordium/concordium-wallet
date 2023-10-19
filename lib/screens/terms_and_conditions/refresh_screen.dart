@@ -2,6 +2,7 @@ import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/state/inherited_url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -38,13 +39,15 @@ class RefreshTermsAndConditionsScreen extends StatelessWidget {
                 // Current T&C is already accepted; update the T&C check time to make the home screen replace this widget.
                 Future.microtask(() => _markCheckPerformed(context));
               } else {
-                return TermsAndConditionsScreen(
-                  TermsAndConditionsViewModel(
-                    currentTac,
-                    acceptedTacVersion,
-                    _markCheckPerformed,
-                  ),
-                  UrlLauncher(),
+                return InheritedUrl(
+                  urlLauncher: UrlLauncher(),
+                  child: TermsAndConditionsScreen(
+                    TermsAndConditionsViewModel(
+                      currentTac,
+                      acceptedTacVersion,
+                      _markCheckPerformed,
+                    )
+                  )
                 );
               }
             }
