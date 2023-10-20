@@ -8,7 +8,7 @@ The JSON models used to deserialize the responses from Wallet Proxy are generate
 [`json_serializable`](https://pub.dev/packages/json_serializable).
 It works by specifying the data model as plain Dart classes
 along with a little special syntax for the `fromJson` and `toJson` methods.
-When running the command
+When running the following command
 ```shell
 dart run build_runner build
 ```
