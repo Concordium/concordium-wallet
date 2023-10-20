@@ -33,7 +33,7 @@ class RefreshTermsAndConditionsScreen extends StatelessWidget {
             if (currentTac != null) {
               // TODO It feels wrong to have this business logic in the widget builder.
               if (currentTac.version == acceptedTacVersion) {
-                print('already accepted; dismissing');
+                // print('already accepted; dismissing');
                 // Current T&C is already accepted; update the T&C check time to make the home screen replace this widget.
                 Future.microtask(() => _markCheckPerformed(context));
               } else {
