@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class InheritedTac extends InheritedWidget {
   final TacState tacState;
 
-  InheritedTac({
+  const InheritedTac({
     super.key,
     required this.tacState,
     required super.child
@@ -45,7 +45,7 @@ class RestorableTacState extends RestorableChangeNotifier<TacState> {
   
   @override
   Object? toPrimitives() {
-    String json = jsonEncode(this);
+    String json = jsonEncode(value);
     return json;
   }
 }
@@ -62,12 +62,12 @@ class TacState extends ChangeNotifier {
   TacState();
 
   TacState.fromJson(Map<String, dynamic> json)
-    : _termsAndConditionsLastVerifiedAt = json['verified'],
+    : _termsAndConditionsLastVerifiedAt = json['verified'] != null ? DateTime.parse(json['verified']) : null,
       _termsAndConditionsAcceptedVersion = json['version'],
       _refreshTac = json['refresh'];
   
   Map<String, dynamic> toJson() => {
-    'verified': _termsAndConditionsLastVerifiedAt,
+    'verified': _termsAndConditionsLastVerifiedAt?.toString(),
     'version': _termsAndConditionsAcceptedVersion,
     'refresh': refreshTac
   };

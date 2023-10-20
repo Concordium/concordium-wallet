@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/screens/home/screen.dart';
 import 'package:concordium_wallet/states/inherited_tac.dart';
 import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 
 void main() {
-  runApp(const RestorationScope(restorationId: "initial", child: App()));
+  runApp(MaterialApp(
+      restorationScopeId: 'root',
+      routes: appRoutes,
+      theme: concordiumTheme(),
+    ));
 }
 
 class App extends StatefulWidget {
@@ -27,9 +32,6 @@ class AppState extends State<App> with RestorationMixin {
 
   @override
   Widget build(BuildContext context) {
-      return InheritedTac(tacState: tacState.value, child: MaterialApp(
-        routes: appRoutes,
-        theme: concordiumTheme(),
-    ));
+      return InheritedTac(tacState: tacState.value, child: const HomeScreen());
   }
 }
