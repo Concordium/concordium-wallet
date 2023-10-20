@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'inherited_tac.g.dart';
 
 class InheritedTac extends InheritedWidget {
   final TacState tacState;
@@ -50,9 +53,13 @@ class RestorableTacState extends RestorableChangeNotifier<TacState> {
   }
 }
 
+@JsonSerializable()
 class TacState extends ChangeNotifier {
+  @JsonKey(name: 'verified', includeFromJson: true, includeToJson: true)
   DateTime? _termsAndConditionsLastVerifiedAt;
+  @JsonKey(name: 'version', includeFromJson: true, includeToJson: true)
   String? _termsAndConditionsAcceptedVersion;
+  @JsonKey(name: 'refresh', includeFromJson: true, includeToJson: true)
   bool _refreshTac = true;
 
   DateTime? get tacLastVerifiedAt => _termsAndConditionsLastVerifiedAt;
@@ -61,16 +68,9 @@ class TacState extends ChangeNotifier {
 
   TacState();
 
-  TacState.fromJson(Map<String, dynamic> json)
-    : _termsAndConditionsLastVerifiedAt = json['verified'] != null ? DateTime.parse(json['verified']) : null,
-      _termsAndConditionsAcceptedVersion = json['version'],
-      _refreshTac = json['refresh'];
+  factory TacState.fromJson(Map<String, dynamic> json) => _$TacStateFromJson(json);
   
-  Map<String, dynamic> toJson() => {
-    'verified': _termsAndConditionsLastVerifiedAt?.toString(),
-    'version': _termsAndConditionsAcceptedVersion,
-    'refresh': refreshTac
-  };
+  Map<String, dynamic> toJson() => _$TacStateToJson(this);
 
   Future<void> setTermsAndConditionsLastVerifiedAt(DateTime verified, String version) {
     return _setTermsAndConditionsLastVerifiedAt(verified, version);
