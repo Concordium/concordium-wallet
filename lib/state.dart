@@ -15,7 +15,8 @@ final testnet = Network(
   ),
 );
 
-class AppSharedPreferences { // TODO: Extend ChangeNotifier?
+class AppSharedPreferences {
+  // TODO: Extend ChangeNotifier?
   static const _tacAcceptedVersionKey = 'tac:accepted_version';
 
   final SharedPreferences _prefs;
