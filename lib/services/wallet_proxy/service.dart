@@ -30,7 +30,7 @@ class WalletProxyService {
   WalletProxyService({required this.config, required this.httpService});
 
   /// Retrieves the terms and conditions from the wallet-proxy.
-  Future<TermsAndConditions> getTac() async {
+  Future<TermsAndConditions> getTermsAndConditions() async {
     final url = config.urlOf(WalletProxyEndpoint.tacVersion);
     final response = await httpService.get(url);
     final jsonResponse = jsonDecode(response.body);
