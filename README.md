@@ -19,3 +19,12 @@ See for example [`wallet_proxy/model.dart`](./lib/services/wallet_proxy/model.da
 which expands into [`wallet_proxy/model.g.dart`](./lib/services/wallet_proxy/model.g.dart).
 
 The generated class is checked into the repo, but imports always refer to the original one.
+
+
+## Widget Book
+
+To open widgetbook, the widget library, run:
+
+```shell
+flutter run -t bin/widgetbook.dart
+```
