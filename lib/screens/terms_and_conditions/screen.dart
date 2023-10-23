@@ -7,10 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {
-  final TermsAndConditions valid;
-  final String? acceptedVersion;
+  final TermsAndConditions validTermsAndConditions;
+  final String? acceptedTermsAndConditionsVersion;
 
-  const TermsAndConditionsScreen({super.key, required this.valid, this.acceptedVersion});
+  const TermsAndConditionsScreen({super.key, required this.validTermsAndConditions, this.acceptedTermsAndConditionsVersion});
 
   @override
   State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
@@ -76,7 +76,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                 Flexible(
                   child: GestureDetector(
                     onTap: () {
-                      _launchUrl(widget.valid.url);
+                      _launchUrl(widget.validTermsAndConditions.url);
                     },
                     child: RichText(
                       text: TextSpan(
@@ -84,13 +84,13 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                         children: [
                           const TextSpan(text: 'I have read and agree to the '),
                           TextSpan(
-                            text: 'Terms and Conditions v${widget.valid.version}',
+                            text: 'Terms and Conditions v${widget.validTermsAndConditions.version}',
                             style: const TextStyle(
                               color: Colors.indigo,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          switch (widget.acceptedVersion) {
+                          switch (widget.acceptedTermsAndConditionsVersion) {
                             null => const TextSpan(text: '.'),
                             String v => TextSpan(
                                 text: ' (you previously accepted v$v).',
@@ -123,7 +123,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     if (isAccepted) {
       return () {
         final tac = AcceptedTermsAndConditions(
-          version: widget.valid.version,
+          version: widget.validTermsAndConditions.version,
         );
         context.read<TermsAndConditionAcceptance>().userAccepted(tac);
       };

@@ -57,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
             final acceptedTac = tacState.accepted;
             if (acceptedTac == null || !acceptedTac.isValid(validTac.termsAndConditions)) {
               return TermsAndConditionsScreen(
-                valid: validTac.termsAndConditions,
-                acceptedVersion: acceptedTac?.version,
+                validTermsAndConditions: validTac.termsAndConditions,
+                acceptedTermsAndConditionsVersion: acceptedTac?.version,
               );
             }
             return Column(
