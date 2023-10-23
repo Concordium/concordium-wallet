@@ -1,10 +1,12 @@
-import 'package:concordium_wallet/services/http.dart';
-import 'package:concordium_wallet/state.dart';
-import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/material.dart';
-
-import 'package:concordium_wallet/screens/routes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:concordium_wallet/screens/routes.dart';
+import 'package:concordium_wallet/services/http.dart';
+import 'package:concordium_wallet/services/shared_preferences/service.dart';
+import 'package:concordium_wallet/state/network.dart';
+import 'package:concordium_wallet/state/services.dart';
+import 'package:concordium_wallet/state/terms_and_conditions.dart';
+import 'package:concordium_wallet/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -38,7 +40,7 @@ class App extends StatelessWidget {
           },
           child: Builder(
             builder: (context) {
-              // Wrapping provider in Builder for services to be available in the context.
+              // Wrap provider in Builder for services to be available in the context.
               final prefs = context.select(((ServiceRepository s) => s.sharedPreferences));
               return MultiBlocProvider(
                 providers: [

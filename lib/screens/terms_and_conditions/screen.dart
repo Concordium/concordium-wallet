@@ -1,6 +1,6 @@
 import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
-import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
