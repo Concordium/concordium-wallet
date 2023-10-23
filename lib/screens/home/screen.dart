@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tacLastCheckedAt = context.select((AppState state) => state.termsAndConditionsLastVerifiedAt);
-    print('tacLastCheckedAt: $tacLastCheckedAt');
+    //print('tacLastCheckedAt: $tacLastCheckedAt');
 
     // Temporary...
     final state = context.watch<AppState>();
@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
     // print('lastAcceptedVersion: $lastAcceptedVersion');
 
     // Force recheck after 1 min.
-    print('diff: ${DateTime.now().difference(tacLastCheckedAt).inMinutes}');
+    // print('diff: ${DateTime.now().difference(tacLastCheckedAt).inMinutes}');
     if (DateTime.now().difference(tacLastCheckedAt).inMinutes > 1) {
       return const RefreshTermsAndConditionsScreen();
     }
