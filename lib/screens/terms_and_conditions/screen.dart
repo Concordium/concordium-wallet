@@ -124,7 +124,6 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       return () {
         final tac = AcceptedTermsAndConditions(
           version: widget.valid.version,
-          lastVerifiedAt: DateTime.now(),
         );
         context.read<TermsAndConditionAcceptance>().userAccepted(tac);
       };

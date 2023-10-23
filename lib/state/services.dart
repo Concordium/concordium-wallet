@@ -3,15 +3,6 @@ import 'package:concordium_wallet/services/shared_preferences/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/network.dart';
 
-class ServiceRepository {
-  final Map<Network, NetworkServices> networkServices;
-  final SharedPreferencesService sharedPreferences;
-
-  const ServiceRepository({required this.networkServices, required this.sharedPreferences});
-
-// List<Network> get availableNetworks => List.of(networkServices.keys);
-}
-
 class NetworkServices {
   final WalletProxyService walletProxy;
 
@@ -25,4 +16,13 @@ class NetworkServices {
       ),
     );
   }
+}
+
+class ServiceRepository {
+  final Map<Network, NetworkServices> networkServices;
+  final SharedPreferencesService sharedPreferences;
+
+  const ServiceRepository({required this.networkServices, required this.sharedPreferences});
+
+// List<Network> get availableNetworks => List.of(networkServices.keys);
 }

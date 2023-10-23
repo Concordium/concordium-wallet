@@ -1,4 +1,5 @@
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
+import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
@@ -13,18 +14,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
     super.initState();
 
-    // Fetch currently valid T&C version when initializing the widget.
-    // TODO: Use the "last verified" time to determine whether to perform the refresh now and whenever the home screen is loaded.
+    // Fetch currently valid T&C version unconditionally when initializing the widget.
+    // TODO: Use the 'tacAcceptance.state.valid.updatedAt' to determine whether to perform the refresh (now and on other appropriate triggers).
+    final tacAcceptance = context.read<TermsAndConditionAcceptance>();
     final network = context.read<SelectedNetwork>().state;
     final services = context.read<ServiceRepository>().networkServices[network]!;
-    final tac = context.read<TermsAndConditionAcceptance>();
-    // TODO: Store future in state to be used to indicate that there's an ongoing fetch?
-    services.walletProxy.getTermsAndConditions().then(tac.validVersionUpdated);
+    _updateValidTac(services.walletProxy, tacAcceptance);
+  }
+
+  static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
+    final tac = await walletProxy.getTermsAndConditions();
+    tacAcceptance.validVersionUpdated(ValidTermsAndConditions.updatedNow(termsAndConditions: tac));
   }
 
   @override
@@ -37,21 +41,23 @@ class _HomeScreenState extends State<HomeScreen> {
             final validTac = tacState.valid;
             if (validTac == null) {
               // Show spinner if no valid T&C have been resolved yet (not as a result of actually ongoing fetch).
+              // Should store the future from '_updateValidTac' and use that in a wrapping 'FutureBuilder'..?
               return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircularProgressIndicator(),
-                    Text('Waiting for Terms & Conditions...'),
+                    SizedBox(height: 16),
+                    Text('Waiting for enforced Terms & Conditions...'),
                   ],
                 ),
               );
             }
             final acceptedTac = tacState.accepted;
-            if (acceptedTac == null || !acceptedTac.isValid(validTac)) {
+            if (acceptedTac == null || !acceptedTac.isValid(validTac.termsAndConditions)) {
               return TermsAndConditionsScreen(
-                valid: validTac,
+                valid: validTac.termsAndConditions,
                 acceptedVersion: acceptedTac?.version,
               );
             }
@@ -60,14 +66,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Column(
                     children: [
-                      Text('T&C last verified at ${tacState.accepted?.lastVerifiedAt}.'),
-                      Text('Last T&C version accepted: ${tacState.accepted?.version}'),
+                      Text('Accepted T&C version: ${tacState.accepted?.version}'),
+                      Text('Valid T&C last verified at ${tacState.valid?.updatedAt}.'),
                     ],
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().resetAccepted(),
-                  child: const Text('Reset accepted T&C'),
+                  onPressed: () => context.read<TermsAndConditionAcceptance>().testResetValidTime(),
+                  child: const Text('Reset update time of valid T&C'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
@@ -77,13 +83,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().testSetAcceptedVersion('1.2.3'),
-                  child: const Text('Set accepted version to "1.2.3"'),
+                  onPressed: () {
+                    const tac = AcceptedTermsAndConditions(version: '1.2.3');
+                    context.read<TermsAndConditionAcceptance>().userAccepted(tac);
+                  },
+                  child: const Text('Set accepted T&C version to 1.2.3'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().testResetAcceptedTime(),
-                  child: const Text('Reset accepted time'),
+                  onPressed: () => context.read<TermsAndConditionAcceptance>().resetAccepted(),
+                  child: const Text('Reset accepted T&C'),
                 ),
               ],
             );

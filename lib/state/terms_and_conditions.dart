@@ -4,29 +4,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AcceptedTermsAndConditions {
   final String version;
-  final DateTime? lastVerifiedAt; // TODO: looks like this field should be the time of fetching the current valid version
 
-  const AcceptedTermsAndConditions({required this.version, required this.lastVerifiedAt});
-
-  AcceptedTermsAndConditions copyWith({String? version, DateTime? lastVerifiedAt}) {
-    return AcceptedTermsAndConditions(
-      version: version ?? this.version,
-      lastVerifiedAt: lastVerifiedAt ?? this.lastVerifiedAt,
-    );
-  }
+  const AcceptedTermsAndConditions({required this.version});
 
   bool isValid(TermsAndConditions tac) {
     return version == tac.version;
   }
 }
 
+class ValidTermsAndConditions {
+  final TermsAndConditions termsAndConditions;
+  final DateTime? updatedAt;
+
+  const ValidTermsAndConditions({required this.termsAndConditions, required this.updatedAt});
+
+  factory ValidTermsAndConditions.updatedNow({required TermsAndConditions termsAndConditions}) {
+    return ValidTermsAndConditions(termsAndConditions: termsAndConditions, updatedAt: DateTime.now());
+  }
+}
+
 class TermsAndConditionsAcceptanceState {
   final AcceptedTermsAndConditions? accepted;
-  final TermsAndConditions? valid;
+  final ValidTermsAndConditions? valid;
 
   const TermsAndConditionsAcceptanceState({required this.accepted, required this.valid});
 
-  TermsAndConditionsAcceptanceState copyWith({AcceptedTermsAndConditions? accepted, TermsAndConditions? valid}) {
+  TermsAndConditionsAcceptanceState copyWith({AcceptedTermsAndConditions? accepted, ValidTermsAndConditions? valid}) {
     return TermsAndConditionsAcceptanceState(
       accepted: accepted ?? this.accepted,
       valid: valid ?? this.valid,
@@ -42,7 +45,7 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   TermsAndConditionAcceptance(this._preferences) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
     final acceptedVersion = _preferences.termsAndConditionsAcceptedVersion;
     if (acceptedVersion != null) {
-      userAccepted(AcceptedTermsAndConditions(version: acceptedVersion, lastVerifiedAt: _zeroTime));
+      userAccepted(AcceptedTermsAndConditions(version: acceptedVersion));
     }
   }
 
@@ -50,7 +53,7 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
     emit(state.copyWith(accepted: tac));
   }
 
-  void validVersionUpdated(TermsAndConditions tac) {
+  void validVersionUpdated(ValidTermsAndConditions tac) {
     emit(state.copyWith(valid: tac));
   }
 
@@ -65,13 +68,8 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   }
 
   // Temporary - for testing.
-  void testSetAcceptedVersion(String version) {
-    emit(state.copyWith(accepted: state.accepted?.copyWith(version: version)));
-  }
-
-  // Temporary - for testing.
-  void testResetAcceptedTime() {
-    emit(state.copyWith(accepted: state.accepted?.copyWith(lastVerifiedAt: _zeroTime)));
+  void testResetValidTime() {
+    emit(state.copyWith(valid: ValidTermsAndConditions(termsAndConditions: state.valid!.termsAndConditions, updatedAt: _zeroTime)));
   }
 
   @override
