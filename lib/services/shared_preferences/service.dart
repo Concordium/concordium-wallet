@@ -13,4 +13,3 @@ class SharedPreferencesService {
     _prefs.setString(_tacAcceptedVersionKey, v);
   }
 }
-
