@@ -24,7 +24,15 @@ class App extends StatelessWidget {
         final prefs = snapshot.data;
         if (prefs == null) {
           // Loading preferences.
-          return const CircularProgressIndicator();
+          return const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Loading shared preferences...', textDirection: TextDirection.ltr),
+            ],
+          );
         }
         // Initialize services and provide them to the nested components
         // (including the blocs created in the child provider).
@@ -38,25 +46,22 @@ class App extends StatelessWidget {
               sharedPreferences: prefsSvc,
             );
           },
-          child: Builder(
-            builder: (context) {
-              // Wrap provider in Builder for services to be available in the context.
-              final prefs = context.select(((ServiceRepository s) => s.sharedPreferences));
-              return MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) => SelectedNetwork(networks[NetworkName.testnet]!),
-                  ),
-                  BlocProvider(
-                    create: (context) => TermsAndConditionAcceptance(prefs),
-                  ),
-                ],
-                child: MaterialApp(
-                  routes: appRoutes,
-                  theme: concordiumTheme(),
-                ),
-              );
-            },
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => SelectedNetwork(networks[NetworkName.testnet]!),
+              ),
+              BlocProvider(
+                create: (context) {
+                  final prefs = context.read<ServiceRepository>().sharedPreferences;
+                  return TermsAndConditionAcceptance(prefs);
+                },
+              ),
+            ],
+            child: MaterialApp(
+              routes: appRoutes,
+              theme: concordiumTheme(),
+            ),
           ),
         );
       },

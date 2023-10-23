@@ -42,17 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
             if (validTac == null) {
               // Show spinner if no valid T&C have been resolved yet (not as a result of actually ongoing fetch).
               // Should store the future from '_updateValidTac' and use that in a wrapping 'FutureBuilder'..?
-              return const Center(
-                child: Column(
+              return const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
-                    Text('Waiting for enforced Terms & Conditions...'),
+                    Center(child: Text('Waiting for enforced Terms & Conditions...')),
                   ],
-                ),
-              );
+                );
             }
             final acceptedTac = tacState.accepted;
             if (acceptedTac == null || !acceptedTac.isValid(validTac.termsAndConditions)) {
@@ -79,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton(
                   onPressed: () => context.read<TermsAndConditionAcceptance>().resetValid(),
                   // NOTE: This breaks the app because no re-fetch is triggered - hot restart is necessary to recover.
-                  child: const Text('Reset valid T&C (breaks the app!)'),
+                  child: const Text('Reset valid T&C (and break the app)'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
