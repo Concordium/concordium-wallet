@@ -6,9 +6,7 @@ import 'package:concordium_wallet/states/inherited_tac.dart';
 final appRoutes = {
   '/': (context) {
     var prefs = InheritedSharedPreferences.of(context).appPrefs;
-    
-    return InheritedTac(
-      tacState: TacState.instance(prefs),
-      child: const HomeScreen());
+
+    return InheritedTac(tacState: TacState.instance(prefs), child: const HomeScreen());
   },
 };

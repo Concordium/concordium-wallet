@@ -4,18 +4,14 @@ import 'package:flutter/material.dart';
 class InheritedTac extends InheritedWidget {
   final TacState tacState;
 
-  const InheritedTac({
-    super.key,
-    required this.tacState,
-    required super.child
-  });
+  const InheritedTac({super.key, required this.tacState, required super.child});
 
   static InheritedTac of(BuildContext context) {
     final i = context.dependOnInheritedWidgetOfExactType<InheritedTac>();
     assert(i != null, "No 'InheritedTac' found above in the tree");
     return i!;
   }
-  
+
   @override
   bool updateShouldNotify(covariant InheritedTac oldWidget) {
     return tacState.refreshTac != tacState.refreshTac;
@@ -33,13 +29,12 @@ class TacState extends ChangeNotifier {
   final AppSharedPreferences sharedPreferences;
 
   TacState({
-      required this.sharedPreferences,
-      required this.refreshTac,
-      required String? termsAndConditionsAcceptedVersion,
-      required DateTime? termsAndConditionsLastVerifiedAt,
-    }) :
-    _termsAndConditionsAcceptedVersion = termsAndConditionsAcceptedVersion,
-    _termsAndConditionsLastVerifiedAt = termsAndConditionsLastVerifiedAt;
+    required this.sharedPreferences,
+    required this.refreshTac,
+    required String? termsAndConditionsAcceptedVersion,
+    required DateTime? termsAndConditionsLastVerifiedAt,
+  })  : _termsAndConditionsAcceptedVersion = termsAndConditionsAcceptedVersion,
+        _termsAndConditionsLastVerifiedAt = termsAndConditionsLastVerifiedAt;
 
   factory TacState.instance(AppSharedPreferences sharedPreferences) {
     final version = sharedPreferences.termsAndConditionsAcceptedVersion;
@@ -47,11 +42,10 @@ class TacState extends ChangeNotifier {
     final shouldRefresh = (latest == null || version == null || DateTime.now().difference(latest).inMinutes > 2);
 
     return TacState(
-      sharedPreferences: sharedPreferences,
-      refreshTac: shouldRefresh,
-      termsAndConditionsAcceptedVersion: version,
-      termsAndConditionsLastVerifiedAt: latest
-    );
+        sharedPreferences: sharedPreferences,
+        refreshTac: shouldRefresh,
+        termsAndConditionsAcceptedVersion: version,
+        termsAndConditionsLastVerifiedAt: latest);
   }
 
   DateTime? get tacLastVerifiedAt => _termsAndConditionsLastVerifiedAt;
@@ -82,9 +76,9 @@ class TacState extends ChangeNotifier {
 
   bool _shouldRefreshTacAfterUpdate(DateTime? newVerified, String? newVersion) {
     return newVerified == null ||
-      newVersion == null ||
-      (_termsAndConditionsLastVerifiedAt != null && DateTime.now().difference(_termsAndConditionsLastVerifiedAt!).inMinutes > 2) ||
-      (_termsAndConditionsAcceptedVersion != null && _termsAndConditionsAcceptedVersion != newVersion);
+        newVersion == null ||
+        (_termsAndConditionsLastVerifiedAt != null && DateTime.now().difference(_termsAndConditionsLastVerifiedAt!).inMinutes > 2) ||
+        (_termsAndConditionsAcceptedVersion != null && _termsAndConditionsAcceptedVersion != newVersion);
   }
 
   void printDiff() {

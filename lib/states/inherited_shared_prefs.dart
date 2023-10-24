@@ -5,12 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class InheritedSharedPreferences extends InheritedWidget {
   final AppSharedPreferences appPrefs;
-  
-  InheritedSharedPreferences({
-    super.key,
-    required SharedPreferences prefs,
-    required super.child
-    }) : appPrefs = AppSharedPreferences(prefs);
+
+  InheritedSharedPreferences({super.key, required SharedPreferences prefs, required super.child}) : appPrefs = AppSharedPreferences(prefs);
 
   static InheritedSharedPreferences of(BuildContext context) {
     final i = context.dependOnInheritedWidgetOfExactType<InheritedSharedPreferences>();
@@ -19,7 +15,7 @@ class InheritedSharedPreferences extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(covariant oldWidget ) {
+  bool updateShouldNotify(covariant oldWidget) {
     return false;
   }
 }

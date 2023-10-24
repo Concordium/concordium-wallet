@@ -116,7 +116,6 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ElevatedButton(
               onPressed: _onAcceptButtonPressed(tacState),
               child: const Text('Continue'),
-              
             ),
           ],
         ),

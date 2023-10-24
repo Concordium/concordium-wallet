@@ -15,19 +15,17 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<SharedPreferences>(
-      future: SharedPreferences.getInstance(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        }
-        return InheritedSharedPreferences(
-          prefs: snapshot.data!,
-          child: MaterialApp(
-            routes: appRoutes,
-            theme: concordiumTheme(),
-          )
-        );
-      }
-    );
+        future: SharedPreferences.getInstance(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const CircularProgressIndicator();
+          }
+          return InheritedSharedPreferences(
+              prefs: snapshot.data!,
+              child: MaterialApp(
+                routes: appRoutes,
+                theme: concordiumTheme(),
+              ));
+        });
   }
 }
