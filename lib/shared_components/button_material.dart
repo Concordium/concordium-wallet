@@ -23,8 +23,17 @@ class ButtonMaterial extends StatelessWidget {
   final String text;
   final GestureTapCallback? onTap;
   final BoxDecoration decoration;
+  final double width;
+  final double height;
 
-  const ButtonMaterial({super.key, required this.text, this.onTap, required this.decoration});
+  const ButtonMaterial({
+    super.key,
+    required this.text,
+    this.onTap,
+    required this.decoration,
+    this.width = double.infinity,
+    this.height = 40,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +43,8 @@ class ButtonMaterial extends StatelessWidget {
     );
 
     return Container(
-        height: 40,
-        // TODO allow other widths
-        width: double.infinity,
+        height: height,
+        width: width,
         decoration: onTap != null
             ? buttonDecoration
             // TODO allow choosing the disabled styling (Also this doesn't like anything from the design)
