@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/shared_components/button_generated.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:concordium_wallet/shared_components/button.dart';
@@ -16,7 +17,7 @@ class WidgetbookApp extends StatelessWidget {
       addons: [
         AlignmentAddon(),
       ],
-      directories: [__button(), __buttonMaterial()],
+      directories: [__button(), __buttonMaterial(), __buttonGenerated()],
     );
   }
 
@@ -59,4 +60,20 @@ class WidgetbookApp extends StatelessWidget {
       ],
     );
   }
+
+  WidgetbookComponent __buttonGenerated() {
+    return WidgetbookComponent(
+      name: '$ColorGradientMineralIconFalseSizeMedium',
+      useCases: [
+        WidgetbookUseCase(
+          name: 'Default',
+          builder: (context) {
+            return ColorGradientMineralIconFalseSizeMedium(
+            );
+          },
+        )
+      ],
+    );
+  }
+
 }

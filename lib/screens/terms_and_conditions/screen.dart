@@ -2,7 +2,6 @@ import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state.dart';
 import 'package:concordium_wallet/shared_components/button.dart';
-import 'package:concordium_wallet/shared_components/button_material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -125,7 +124,6 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             const SizedBox(height: 9),
             Button(key: const Key("Continue"), onTap: _onAcceptButtonPressed(context), text: 'Continue', decoration: decoration),
-            ButtonMaterial(onTap: _onAcceptButtonPressed(context), text: 'Continue', decoration: decoration),
           ],
         ),
       ],
