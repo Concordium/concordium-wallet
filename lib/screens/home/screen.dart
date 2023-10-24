@@ -26,7 +26,8 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        Text('T&C last checked at ${tacState.tacLastVerifiedAt}.'),
+                        Text(
+                            'T&C last checked at ${tacState.tacLastVerifiedAt}.'),
                         Text('Last T&C version accepted: ${tacState.version}'),
                       ],
                     ),

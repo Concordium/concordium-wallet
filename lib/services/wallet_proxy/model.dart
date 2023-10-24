@@ -8,7 +8,8 @@ class TermsAndConditions {
 
   TermsAndConditions(this.url, this.version);
 
-  factory TermsAndConditions.fromJson(Map<String, dynamic> json) => _$TermsAndConditionsFromJson(json);
+  factory TermsAndConditions.fromJson(Map<String, dynamic> json) =>
+      _$TermsAndConditionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$TermsAndConditionsToJson(this);
 }

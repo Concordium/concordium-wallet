@@ -11,11 +11,13 @@ class TermsAndConditionsScreen extends StatefulWidget {
   const TermsAndConditionsScreen(this.currentTac, {super.key});
 
   Future<void> userAccepted(TacState tacState) {
-    return tacState.setTermsAndConditionsLastVerifiedAt(DateTime.now(), currentTac.version);
+    return tacState.setTermsAndConditionsLastVerifiedAt(
+        DateTime.now(), currentTac.version);
   }
 
   @override
-  State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
+  State<TermsAndConditionsScreen> createState() =>
+      _TermsAndConditionsScreenState();
 }
 
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
@@ -63,7 +65,8 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                 padding: const EdgeInsets.all(16),
                 child: const Column(
                   children: [
-                    Text('Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.'),
+                    Text(
+                        'Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.'),
                     SizedBox(height: 9),
                     Text(
                         'It is very important that you keep your passcode safe, because it is the only way to access your accounts. Concordium is not able to change your passcode or help you unlock your wallet if you lose your passcode.'),
@@ -88,7 +91,8 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                         children: [
                           const TextSpan(text: 'I have read and agree to the '),
                           TextSpan(
-                            text: 'Terms and Conditions v${widget.currentTac.version}',
+                            text:
+                                'Terms and Conditions v${widget.currentTac.version}',
                             style: const TextStyle(
                               color: Colors.indigo,
                               fontWeight: FontWeight.bold,

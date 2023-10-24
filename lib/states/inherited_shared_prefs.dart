@@ -6,11 +6,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class InheritedSharedPreferences extends InheritedWidget {
   final AppSharedPreferences appPrefs;
 
-  InheritedSharedPreferences({super.key, required SharedPreferences prefs, required super.child}) : appPrefs = AppSharedPreferences(prefs);
+  InheritedSharedPreferences(
+      {super.key, required SharedPreferences prefs, required super.child})
+      : appPrefs = AppSharedPreferences(prefs);
 
   static InheritedSharedPreferences of(BuildContext context) {
-    final i = context.dependOnInheritedWidgetOfExactType<InheritedSharedPreferences>();
-    assert(i != null, "No 'InheritedSharedPreferences' found above in the tree");
+    final i = context
+        .dependOnInheritedWidgetOfExactType<InheritedSharedPreferences>();
+    assert(
+        i != null, "No 'InheritedSharedPreferences' found above in the tree");
     return i!;
   }
 
@@ -28,7 +32,8 @@ class AppSharedPreferences {
 
   AppSharedPreferences(this._prefs);
 
-  String? get termsAndConditionsAcceptedVersion => _prefs.getString(_tacAcceptedVersionKey);
+  String? get termsAndConditionsAcceptedVersion =>
+      _prefs.getString(_tacAcceptedVersionKey);
   DateTime? get termsAndConditionsLastAccepted {
     var lastAccept = _prefs.getString(_tacLastAcceptedKey);
     if (lastAccept == null) {
