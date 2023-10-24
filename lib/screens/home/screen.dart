@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
     final tac = await walletProxy.getTermsAndConditions();
-    tacAcceptance.validVersionUpdated(ValidTermsAndConditions.updatedNow(termsAndConditions: tac));
+    tacAcceptance.validVersionUpdated(ValidTermsAndConditions.refreshedNow(termsAndConditions: tac));
   }
 
   @override
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: [
                       Text('Accepted T&C version: ${tacState.accepted?.version}'),
-                      Text('Valid T&C last verified at ${tacState.valid?.updatedAt}.'),
+                      Text('Valid T&C last refreshed at ${tacState.valid?.refreshedAt}.'),
                     ],
                   ),
                 ),

@@ -9,7 +9,11 @@ class SharedPreferencesService {
 
   String? get termsAndConditionsAcceptedVersion => _prefs.getString(_tacAcceptedVersionKey);
 
-  void setTermsAndConditionsAcceptedVersion(String v) {
-    _prefs.setString(_tacAcceptedVersionKey, v);
+  void setTermsAndConditionsAcceptedVersion(String? v) {
+    if (v == null) {
+      _prefs.remove(_tacAcceptedVersionKey);
+    } else {
+      _prefs.setString(_tacAcceptedVersionKey, v);
+    }
   }
 }
