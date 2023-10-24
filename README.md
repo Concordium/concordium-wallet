@@ -19,3 +19,19 @@ See for example [`wallet_proxy/model.dart`](./lib/services/wallet_proxy/model.da
 which expands into [`wallet_proxy/model.g.dart`](./lib/services/wallet_proxy/model.g.dart).
 
 The generated class is checked into the repo, but imports always refer to the original one.
+
+## Hive
+
+Dependencies
+```
+flutter pub add hive
+flutter pub add hive_flutter
+flutter pub add -d hive_generator
+flutter pub add -d build_runner
+```
+
+Generator
+```
+dart run build_runner build
+```
+

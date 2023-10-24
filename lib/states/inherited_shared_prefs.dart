@@ -1,18 +1,17 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class InheritedSharedPreferences extends InheritedWidget {
-  final AppSharedPreferences appPrefs;
+class InheritedHiveBox extends InheritedWidget {
+  final AppHiveBox appPrefs;
 
-  InheritedSharedPreferences(
-      {super.key, required SharedPreferences prefs, required super.child})
-      : appPrefs = AppSharedPreferences(prefs);
+  const InheritedHiveBox(
+      {super.key, required this.appPrefs, required super.child});
 
-  static InheritedSharedPreferences of(BuildContext context) {
+  static InheritedHiveBox of(BuildContext context) {
     final i = context
-        .dependOnInheritedWidgetOfExactType<InheritedSharedPreferences>();
+        .dependOnInheritedWidgetOfExactType<InheritedHiveBox>();
     assert(
         i != null, "No 'InheritedSharedPreferences' found above in the tree");
     return i!;
@@ -24,35 +23,40 @@ class InheritedSharedPreferences extends InheritedWidget {
   }
 }
 
-class AppSharedPreferences {
+class AppHiveBox {
   static const _tacAcceptedVersionKey = 'tac:accepted_version';
   static const _tacLastAcceptedKey = 'tac:accepted_datetime';
 
-  final SharedPreferences _prefs;
+  Box box;
 
-  AppSharedPreferences(this._prefs);
+  AppHiveBox({required this.box});
 
-  String? get termsAndConditionsAcceptedVersion =>
-      _prefs.getString(_tacAcceptedVersionKey);
+  String? get termsAndConditionsAcceptedVersion => box.get(_tacAcceptedVersionKey)?.version;
+  
+  static Future<AppHiveBox> init() async {
+    await Hive.initFlutter();
+    var box = await Hive.openBox("tac");
+    return AppHiveBox(box: box);
+  }
+
   DateTime? get termsAndConditionsLastAccepted {
-    var lastAccept = _prefs.getString(_tacLastAcceptedKey);
+    var lastAccept = box.get(_tacLastAcceptedKey)?.latest;
     if (lastAccept == null) {
       return null;
     }
-    return DateTime.parse(lastAccept);
+    return lastAccept;
   }
 
   Future<void> update(DateTime? verified, String? version) async {
     if (verified == null) {
-      await _prefs.remove(_tacLastAcceptedKey);
+      await box.delete(_tacLastAcceptedKey);
     } else {
-      var dateTime = verified.toString();
-      await _prefs.setString(_tacLastAcceptedKey, dateTime);
+      await box.put(_tacLastAcceptedKey, verified);
     }
     if (version == null) {
-      await _prefs.remove(_tacAcceptedVersionKey);
+      await box.delete(_tacAcceptedVersionKey);
     } else {
-      await _prefs.setString(_tacAcceptedVersionKey, version);
+      await box.put(_tacAcceptedVersionKey, version);
     }
   }
 }

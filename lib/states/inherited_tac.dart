@@ -26,7 +26,7 @@ class TacState extends ChangeNotifier {
   DateTime? _termsAndConditionsLastVerifiedAt;
   String? _termsAndConditionsAcceptedVersion;
   bool refreshTac;
-  final AppSharedPreferences sharedPreferences;
+  final AppHiveBox sharedPreferences;
 
   TacState({
     required this.sharedPreferences,
@@ -36,7 +36,7 @@ class TacState extends ChangeNotifier {
   })  : _termsAndConditionsAcceptedVersion = termsAndConditionsAcceptedVersion,
         _termsAndConditionsLastVerifiedAt = termsAndConditionsLastVerifiedAt;
 
-  factory TacState.instance(AppSharedPreferences sharedPreferences) {
+  factory TacState.instance(AppHiveBox sharedPreferences) {
     final version = sharedPreferences.termsAndConditionsAcceptedVersion;
     final latest = sharedPreferences.termsAndConditionsLastAccepted;
     final shouldRefresh = (latest == null || version == null || DateTime.now().difference(latest).inMinutes > 2);
