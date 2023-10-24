@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:concordium_wallet/states/tac_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -26,25 +27,28 @@ class InheritedHiveBox extends InheritedWidget {
 class AppHiveBox {
   static const _tacAcceptedVersionKey = 'tac:accepted_version';
   static const _tacLastAcceptedKey = 'tac:accepted_datetime';
+  static const _tacKey = 'tacExample';
 
   Box box;
+  Box<TacEntity> boxExample;
 
-  AppHiveBox({required this.box});
+  AppHiveBox({required this.box, required this.boxExample});
 
-  String? get termsAndConditionsAcceptedVersion => box.get(_tacAcceptedVersionKey)?.version;
+  String? get termsAndConditionsAcceptedVersion => box.get(_tacAcceptedVersionKey);
+  String? get versionExample => boxExample.get(_tacKey)?.version;
+  DateTime? get termsAndConditionsLastAccepted {
+    DateTime? lastAccept = box.get(_tacLastAcceptedKey);
+    if (lastAccept == null) { 
+      return null;
+    }
+    return lastAccept;
+  }
   
   static Future<AppHiveBox> init() async {
     await Hive.initFlutter();
     var box = await Hive.openBox("tac");
-    return AppHiveBox(box: box);
-  }
-
-  DateTime? get termsAndConditionsLastAccepted {
-    var lastAccept = box.get(_tacLastAcceptedKey)?.latest;
-    if (lastAccept == null) {
-      return null;
-    }
-    return lastAccept;
+    var boxExample = await Hive.openBox<TacEntity>("tacExample");
+    return AppHiveBox(box: box, boxExample: boxExample);
   }
 
   Future<void> update(DateTime? verified, String? version) async {
