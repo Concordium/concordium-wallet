@@ -19,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // Fetch currently valid T&C version unconditionally when initializing the widget.
-    // TODO: Use the 'tacAcceptance.state.valid.updatedAt' to determine whether to perform the refresh (now and on other appropriate triggers).
+    // TODO: Use the 'tacAcceptance.state.valid.updatedAt' to determine whether to perform the refresh
+    //       (now and on other appropriate triggers like activating the app).
     final tacAcceptance = context.read<TermsAndConditionAcceptance>();
     final network = context.read<SelectedNetwork>().state;
     final services = context.read<ServiceRepository>().networkServices[network]!;

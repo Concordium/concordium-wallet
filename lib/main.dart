@@ -30,6 +30,7 @@ class App extends StatelessWidget {
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
+              // Setting text direction is required because we're outside 'MaterialApp' widget.
               Text('Loading shared preferences...', textDirection: TextDirection.ltr),
             ],
           );
