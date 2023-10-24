@@ -30,6 +30,15 @@ class WidgetbookApp extends StatelessWidget {
           builder: (context) {
             return Button(
               decoration: decoration,
+              onTap: context.knobs.listOrNull(label: "onTap", options: [() {}]),
+              width: context.knobs.double.input(
+                label: 'Width',
+                initialValue: double.infinity,
+              ),
+              height: context.knobs.double.input(
+                label: 'Height',
+                initialValue: 40,
+              ),
               text: context.knobs.string(
                 label: 'Text',
                 initialValue: 'Hello World!',
@@ -50,6 +59,15 @@ class WidgetbookApp extends StatelessWidget {
           builder: (context) {
             return ButtonMaterial(
               decoration: decoration,
+              onTap: context.knobs.listOrNull(label: "onTap", options: [() {}]),
+              width: context.knobs.double.input(
+                label: 'Width',
+                initialValue: double.infinity,
+              ),
+              height: context.knobs.double.input(
+                label: 'Height',
+                initialValue: 40,
+              ),
               text: context.knobs.string(
                 label: 'Text',
                 initialValue: 'Hello World!',
@@ -68,12 +86,10 @@ class WidgetbookApp extends StatelessWidget {
         WidgetbookUseCase(
           name: 'Default',
           builder: (context) {
-            return ColorGradientMineralIconFalseSizeMedium(
-            );
+            return ColorGradientMineralIconFalseSizeMedium();
           },
         )
       ],
     );
   }
-
 }
