@@ -26,5 +26,5 @@ The generated class is checked into the repo, but imports always refer to the or
 To open widgetbook, the widget library, run:
 
 ```shell
-flutter run -t bin/widgetbook.dart
+flutter run -t example/widgetbook.dart
 ```
