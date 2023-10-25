@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 
