@@ -42,6 +42,10 @@ dependencies:
   url_launcher: ^6.1.14
   shared_preferences: ^2.2.1
   http: ^1.1.0
+  built_value: ^8.6.3
+  built_collection: ^5.1.1
+  source_gen: ^1.4.0
+  built_value_generator: ^8.6.3
 
 dev_dependencies:
   flutter_test:
