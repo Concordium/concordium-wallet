@@ -20,13 +20,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Fetch currently valid T&C version unconditionally when initializing the widget.
     final tacAcceptance = context.read<TermsAndConditionAcceptance>();
-    final network = context.read<SelectedNetwork>();
-    final services = context.read<ServiceRepository>().networkServices[network.selected]!;
+    final network = context.read<ActiveNetwork>();
+    final services = context.read<ServiceRepository>().networkServices[network.active]!;
     _updateValidTac(services.walletProxy, tacAcceptance);
   }
 
   static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
-    final tac = await walletProxy.getTermsAndConditions();
+    final tac = await walletProxy.fetchTermsAndConditions();
     tacAcceptance.validVersionUpdated(ValidTermsAndConditions.refreshedNow(termsAndConditions: tac));
   }
 

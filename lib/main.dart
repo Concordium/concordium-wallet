@@ -61,7 +61,7 @@ class App extends StatelessWidget {
           child: MultiProvider(
             providers: [
               ChangeNotifierProvider(
-                create: (context) => SelectedNetwork(config.availableNetworks[NetworkName.testnet]!),
+                create: (context) => ActiveNetwork(config.availableNetworks[NetworkName.testnet]!),
               ),
               ChangeNotifierProvider(
                 create: (context) {
