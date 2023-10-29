@@ -10,6 +10,7 @@ class NetworkName {
 
   /// Standard name of the testnet network.
   static const NetworkName testnet = NetworkName('testnet');
+
   /// Standard name of the mainnet network.
   static const NetworkName mainnet = NetworkName('mainnet');
 }
@@ -18,6 +19,7 @@ class NetworkName {
 class Network {
   /// Name of the network.
   final NetworkName name;
+
   /// Configuration of the Wallet Proxy service belonging to the network.
   final WalletProxyConfig walletProxyConfig;
 

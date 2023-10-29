@@ -25,6 +25,7 @@ class NetworkServices {
 class ServiceRepository {
   /// Service collections for all "enabled" networks (as defined in [Config.availableNetworks]).
   final Map<Network, NetworkServices> networkServices;
+
   /// Global service for interacting with shared preferences.
   final SharedPreferencesService sharedPreferences;
 

@@ -22,6 +22,7 @@ class AcceptedTermsAndConditions {
 class ValidTermsAndConditions {
   /// T&C configuration fetched from an external endpoint.
   final TermsAndConditions termsAndConditions;
+
   /// Latest time at which [termsAndConditions] is known to be valid.
   final DateTime refreshedAt;
 
@@ -42,6 +43,7 @@ class TermsAndConditionAcceptance extends ChangeNotifier {
   ///
   /// The accepted version is persisted into shared preferences.
   AcceptedTermsAndConditions? accepted;
+
   /// Currently valid T&C.
   ValidTermsAndConditions? valid;
 

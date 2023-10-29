@@ -33,6 +33,7 @@ class WalletProxyConfig {
 class WalletProxyService {
   /// Configuration of the instance.
   final WalletProxyConfig config;
+
   /// HTTP service used to send requests to the instance.
   final HttpService httpService;
 

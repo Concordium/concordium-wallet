@@ -8,6 +8,7 @@ part 'model.g.dart';
 class TermsAndConditions {
   /// URL of the T&C text.
   final Uri url;
+
   /// T&C version.
   final String version;
 

@@ -1,14 +1,16 @@
 import 'package:concordium_wallet/state/network.dart';
 
 /// Global configuration of the app.
-/// 
+///
 /// For now, the configuration is hardcoded and only contains the network configuration of each available network.
-/// 
+///
 /// The intent is that it should be loaded from a predefined location that is set with a build parameter
 /// and include all necessary information for setting up the services used by the app.
 /// This means things like where to find IP info, T&C, forced upgrade config, news, marketplace apps, etc.
+/// and maybe even behavioral parameters like refresh frequency of account balance and other kinds of policies.
 ///
-/// Custom configuration exposed to the user is not intended to live in this object.
+/// The class is immutable as it just models configuration that is defined somewhere else.
+/// In particular, user configuration is not intended to live in this class.
 class Config {
   /// All available networks and their configuration.
   ///
