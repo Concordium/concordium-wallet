@@ -37,7 +37,6 @@ class ActiveNetworkState {
 
 /// State component acting as the source of truth for what network is currently active in the app.
 class ActiveNetwork extends Cubit<ActiveNetworkState> {
-
   ActiveNetwork(Network active) : super(ActiveNetworkState(active));
 
   void setActive(Network n) {
