@@ -103,16 +103,14 @@ class WidgetbookApp extends StatelessWidget {
           name: 'Default',
           builder: (context) {
             return AccountSummaryCard(
-              accounts: 1,
-              atDisposal: context.knobs.double.input(label: 'At disposal', initialValue: 100),
-              totalAmount: context.knobs.double.input(label: 'total amount', initialValue: 200),
-              dollarAmount: context.knobs.double.input(label: 'dollar amount', initialValue: 100),
-              decoration: context.knobs.list(label: 'gradients', options: [CardDecorations.teal, CardDecorations.orange, CardDecorations.purple])
-            );
+                accounts: 1,
+                atDisposal: context.knobs.double.input(label: 'At disposal', initialValue: 100),
+                totalAmount: context.knobs.double.input(label: 'total amount', initialValue: 200),
+                dollarAmount: context.knobs.double.input(label: 'dollar amount', initialValue: 100),
+                decoration: context.knobs.list(label: 'gradients', options: [CardDecorations.teal, CardDecorations.orange, CardDecorations.purple]));
           },
         )
       ],
     );
   }
 }
-
