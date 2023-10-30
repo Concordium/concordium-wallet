@@ -6,38 +6,28 @@ part of 'built_value_model.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<TermsAndConditionsV2> _$termsAndConditionsV2Serializer =
-    new _$TermsAndConditionsV2Serializer();
+Serializer<TermsAndConditionsV2> _$termsAndConditionsV2Serializer = new _$TermsAndConditionsV2Serializer();
 
-class _$TermsAndConditionsV2Serializer
-    implements StructuredSerializer<TermsAndConditionsV2> {
+class _$TermsAndConditionsV2Serializer implements StructuredSerializer<TermsAndConditionsV2> {
   @override
-  final Iterable<Type> types = const [
-    TermsAndConditionsV2,
-    _$TermsAndConditionsV2
-  ];
+  final Iterable<Type> types = const [TermsAndConditionsV2, _$TermsAndConditionsV2];
   @override
   final String wireName = 'TermsAndConditionsV2';
 
   @override
-  Iterable<Object?> serialize(
-      Serializers serializers, TermsAndConditionsV2 object,
-      {FullType specifiedType = FullType.unspecified}) {
+  Iterable<Object?> serialize(Serializers serializers, TermsAndConditionsV2 object, {FullType specifiedType = FullType.unspecified}) {
     final result = <Object?>[
       'url',
       serializers.serialize(object.url, specifiedType: const FullType(Uri)),
       'version',
-      serializers.serialize(object.version,
-          specifiedType: const FullType(String)),
+      serializers.serialize(object.version, specifiedType: const FullType(String)),
     ];
 
     return result;
   }
 
   @override
-  TermsAndConditionsV2 deserialize(
-      Serializers serializers, Iterable<Object?> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
+  TermsAndConditionsV2 deserialize(Serializers serializers, Iterable<Object?> serialized, {FullType specifiedType = FullType.unspecified}) {
     final result = new TermsAndConditionsV2Builder();
 
     final iterator = serialized.iterator;
@@ -47,12 +37,10 @@ class _$TermsAndConditionsV2Serializer
       final Object? value = iterator.current;
       switch (key) {
         case 'url':
-          result.url = serializers.deserialize(value,
-              specifiedType: const FullType(Uri))! as Uri;
+          result.url = serializers.deserialize(value, specifiedType: const FullType(Uri))! as Uri;
           break;
         case 'version':
-          result.version = serializers.deserialize(value,
-              specifiedType: const FullType(String))! as String;
+          result.version = serializers.deserialize(value, specifiedType: const FullType(String))! as String;
           break;
       }
     }
@@ -67,32 +55,24 @@ class _$TermsAndConditionsV2 extends TermsAndConditionsV2 {
   @override
   final String version;
 
-  factory _$TermsAndConditionsV2(
-          [void Function(TermsAndConditionsV2Builder)? updates]) =>
+  factory _$TermsAndConditionsV2([void Function(TermsAndConditionsV2Builder)? updates]) =>
       (new TermsAndConditionsV2Builder()..update(updates))._build();
 
-  _$TermsAndConditionsV2._({required this.url, required this.version})
-      : super._() {
+  _$TermsAndConditionsV2._({required this.url, required this.version}) : super._() {
     BuiltValueNullFieldError.checkNotNull(url, r'TermsAndConditionsV2', 'url');
-    BuiltValueNullFieldError.checkNotNull(
-        version, r'TermsAndConditionsV2', 'version');
+    BuiltValueNullFieldError.checkNotNull(version, r'TermsAndConditionsV2', 'version');
   }
 
   @override
-  TermsAndConditionsV2 rebuild(
-          void Function(TermsAndConditionsV2Builder) updates) =>
-      (toBuilder()..update(updates)).build();
+  TermsAndConditionsV2 rebuild(void Function(TermsAndConditionsV2Builder) updates) => (toBuilder()..update(updates)).build();
 
   @override
-  TermsAndConditionsV2Builder toBuilder() =>
-      new TermsAndConditionsV2Builder()..replace(this);
+  TermsAndConditionsV2Builder toBuilder() => new TermsAndConditionsV2Builder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is TermsAndConditionsV2 &&
-        url == other.url &&
-        version == other.version;
+    return other is TermsAndConditionsV2 && url == other.url && version == other.version;
   }
 
   @override
@@ -113,8 +93,7 @@ class _$TermsAndConditionsV2 extends TermsAndConditionsV2 {
   }
 }
 
-class TermsAndConditionsV2Builder
-    implements Builder<TermsAndConditionsV2, TermsAndConditionsV2Builder> {
+class TermsAndConditionsV2Builder implements Builder<TermsAndConditionsV2, TermsAndConditionsV2Builder> {
   _$TermsAndConditionsV2? _$v;
 
   Uri? _url;
@@ -154,10 +133,8 @@ class TermsAndConditionsV2Builder
   _$TermsAndConditionsV2 _build() {
     final _$result = _$v ??
         new _$TermsAndConditionsV2._(
-            url: BuiltValueNullFieldError.checkNotNull(
-                url, r'TermsAndConditionsV2', 'url'),
-            version: BuiltValueNullFieldError.checkNotNull(
-                version, r'TermsAndConditionsV2', 'version'));
+            url: BuiltValueNullFieldError.checkNotNull(url, r'TermsAndConditionsV2', 'url'),
+            version: BuiltValueNullFieldError.checkNotNull(version, r'TermsAndConditionsV2', 'version'));
     replace(_$result);
     return _$result;
   }
