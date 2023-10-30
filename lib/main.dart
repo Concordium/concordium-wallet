@@ -1,6 +1,8 @@
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/shared_preferences/service.dart';
+import 'package:concordium_wallet/services/wallet_proxy/service.dart';
+import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
@@ -12,6 +14,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(const App());
 }
+
+final config = Config.ofNetworks([
+  const Network(
+    name: NetworkName.testnet,
+    walletProxyConfig: WalletProxyConfig(
+      baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+    ),
+  ),
+]);
+const httpService = HttpService();
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -39,18 +51,17 @@ class App extends StatelessWidget {
         // (including the blocs created in the child provider).
         return RepositoryProvider(
           create: (context) {
-            final testnet = networks[NetworkName.testnet]!;
-            final httpSvc = HttpService();
+            final testnet = config.availableNetworks[NetworkName.testnet]!;
             final prefsSvc = SharedPreferencesService(prefs);
             return ServiceRepository(
-              networkServices: {testnet: NetworkServices.forNetwork(testnet, httpService: httpSvc)},
+              networkServices: {testnet: NetworkServices.forNetwork(testnet, httpService: httpService)},
               sharedPreferences: prefsSvc,
             );
           },
           child: MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (context) => SelectedNetwork(networks[NetworkName.testnet]!),
+                create: (context) => ActiveNetwork(config.availableNetworks[NetworkName.testnet]!),
               ),
               BlocProvider(
                 create: (context) {

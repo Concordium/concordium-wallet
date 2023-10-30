@@ -1,46 +1,46 @@
+import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Network {
-  final NetworkName name;
-  final WalletProxyConfig walletProxyConfig;
-
-  const Network({required this.name, required this.walletProxyConfig});
-}
-
+/// Name of a network.
 class NetworkName {
   final String name;
 
   const NetworkName(this.name);
 
+  /// Standard name of the testnet network.
   static const NetworkName testnet = NetworkName('testnet');
+
+  /// Standard name of the mainnet network.
   static const NetworkName mainnet = NetworkName('mainnet');
 }
 
-final _testnet = Network(
-  name: NetworkName.testnet,
-  walletProxyConfig: WalletProxyConfig(
-    baseUrl: 'https://wallet-proxy.testnet.concordium.com',
-  ),
-);
+/// Configuration of all services of a specific network.
+class Network {
+  /// Name of the network.
+  final NetworkName name;
 
-/// All available networks in the app.
-/// TODO: Expose as something nicer than a global const (should be part of the 'SelectedNetwork' cubit)?
-final networks = {
-  _testnet.name: _testnet,
-};
+  /// Configuration of the Wallet Proxy service belonging to the network.
+  final WalletProxyConfig walletProxyConfig;
 
-// TODO: Should network be nullable?
-class SelectedNetwork extends Cubit<Network> {
-  SelectedNetwork(super.initialState);
+  const Network({required this.name, required this.walletProxyConfig});
+}
 
-  void setNetwork(Network n) {
-    emit(n);
-  }
+class ActiveNetworkState {
+  /// Currently active network.
+  ///
+  /// The network is guaranteed to be one of the "enabled" networks (as defined in [Config.availableNetworks]).
+  Network active;
 
-  @override
-  void onChange(Change<Network> change) {
-    super.onChange(change);
-    // TODO: Trigger update on with accounts to display, etc.
+  ActiveNetworkState(this.active);
+}
+
+/// State component acting as the source of truth for what network is currently active in the app.
+class ActiveNetwork extends Cubit<ActiveNetworkState> {
+
+  ActiveNetwork(Network active) : super(ActiveNetworkState(active));
+
+  void setActive(Network n) {
+    emit(ActiveNetworkState(n));
   }
 }

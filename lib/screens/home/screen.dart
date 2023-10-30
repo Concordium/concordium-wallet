@@ -22,13 +22,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: Use the 'tacAcceptance.state.valid.updatedAt' to determine whether to perform the refresh
     //       (now and on other appropriate triggers like activating the app).
     final tacAcceptance = context.read<TermsAndConditionAcceptance>();
-    final network = context.read<SelectedNetwork>().state;
-    final services = context.read<ServiceRepository>().networkServices[network]!;
+    final network = context.read<ActiveNetwork>().state;
+    final services = context.read<ServiceRepository>().networkServices[network.active]!;
     _updateValidTac(services.walletProxy, tacAcceptance);
   }
 
   static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
-    final tac = await walletProxy.getTermsAndConditions();
+    final tac = await walletProxy.fetchTermsAndConditions();
     tacAcceptance.validVersionUpdated(ValidTermsAndConditions.refreshedNow(termsAndConditions: tac));
   }
 
