@@ -6,6 +6,7 @@ import 'package:concordium_wallet/services/wallet_proxy/built_value_model.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/services/wallet_proxy/serializer.dart';
 
+// https://pub.dev/packages/benchmarking
 // dart run ./benchmark/json_benchmarking.dart --release
 void main () {
   final testUri = Uri(scheme: 'https', host: 'concordium.com', path: 'hello-world');

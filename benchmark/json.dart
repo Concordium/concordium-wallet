@@ -41,6 +41,7 @@ class BuiltIt extends BenchmarkBase {
   }
 }
 
+// https://pub.dev/packages/benchmark_harness
 // dart run ./benchmark/json.dart --release
 void main() {
   // Run TemplateBenchmark
