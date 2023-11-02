@@ -46,6 +46,8 @@ dependencies:
   built_collection: ^5.1.1
   source_gen: ^1.4.0
   built_value_generator: ^8.6.3
+  benchmark_harness: ^2.2.2
+  benchmarking: ^0.6.1
 
 dev_dependencies:
   flutter_test:
