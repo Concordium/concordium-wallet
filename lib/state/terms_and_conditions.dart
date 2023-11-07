@@ -1,6 +1,9 @@
-import 'package:concordium_wallet/services/shared_preferences/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:concordium_wallet/state/network.dart';
+import 'package:concordium_wallet/state/services.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'terms_and_conditions.g.dart';
 
 /// Version of the Terms & Conditions accepted by the user.
 class AcceptedTermsAndConditions {
@@ -34,68 +37,37 @@ class ValidTermsAndConditions {
   }
 }
 
-/// State component of the currently accepted and valid Terms & Conditions.
-class TermsAndConditionAcceptance extends ChangeNotifier {
-  /// Service used to persist the accepted T&C version.
-  final SharedPreferencesService _prefs;
+@riverpod
+class ActiveNetworkNotifier extends _$ActiveNetworkNotifier {
+  @override
+  Network? build() => null;
 
-  /// Currently accepted T&C.
-  ///
-  /// The accepted version is persisted into shared preferences.
-  AcceptedTermsAndConditions? accepted;
-
-  /// Currently valid T&C.
-  ValidTermsAndConditions? valid;
-
-  TermsAndConditionAcceptance(this._prefs) {
-    final acceptedVersion = _prefs.termsAndConditionsAcceptedVersion;
-    if (acceptedVersion != null) {
-      userAccepted(AcceptedTermsAndConditions(version: acceptedVersion));
-    }
+  void select(Network n) {
+    state = n;
   }
+}
 
-  /// Update the currently accepted T&C and persist the new value.
-  ///
-  /// Use [resetAccepted] to revoke acceptance.
+@riverpod
+class TermsAndConditionsAcceptedVersionNotifier extends _$TermsAndConditionsAcceptedVersionNotifier {
+  @override
+  AcceptedTermsAndConditions? build() => null;
+
   void userAccepted(AcceptedTermsAndConditions tac) {
-    accepted = tac;
-    _prefs.updateTermsAndConditionsAcceptedVersion(tac.version);
-    notifyListeners();
+    state = tac;
   }
 
-  /// Updates the currently valid T&C.
-  void validVersionUpdated(ValidTermsAndConditions tac) {
-    valid = tac;
-    notifyListeners();
-  }
-
-  /// Revokes T&C acceptance and delete it from persistence.
   void resetAccepted() {
-    accepted = null;
-    _prefs.updateTermsAndConditionsAcceptedVersion(null);
-    notifyListeners();
+    state = null;
   }
+}
 
-  /// Resets the valid T&C.
-  ///
-  /// This should trigger a reload and re-verification of the validity of the acceptance.
-  void resetValid() {
-    valid = null;
-    notifyListeners();
+@riverpod
+Future<ValidTermsAndConditions?> validTermsAndConditions(ValidTermsAndConditionsRef ref) async {
+  final network = ref.watch(activeNetworkNotifierProvider);
+  if (network == null) {
+    return null;
   }
-
-  /// Resets the update time of the currently valid T&C (if present).
-  ///
-  /// This method is not likely to have any uses besides maybe testing.
-  void testResetValidTime() {
-    final valid = this.valid;
-    if (valid != null) {
-      validVersionUpdated(
-        ValidTermsAndConditions(
-          termsAndConditions: valid.termsAndConditions,
-          refreshedAt: DateTime.fromMicrosecondsSinceEpoch(0),
-        ),
-      );
-    }
-  }
+  final svcs = ref.watch(serviceRepositoryProvider);
+  final tac = await svcs.networkServices[network]!.walletProxy.fetchTermsAndConditions();
+  return ValidTermsAndConditions.refreshedNow(termsAndConditions: tac);
 }

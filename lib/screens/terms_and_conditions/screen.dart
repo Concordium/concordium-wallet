@@ -2,21 +2,21 @@ import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class TermsAndConditionsScreen extends StatefulWidget {
+class TermsAndConditionsScreen extends ConsumerStatefulWidget {
   final TermsAndConditions validTermsAndConditions;
   final String? acceptedTermsAndConditionsVersion;
 
   const TermsAndConditionsScreen({super.key, required this.validTermsAndConditions, this.acceptedTermsAndConditionsVersion});
 
   @override
-  State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
+  ConsumerState<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
 }
 
-class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
+class _TermsAndConditionsScreenState extends ConsumerState<TermsAndConditionsScreen> {
   bool isAccepted = false;
 
   void _setAccepted(bool val) {
@@ -110,7 +110,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             const SizedBox(height: 9),
             ElevatedButton(
-              onPressed: _onAcceptButtonPressed(context),
+              onPressed: _onAcceptButtonPressed(ref),
               child: const Text('Continue'),
             ),
           ],
@@ -119,13 +119,13 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     );
   }
 
-  Function()? _onAcceptButtonPressed(BuildContext context) {
+  Function()? _onAcceptButtonPressed(WidgetRef ref) {
     if (isAccepted) {
       return () {
         final tac = AcceptedTermsAndConditions(
           version: widget.validTermsAndConditions.version,
         );
-        context.read<TermsAndConditionAcceptance>().userAccepted(tac);
+        ref.read(termsAndConditionsAcceptedVersionNotifierProvider.notifier).userAccepted(tac);
       };
     }
     return null;
