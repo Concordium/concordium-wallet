@@ -50,16 +50,16 @@ class TermsAndConditionAcceptance extends ChangeNotifier {
   TermsAndConditionAcceptance(this._prefs) {
     final acceptedVersion = _prefs.termsAndConditionsAcceptedVersion;
     if (acceptedVersion != null) {
-      userAccepted(AcceptedTermsAndConditions(version: acceptedVersion));
+      accepted = AcceptedTermsAndConditions(version: acceptedVersion);
     }
   }
 
   /// Update the currently accepted T&C and persist the new value.
   ///
   /// Use [resetAccepted] to revoke acceptance.
-  void userAccepted(AcceptedTermsAndConditions tac) {
+  Future<void> userAccepted(AcceptedTermsAndConditions tac) async {
     accepted = tac;
-    _prefs.updateTermsAndConditionsAcceptedVersion(tac.version);
+    await _prefs.writeTermsAndConditionsAcceptedVersion(tac.version);
     notifyListeners();
   }
 
@@ -70,9 +70,9 @@ class TermsAndConditionAcceptance extends ChangeNotifier {
   }
 
   /// Revokes T&C acceptance and delete it from persistence.
-  void resetAccepted() {
+  Future<void> resetAccepted() async {
     accepted = null;
-    _prefs.updateTermsAndConditionsAcceptedVersion(null);
+    await _prefs.deleteTermsAndConditionsAcceptedVersion();
     notifyListeners();
   }
 

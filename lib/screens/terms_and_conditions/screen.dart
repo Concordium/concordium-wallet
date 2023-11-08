@@ -121,11 +121,11 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
   Function()? _onAcceptButtonPressed(BuildContext context) {
     if (isAccepted) {
-      return () {
+      return () async {
         final tac = AcceptedTermsAndConditions(
           version: widget.validTermsAndConditions.version,
         );
-        context.read<TermsAndConditionAcceptance>().userAccepted(tac);
+        await context.read<TermsAndConditionAcceptance>().userAccepted(tac);
       };
     }
     return null;

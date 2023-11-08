@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class HttpService {
   const HttpService();
 
-  /// Performs an HTTP request asynchronously.
+  /// Performs an HTTP GET request asynchronously.
   Future<http.Response> get(Uri url) async {
     return http.get(url);
   }

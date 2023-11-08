@@ -32,25 +32,15 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<SharedPreferences>(
       future: SharedPreferences.getInstance(),
-      builder: (context, snapshot) {
+      builder: (_, snapshot) {
         final prefs = snapshot.data;
         if (prefs == null) {
-          // Loading preferences.
-          return const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              // Setting text direction is required because we're outside 'MaterialApp' widget.
-              Text('Loading shared preferences...', textDirection: TextDirection.ltr),
-            ],
-          );
+          return const _LoadingSharedPreferences();
         }
         // Initialize services and provide them to the nested components
         // (including the state components created in the child provider).
         return Provider(
-          create: (context) {
+          create: (_) {
             final testnet = config.availableNetworks[NetworkName.testnet]!;
             final prefsSvc = SharedPreferencesService(prefs);
             return ServiceRepository(
@@ -61,7 +51,7 @@ class App extends StatelessWidget {
           child: MultiProvider(
             providers: [
               ChangeNotifierProvider(
-                create: (context) => ActiveNetwork(config.availableNetworks[NetworkName.testnet]!),
+                create: (_) => ActiveNetwork(config.availableNetworks[NetworkName.testnet]!),
               ),
               ChangeNotifierProvider(
                 create: (context) {
@@ -77,6 +67,24 @@ class App extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _LoadingSharedPreferences extends StatelessWidget {
+  const _LoadingSharedPreferences();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CircularProgressIndicator(),
+        SizedBox(height: 16),
+        // Setting text direction is required because we're outside 'MaterialApp' widget.
+        Text('Loading shared preferences...', textDirection: TextDirection.ltr),
+      ],
     );
   }
 }
