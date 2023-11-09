@@ -11,7 +11,7 @@ const testVersion = '1.0.0';
 final serializedJson = '{"url": "$testUri", "version": "$testVersion"}';
 
 void main() {
-  test('json_serializable test', () {
+  test('freezed test', () {
     TermsAndConditions expected = TermsAndConditions(testUri, testVersion);
 
     final result = TermsAndConditions.fromJson(jsonDecode(serializedJson));

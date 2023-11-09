@@ -46,6 +46,7 @@ dependencies:
   built_collection: ^5.1.1
   source_gen: ^1.4.0
   built_value_generator: ^8.6.3
+  freezed_annotation: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   json_serializable: ^6.7.1
   test: ^1.24.3
+  freezed: ^2.4.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

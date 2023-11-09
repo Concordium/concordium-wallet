@@ -1,14 +1,10 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 part 'model.g.dart';
+part 'model.freezed.dart';
 
-@JsonSerializable()
-class TermsAndConditions {
-  final Uri url;
-  final String version;
-
-  TermsAndConditions(this.url, this.version);
+@freezed
+class TermsAndConditions with _$TermsAndConditions {
+  const factory TermsAndConditions(Uri url, String version) = _TermsAndConditions;
 
   factory TermsAndConditions.fromJson(Map<String, dynamic> json) => _$TermsAndConditionsFromJson(json);
-
-  Map<String, dynamic> toJson() => _$TermsAndConditionsToJson(this);
 }
