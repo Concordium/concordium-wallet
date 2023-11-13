@@ -14,6 +14,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  Future<void>? _validTacFetch;
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final network = context.read<ActiveNetwork>().state;
     final services = context.read<ServiceRepository>().networkServices[network.active]!;
     final tacAcceptance = context.read<TermsAndConditionAcceptance>();
-    _updateValidTac(services.walletProxy, tacAcceptance);
+
+    // TODO: Remove test delay.
+    const testDelay = Duration(seconds: 2);
+    _validTacFetch = Future.delayed(testDelay, () => _updateValidTac(services.walletProxy, tacAcceptance));
   }
 
   @override
@@ -49,60 +55,65 @@ class _HomeScreenState extends State<HomeScreen> {
             _refresh(context);
           },
           builder: (context, tacState) {
-            final validTac = tacState.valid;
-            if (validTac == null) {
-              // Show spinner if no valid T&C have been resolved yet (not as a result of actually ongoing fetch).
-              // Should store the future from '_updateValidTac' and use that in a wrapping 'FutureBuilder'..?
-              return const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Center(child: Text('Waiting for enforced Terms & Conditions...')),
-                ],
-              );
-            }
-            final acceptedTac = tacState.accepted;
-            if (acceptedTac == null || !acceptedTac.isValid(validTac.termsAndConditions)) {
-              return TermsAndConditionsScreen(
-                validTermsAndConditions: validTac.termsAndConditions,
-                acceptedTermsAndConditionsVersion: acceptedTac?.version,
-              );
-            }
-            return Column(
-              children: [
-                Expanded(
-                  child: Column(
+            return FutureBuilder(
+              future: _validTacFetch,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  // Show spinner while valid T&C is being resolved.
+                  return const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Accepted T&C version: ${tacState.accepted?.version}'),
-                      Text('Valid T&C last refreshed at ${tacState.valid?.refreshedAt}.'),
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Center(child: Text('Waiting for enforced Terms & Conditions...')),
                     ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().testResetValidTime(),
-                  child: const Text('Reset update time of valid T&C'),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().resetValid(),
-                  // NOTE: This resets the valid T&C which is picked up by the BlocConsumer's listener above to automatically trigger a re-fetch.
-                  child: const Text('Reset valid T&C'),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    const tac = AcceptedTermsAndConditions(version: '1.2.3');
-                    context.read<TermsAndConditionAcceptance>().userAccepted(tac);
-                  },
-                  child: const Text('Set accepted T&C version to 1.2.3'),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().resetAccepted(),
-                  child: const Text('Reset accepted T&C'),
-                ),
-              ],
+                  );
+                }
+                final acceptedTac = tacState.accepted;
+                final validTac = tacState.valid;
+                var validTermsAndConditions = validTac?.termsAndConditions;
+                if (validTermsAndConditions != null && (acceptedTac == null || !acceptedTac.isValid(validTermsAndConditions))) {
+                  return TermsAndConditionsScreen(
+                    validTermsAndConditions: validTermsAndConditions,
+                    acceptedTermsAndConditionsVersion: acceptedTac?.version,
+                  );
+                }
+                return Column(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text('Accepted T&C version: ${acceptedTac?.version}'),
+                          Text('Valid T&C last refreshed at ${validTac?.refreshedAt}.'),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => context.read<TermsAndConditionAcceptance>().testResetValidTime(),
+                      child: const Text('Reset update time of valid T&C'),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => context.read<TermsAndConditionAcceptance>().resetValid(),
+                      // NOTE: This resets the valid T&C which is picked up by the BlocConsumer's listener above to automatically trigger a re-fetch.
+                      child: const Text('Reset valid T&C'),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        const tac = AcceptedTermsAndConditions(version: '1.2.3');
+                        context.read<TermsAndConditionAcceptance>().userAccepted(tac);
+                      },
+                      child: const Text('Set accepted T&C version to 1.2.3'),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => context.read<TermsAndConditionAcceptance>().resetAccepted(),
+                      child: const Text('Reset accepted T&C'),
+                    ),
+                  ],
+                );
+              },
             );
           },
         ),
