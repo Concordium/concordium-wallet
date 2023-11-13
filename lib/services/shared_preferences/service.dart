@@ -10,15 +10,16 @@ class SharedPreferencesService {
 
   const SharedPreferencesService(this._prefs);
 
-  /// Currently accepted shared preferences.
+  /// Reads the currently accepted T&C version.
   String? get termsAndConditionsAcceptedVersion => _prefs.getString(_tacAcceptedVersionKey);
 
-  /// Sets or deletes the currently accepted shared preferences.
-  void updateTermsAndConditionsAcceptedVersion(String? v) {
-    if (v == null) {
-      _prefs.remove(_tacAcceptedVersionKey);
-    } else {
-      _prefs.setString(_tacAcceptedVersionKey, v);
-    }
+  /// Writes the currently accepted T&C version.
+  Future<void> writeTermsAndConditionsAcceptedVersion(String version) async {
+    await _prefs.setString(_tacAcceptedVersionKey, version);
+  }
+
+  /// Deletes the currently accepted T&C version.
+  Future<void> deleteTermsAndConditionsAcceptedVersion() async {
+    await _prefs.remove(_tacAcceptedVersionKey);
   }
 }
