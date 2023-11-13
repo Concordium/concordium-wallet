@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Fetch currently valid T&C version unconditionally when initializing the widget.
     // TODO: Use the 'tacAcceptance.state.valid.updatedAt' to determine whether to perform the refresh
     //       (now and on other appropriate triggers like activating the app).
-    _refresh(context, context.read<TermsAndConditionAcceptance>());
+    _refresh(context);
   }
 
   static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
@@ -29,25 +29,24 @@ class _HomeScreenState extends State<HomeScreen> {
     tacAcceptance.validVersionUpdated(ValidTermsAndConditions.refreshedNow(termsAndConditions: tac));
   }
 
-  void _refresh(BuildContext context, TermsAndConditionAcceptance tacAcceptance) {
+  void _refresh(BuildContext context) {
     final network = context.read<ActiveNetwork>().state;
     final services = context.read<ServiceRepository>().networkServices[network.active]!;
+    final tacAcceptance = context.read<TermsAndConditionAcceptance>();
     _updateValidTac(services.walletProxy, tacAcceptance);
   }
 
   @override
   Widget build(BuildContext context) {
-    final tacAcceptance = context.watch<TermsAndConditionAcceptance>();
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
         child: BlocConsumer<TermsAndConditionAcceptance, TermsAndConditionsAcceptanceState>(
-          bloc: tacAcceptance,
           listenWhen: (previous, current) {
             return current.valid == null;
           },
           listener: (context, state) {
-            _refresh(context, tacAcceptance);
+            _refresh(context);
           },
           builder: (context, tacState) {
             final validTac = tacState.valid;
