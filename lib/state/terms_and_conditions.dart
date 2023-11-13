@@ -62,7 +62,6 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   ///
   /// Use [resetAccepted] to revoke acceptance.
   void userAccepted(AcceptedTermsAndConditions tac) {
-    // TODO Persist.
     emit(TermsAndConditionsAcceptanceState(accepted: tac, valid: state.valid));
   }
 
@@ -73,7 +72,6 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
 
   /// Revokes T&C acceptance and delete it from persistence.
   void resetAccepted() {
-    // TODO Reset.
     emit(TermsAndConditionsAcceptanceState(accepted: null, valid: state.valid));
   }
 
@@ -97,5 +95,23 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
         ),
       );
     }
+  }
+
+  @override
+  void onChange(Change<TermsAndConditionsAcceptanceState> change) {
+    super.onChange(change);
+
+    // TODO: Pass success/failure status to notification service.
+    _persistAcceptedVersionIfChanged(change.nextState.accepted?.version, change.currentState.accepted?.version);
+  }
+
+  Future<void> _persistAcceptedVersionIfChanged(String? nextAcceptedVersion, String? currentAcceptedVersion) {
+    if (nextAcceptedVersion == currentAcceptedVersion) {
+      return Future.value();
+    }
+    if (nextAcceptedVersion == null) {
+      return _prefs.deleteTermsAndConditionsAcceptedVersion();
+    }
+    return _prefs.writeTermsAndConditionsAcceptedVersion(nextAcceptedVersion);
   }
 }
