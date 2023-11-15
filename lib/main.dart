@@ -15,6 +15,7 @@ void main() {
   runApp(const App());
 }
 
+// In the future, this will be loaded from a proper source rather than being hardcoded.
 final config = Config.ofNetworks([
   const Network(
     name: NetworkName.testnet,
@@ -23,7 +24,6 @@ final config = Config.ofNetworks([
     ),
   ),
 ]);
-const httpService = HttpService();
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -41,12 +41,15 @@ class App extends StatelessWidget {
         // (including the state components created in the child provider).
         return Provider(
           create: (_) {
-            final testnet = config.availableNetworks[NetworkName.testnet]!;
             final prefsSvc = SharedPreferencesService(prefs);
+            const httpService = HttpService();
+            // TODO 'enableNetwork' is async so should be initialized in a 'FutureBuilder'.
+            //      Currently it actually is sync though, so this change can wait a bit.
             return ServiceRepository(
-              networkServices: {testnet: NetworkServices.forNetwork(testnet, httpService: httpService)},
+              config: config,
+              httpService: httpService,
               sharedPreferences: prefsSvc,
-            );
+            )..enableNetwork(NetworkName.testnet);
           },
           child: MultiProvider(
             providers: [
