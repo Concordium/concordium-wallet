@@ -24,7 +24,7 @@ class NetworkServices {
 /// Collection of all services available to the app.
 class ServiceRepository {
   /// Service collections for all "enabled" networks (as defined in [Config.availableNetworks]).
-  final Map<Network, NetworkServices> networkServices = const {};
+  final Map<Network, NetworkServices> networkServices = {};
 
   /// Global configuration used when starting services.
   final Config config;
@@ -35,7 +35,7 @@ class ServiceRepository {
   /// Global service for interacting with shared preferences.
   final SharedPreferencesService sharedPreferences;
 
-  const ServiceRepository({required this.config, required this.httpService, required this.sharedPreferences});
+  ServiceRepository({required this.config, required this.httpService, required this.sharedPreferences});
 
   /// Enable the network with the provided name.
   ///
