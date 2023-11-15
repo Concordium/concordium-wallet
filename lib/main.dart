@@ -8,7 +8,7 @@ import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -38,8 +38,8 @@ class App extends StatelessWidget {
           return const _LoadingSharedPreferences();
         }
         // Initialize services and provide them to the nested components
-        // (including the state components created in the child provider).
-        return Provider(
+        // (including the blocs created in the child provider).
+        return RepositoryProvider(
           create: (_) {
             final prefsSvc = SharedPreferencesService(prefs);
             const httpService = HttpService();
@@ -51,12 +51,12 @@ class App extends StatelessWidget {
               sharedPreferences: prefsSvc,
             )..enableNetwork(NetworkName.testnet);
           },
-          child: MultiProvider(
+          child: MultiBlocProvider(
             providers: [
-              ChangeNotifierProvider(
+              BlocProvider(
                 create: (_) => ActiveNetwork(config.availableNetworks[NetworkName.testnet]!),
               ),
-              ChangeNotifierProvider(
+              BlocProvider(
                 create: (context) {
                   final prefs = context.read<ServiceRepository>().sharedPreferences;
                   return TermsAndConditionAcceptance(prefs);

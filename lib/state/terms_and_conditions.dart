@@ -1,6 +1,6 @@
 import 'package:concordium_wallet/services/shared_preferences/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Version of the Terms & Conditions accepted by the user.
 class AcceptedTermsAndConditions {
@@ -34,61 +34,59 @@ class ValidTermsAndConditions {
   }
 }
 
-/// State component of the currently accepted and valid Terms & Conditions.
-class TermsAndConditionAcceptance extends ChangeNotifier {
-  /// Service used to persist the accepted T&C version.
-  final SharedPreferencesService _prefs;
-
+class TermsAndConditionsAcceptanceState {
   /// Currently accepted T&C.
   ///
   /// The accepted version is persisted into shared preferences.
-  AcceptedTermsAndConditions? accepted;
+  final AcceptedTermsAndConditions? accepted;
 
   /// Currently valid T&C.
-  ValidTermsAndConditions? valid;
+  final ValidTermsAndConditions? valid;
 
-  TermsAndConditionAcceptance(this._prefs) {
+  const TermsAndConditionsAcceptanceState({required this.accepted, required this.valid});
+}
+
+/// State component of the currently accepted and valid Terms & Conditions.
+class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceState> {
+  /// Service used to persist the accepted T&C version.
+  final SharedPreferencesService _prefs;
+
+  TermsAndConditionAcceptance(this._prefs) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
     final acceptedVersion = _prefs.termsAndConditionsAcceptedVersion;
     if (acceptedVersion != null) {
-      accepted = AcceptedTermsAndConditions(version: acceptedVersion);
+      userAccepted(AcceptedTermsAndConditions(version: acceptedVersion));
     }
   }
 
   /// Update the currently accepted T&C and persist the new value.
   ///
   /// Use [resetAccepted] to revoke acceptance.
-  Future<void> userAccepted(AcceptedTermsAndConditions tac) async {
-    accepted = tac;
-    await _prefs.writeTermsAndConditionsAcceptedVersion(tac.version);
-    notifyListeners();
+  void userAccepted(AcceptedTermsAndConditions tac) {
+    emit(TermsAndConditionsAcceptanceState(accepted: tac, valid: state.valid));
   }
 
   /// Updates the currently valid T&C.
   void validVersionUpdated(ValidTermsAndConditions tac) {
-    valid = tac;
-    notifyListeners();
+    emit(TermsAndConditionsAcceptanceState(accepted: state.accepted, valid: tac));
   }
 
   /// Revokes T&C acceptance and delete it from persistence.
-  Future<void> resetAccepted() async {
-    accepted = null;
-    await _prefs.deleteTermsAndConditionsAcceptedVersion();
-    notifyListeners();
+  void resetAccepted() {
+    emit(TermsAndConditionsAcceptanceState(accepted: null, valid: state.valid));
   }
 
   /// Resets the valid T&C.
   ///
   /// This should trigger a reload and re-verification of the validity of the acceptance.
   void resetValid() {
-    valid = null;
-    notifyListeners();
+    emit(TermsAndConditionsAcceptanceState(accepted: state.accepted, valid: null));
   }
 
   /// Resets the update time of the currently valid T&C (if present).
   ///
   /// This method is not likely to have any uses besides maybe testing.
   void testResetValidTime() {
-    final valid = this.valid;
+    final valid = state.valid;
     if (valid != null) {
       validVersionUpdated(
         ValidTermsAndConditions(
@@ -97,5 +95,23 @@ class TermsAndConditionAcceptance extends ChangeNotifier {
         ),
       );
     }
+  }
+
+  @override
+  void onChange(Change<TermsAndConditionsAcceptanceState> change) {
+    super.onChange(change);
+
+    // TODO: Pass success/failure status to notification service.
+    _persistAcceptedVersionIfChanged(change.nextState.accepted?.version, change.currentState.accepted?.version);
+  }
+
+  Future<void> _persistAcceptedVersionIfChanged(String? nextAcceptedVersion, String? currentAcceptedVersion) {
+    if (nextAcceptedVersion == currentAcceptedVersion) {
+      return Future.value();
+    }
+    if (nextAcceptedVersion == null) {
+      return _prefs.deleteTermsAndConditionsAcceptedVersion();
+    }
+    return _prefs.writeTermsAndConditionsAcceptedVersion(nextAcceptedVersion);
   }
 }

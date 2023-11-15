@@ -4,7 +4,7 @@ import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,10 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // Fetch currently valid T&C version unconditionally when initializing the widget.
-    final tacAcceptance = context.read<TermsAndConditionAcceptance>();
-    final network = context.read<ActiveNetwork>();
-    final services = context.read<ServiceRepository>().networkServices[network.active]!;
-    _updateValidTac(services.walletProxy, tacAcceptance);
+    // TODO: Use the 'tacAcceptance.state.valid.updatedAt' to determine whether to perform the refresh
+    //       (now and on other appropriate triggers like activating the app).
+    _refresh(context);
   }
 
   static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
@@ -30,14 +29,26 @@ class _HomeScreenState extends State<HomeScreen> {
     tacAcceptance.validVersionUpdated(ValidTermsAndConditions.refreshedNow(termsAndConditions: tac));
   }
 
+  void _refresh(BuildContext context) {
+    final network = context.read<ActiveNetwork>().state;
+    final services = context.read<ServiceRepository>().networkServices[network.active]!;
+    final tacAcceptance = context.read<TermsAndConditionAcceptance>();
+    _updateValidTac(services.walletProxy, tacAcceptance);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
-        child: Builder(
-          builder: (context) {
-            final tacState = context.watch<TermsAndConditionAcceptance>();
+        child: BlocConsumer<TermsAndConditionAcceptance, TermsAndConditionsAcceptanceState>(
+          listenWhen: (previous, current) {
+            return current.valid == null;
+          },
+          listener: (context, state) {
+            _refresh(context);
+          },
+          builder: (context, tacState) {
             final validTac = tacState.valid;
             if (validTac == null) {
               // Show spinner if no valid T&C have been resolved yet (not as a result of actually ongoing fetch).
@@ -75,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () => context.read<TermsAndConditionAcceptance>().resetValid(),
-                  // NOTE: This breaks the app because no re-fetch is triggered - hot restart is necessary to recover.
-                  child: const Text('Reset valid T&C (and break the app)'),
+                  // NOTE: This resets the valid T&C which is picked up by the BlocConsumer's listener above to automatically trigger a re-fetch.
+                  child: const Text('Reset valid T&C'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(

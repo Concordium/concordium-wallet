@@ -1,6 +1,6 @@
 import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Name of a network.
 class NetworkName {
@@ -26,17 +26,20 @@ class Network {
   const Network({required this.name, required this.walletProxyConfig});
 }
 
-/// State component acting as the source of truth for what network is currently active in the app.
-class ActiveNetwork extends ChangeNotifier {
+class ActiveNetworkState {
   /// Currently active network.
   ///
   /// The network is guaranteed to be one of the "enabled" networks (as defined in [Config.availableNetworks]).
   Network active;
 
-  ActiveNetwork(this.active);
+  ActiveNetworkState(this.active);
+}
+
+/// State component acting as the source of truth for what network is currently active in the app.
+class ActiveNetwork extends Cubit<ActiveNetworkState> {
+  ActiveNetwork(Network active) : super(ActiveNetworkState(active));
 
   void setActive(Network n) {
-    active = n;
-    notifyListeners();
+    emit(ActiveNetworkState(n));
   }
 }
