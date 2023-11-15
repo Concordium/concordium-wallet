@@ -1,7 +1,6 @@
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/network.dart';
-import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,10 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _refresh(BuildContext context) {
-    final network = context.read<ActiveNetwork>().state;
-    final services = context.read<ServiceRepository>().networkServices[network.active]!;
+    final network = context.read<SelectedNetwork>().state;
     final tacAcceptance = context.read<TermsAndConditionAcceptance>();
-    _updateValidTac(services.walletProxy, tacAcceptance);
+    _updateValidTac(network.services.walletProxy, tacAcceptance);
   }
 
   @override

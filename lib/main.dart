@@ -15,58 +15,83 @@ void main() {
   runApp(const App());
 }
 
-// In the future, this will be loaded from a proper source rather than being hardcoded.
-final config = Config.ofNetworks([
-  const Network(
-    name: NetworkName.testnet,
-    walletProxyConfig: WalletProxyConfig(
-      baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+/// Load fundamental configuration from the source of truth.
+Future<Config> loadConfig(HttpService http) async {
+  // In the future, this will be loaded from a proper source rather than being hardcoded.
+  return Config.ofNetworks([
+    const Network(
+      name: NetworkName.testnet,
+      walletProxyConfig: WalletProxyConfig(
+        baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+      ),
     ),
-  ),
-]);
+  ]);
+}
+
+Future<ServiceRepository> bootstrap() async {
+  const http = HttpService();
+  final config = await loadConfig(http);
+  final prefs = await SharedPreferences.getInstance();
+  return ServiceRepository(
+    config: config,
+    http: http,
+    sharedPreferences: SharedPreferencesService(prefs),
+  );
+}
+
+const initialNetwork = NetworkName.testnet;
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(
-      future: SharedPreferences.getInstance(),
+    // Initialize configuration and service repository.
+    return FutureBuilder<ServiceRepository>(
+      future: bootstrap(),
       builder: (_, snapshot) {
-        final prefs = snapshot.data;
-        if (prefs == null) {
-          return const _LoadingSharedPreferences();
+        final services = snapshot.data;
+        if (services == null) {
+          // Initializing configuration and service repository.
+          return const _Initializing();
         }
-        // Initialize services and provide them to the nested components
+        // Provide initialized service repository to the nested components
         // (including the blocs created in the child provider).
+        // Then activate the initial network (starting services related to that network).
         return RepositoryProvider(
-          create: (_) {
-            final prefsSvc = SharedPreferencesService(prefs);
-            const httpService = HttpService();
-            // TODO 'enableNetwork' is async so should be initialized in a 'FutureBuilder'.
-            //      Currently it actually is sync though, so this change can wait a bit.
-            return ServiceRepository(
-              config: config,
-              httpService: httpService,
-              sharedPreferences: prefsSvc,
-            )..enableNetwork(NetworkName.testnet);
-          },
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) => ActiveNetwork(config.availableNetworks[NetworkName.testnet]!),
-              ),
-              BlocProvider(
-                create: (context) {
-                  final prefs = context.read<ServiceRepository>().sharedPreferences;
-                  return TermsAndConditionAcceptance(prefs);
-                },
-              ),
-            ],
-            child: MaterialApp(
-              routes: appRoutes,
-              theme: concordiumTheme(),
-            ),
+          create: (_) => services,
+          child: FutureBuilder(
+            future: services.activateNetwork(initialNetwork),
+            builder: (_, snapshot) {
+              final networkServices = snapshot.data;
+              if (networkServices == null) {
+                // Initializing network services.
+                return const _Initializing();
+              }
+
+              // Initialize blocs/cubits.
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (_) {
+                      // Initialize selected network as the one that was just activated.
+                      return SelectedNetwork(networkServices);
+                    },
+                  ),
+                  BlocProvider(
+                    create: (context) {
+                      // Initialize T&C by loading the currently accepted version from shared preferences.
+                      final prefs = context.read<ServiceRepository>().sharedPreferences;
+                      return TermsAndConditionAcceptance(prefs);
+                    },
+                  ),
+                ],
+                child: MaterialApp(
+                  routes: appRoutes,
+                  theme: concordiumTheme(),
+                ),
+              );
+            },
           ),
         );
       },
@@ -74,8 +99,8 @@ class App extends StatelessWidget {
   }
 }
 
-class _LoadingSharedPreferences extends StatelessWidget {
-  const _LoadingSharedPreferences();
+class _Initializing extends StatelessWidget {
+  const _Initializing();
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +111,7 @@ class _LoadingSharedPreferences extends StatelessWidget {
         CircularProgressIndicator(),
         SizedBox(height: 16),
         // Setting text direction is required because we're outside 'MaterialApp' widget.
-        Text('Loading shared preferences...', textDirection: TextDirection.ltr),
+        Text('Initializing...', textDirection: TextDirection.ltr),
       ],
     );
   }
