@@ -1,93 +1,104 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
-import 'package:concordium_wallet/state.dart';
+import 'package:concordium_wallet/state/terms_and_conditions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 
-class MockAppSharedPreferences extends Mock implements AppSharedPreferences {}
-
-class MockAppState extends Mock implements AppState {
-  @override
-  AppSharedPreferences get sharedPreferences => MockAppSharedPreferences();
-}
+import 'helpers.dart';
 
 class MockUrlLauncher extends Mock implements UrlLauncher {}
-
-/// Wrap MaterialApp and a Mocked App State around the given widget.
-Widget makeTestableWidget({required Widget? child}) => MaterialApp(
-      home: ChangeNotifierProvider<AppState>(
-        create: (_) => MockAppState(),
-        child: Scaffold(
-          body: child,
-        ),
-      ),
-    );
+class MockTACCubit extends MockCubit<TermsAndConditionsAcceptanceState> implements TermsAndConditionAcceptance {}
 
 void main() {
   group("Terms and conditions screen", () {
     bool checked = false;
-    TermsAndConditionsScreen? tacScreen;
+    late Widget tacScreen;
+    late MockTACCubit mockTACCubit;
+    late TermsAndConditionsAcceptanceState state;
+    const String validVersion = "1.1.0";
+    const String acceptedVersion = "1.0.0";
+
+    setUpAll(() {
+      registerFallbackValue(const AcceptedTermsAndConditions(version: validVersion));
+    });
 
     setUp(() {
       checked = false;
+
+      final terms = TermsAndConditions(Uri.parse("localhost"), validVersion);
+      state = TermsAndConditionsAcceptanceState(
+          accepted: const AcceptedTermsAndConditions(version: acceptedVersion),
+          valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms));
+
       // Build the terms and condition screen we wish to test
-      tacScreen = TermsAndConditionsScreen(
-          TermsAndConditionsViewModel(
-            TermsAndConditions(Uri.parse("localhost"), "1.1.0"),
-            "1.0.0",
-            (context) => checked = true,
-          ),
-          MockUrlLauncher());
+      final rawTacScreen = TermsAndConditionsScreen(validTermsAndConditions: terms, urlLauncher: MockUrlLauncher());
+      mockTACCubit = MockTACCubit();
+
+      tacScreen = BlocProvider<TermsAndConditionAcceptance>.value(value: mockTACCubit, child: wrapMaterial(child: rawTacScreen));
+
+      when(() => mockTACCubit.state).thenAnswer((_) => state);
+      when(() => mockTACCubit.userAccepted(any())).thenAnswer((_) {
+        checked = true;
+      });
     });
 
     testWidgets('Pressing continue does not perform check', (WidgetTester tester) async {
-      await tester.pumpWidget(makeTestableWidget(child: tacScreen));
+      // Arrange
+      await tester.pumpWidget(wrapMaterial(child: tacScreen));
 
-      // TODO add better way to get widget (Not rely on matching strings)
-      await tester.tap(find.byKey(const Key("Continue")));
+      // Act
+      // TODO use internationalized version here.
+      await tester.tap(find.text("Continue", findRichText: true));
 
+      // Assert
       expect(checked, false);
     });
 
     testWidgets('Pressing continue, after toggling accept, performs check', (WidgetTester tester) async {
-      await tester.pumpWidget(makeTestableWidget(child: tacScreen));
+      // Arrange
+      await tester.pumpWidget(tacScreen);
 
+      // Act
       await tester.tap(find.byType(ToggleAcceptedWidget));
 
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key("Continue")));
+      // TODO use internationalized version here.
+      await tester.tap(find.text("Continue", findRichText: true));
 
       await tester.pump();
 
+      // Assert
       expect(checked, true);
     });
   });
 
   testWidgets('Clicking on terms and conditions', (WidgetTester tester) async {
+    // Arrange
     Uri uri = Uri.parse("localhost");
     var launcher = MockUrlLauncher();
 
     // Build the terms and condition screen we wish to test
     var tacScreen = TermsAndConditionsScreen(
-        TermsAndConditionsViewModel(
-          TermsAndConditions(uri, "1.1.0"),
-          "1.0.0",
-          (context) {},
-        ),
-        launcher);
+      validTermsAndConditions: TermsAndConditions(uri, "1.1.0"),
+      urlLauncher: launcher,
+    );
 
-    await tester.pumpWidget(makeTestableWidget(child: tacScreen));
+    await tester.pumpWidget(wrapMaterial(child: tacScreen));
 
     when(() => launcher.canLaunch(uri)).thenAnswer((_) => Future.value(true));
     when(() => launcher.launch(uri)).thenAnswer((_) => Future.value(true));
 
-    await tester.tap(find.byKey(const Key("TermsAndConditionsText")));
+    // Act
+    // TODO use internationalized version here.
+    await tester.tap(find.textContaining("I have read and agree to the", findRichText: true));
 
+    // Assert
     verify(() => launcher.launch(uri)).called(1);
   });
 }

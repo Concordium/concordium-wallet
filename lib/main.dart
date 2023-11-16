@@ -15,14 +15,16 @@ void main() {
   runApp(const App());
 }
 
+const testnetNetwork = Network(
+  name: NetworkName.testnet,
+  walletProxyConfig: WalletProxyConfig(
+    baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+  ),
+);
+
 // In the future, this will be loaded from a proper source rather than being hardcoded.
 final config = Config.ofNetworks([
-  const Network(
-    name: NetworkName.testnet,
-    walletProxyConfig: WalletProxyConfig(
-      baseUrl: 'https://wallet-proxy.testnet.concordium.com',
-    ),
-  ),
+  testnetNetwork,
 ]);
 
 class App extends StatelessWidget {

@@ -11,7 +11,8 @@ class TermsAndConditionsScreen extends StatefulWidget {
   final String? acceptedTermsAndConditionsVersion;
   final UrlLauncher urlLauncher;
 
-  const TermsAndConditionsScreen({super.key, required this.validTermsAndConditions, this.acceptedTermsAndConditionsVersion, required this.urlLauncher});
+  const TermsAndConditionsScreen(
+      {super.key, required this.validTermsAndConditions, this.acceptedTermsAndConditionsVersion, required this.urlLauncher});
 
   @override
   State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
@@ -76,7 +77,6 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               children: [
                 Flexible(
                   child: GestureDetector(
-                    key: const Key("TermsAndConditionsText"),
                     onTap: () {
                       _launchUrl(widget.validTermsAndConditions.url);
                     },
@@ -112,7 +112,6 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             const SizedBox(height: 9),
             ElevatedButton(
-              key: const Key("Continue"),
               onPressed: _onAcceptButtonPressed(context),
               child: const Text('Continue'),
             ),
