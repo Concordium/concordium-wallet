@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'helpers.dart';
 
 class MockUrlLauncher extends Mock implements UrlLauncher {}
+
 class MockTACCubit extends MockCubit<TermsAndConditionsAcceptanceState> implements TermsAndConditionAcceptance {}
 
 void main() {
