@@ -41,6 +41,6 @@ class StorageProvider {
 
   /// Deletes the currently accepted T&C version.
   Future<void> deleteTermsAndConditionsAcceptedVersion(NetworkName networkName) {
-    return _acceptedTermsAndConditionBox.delete(networkName);
+    return _acceptedTermsAndConditionBox.delete(networkName.name);
   }
 }
