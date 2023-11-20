@@ -25,7 +25,7 @@ void main() {
 
     var httpClient = MockHttpService(rawData);
 
-    var service = WalletProxyService(config: const WalletProxyConfig(baseUrl: 'http://test.com'), httpService: httpClient);
+    var service = WalletProxyService(config: const WalletProxyConfig(baseUrl: 'http://test.com'), http: httpClient);
 
     // Act
     var tac = await service.fetchTermsAndConditions();
