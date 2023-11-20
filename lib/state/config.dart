@@ -20,7 +20,9 @@ class Config {
   /// At some other point we'll introduce a notion of "enabled" networks,
   /// i.e. the list of networks to be included in the user's network selector.
   /// That list will be a subset of the available networks.
-  /// The purpose of describing the concept here already is to allow other doc comments to reference it early.
+  /// Furthermore, the set of "active" networks is a subset of the enabled networks where we have actual services initialized.
+  /// Lastly, the "selected" network is the active network that we're actually currently using in the app.
+  /// The purpose of describing the concepts before they're fully implemented is to allow other doc comments to reference them already.
   final Map<NetworkName, Network> availableNetworks;
 
   const Config({required this.availableNetworks});

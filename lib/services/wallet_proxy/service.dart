@@ -33,14 +33,14 @@ class WalletProxyService {
   final WalletProxyConfig config;
 
   /// HTTP service used to send requests to the instance.
-  final HttpService httpService;
+  final HttpService http;
 
-  const WalletProxyService({required this.config, required this.httpService});
+  const WalletProxyService({required this.config, required this.http});
 
   /// Fetches the currently valid T&C.
   Future<TermsAndConditions> fetchTermsAndConditions() async {
     final url = config.urlOf(WalletProxyEndpoint.termsAndConditionsVersion);
-    final response = await httpService.get(url);
+    final response = await http.get(url);
     final jsonResponse = jsonDecode(response.body);
     return TermsAndConditions.fromJson(jsonResponse);
   }

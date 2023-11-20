@@ -4,18 +4,22 @@ import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
 
-/// Collection of all services of a network.
+/// Collection of all services related to a specific network.
 class NetworkServices {
-  /// The Wallet Proxy service on the network.
+  /// Network to which the services are related.
+  final Network network;
+
+  /// Wallet Proxy service on the network.
   final WalletProxyService walletProxy;
 
-  const NetworkServices({required this.walletProxy});
+  const NetworkServices({required this.network, required this.walletProxy});
 
-  factory NetworkServices.forNetwork(Network n, {required HttpService httpService}) {
+  factory NetworkServices.forNetwork(Network n, {required HttpService http}) {
     return NetworkServices(
+      network: n,
       walletProxy: WalletProxyService(
         config: n.walletProxyConfig,
-        httpService: httpService,
+        http: http,
       ),
     );
   }
@@ -23,40 +27,34 @@ class NetworkServices {
 
 /// Collection of all services available to the app.
 class ServiceRepository {
-  /// Service collections for all "enabled" networks (as defined in [Config.availableNetworks]).
-  final Map<Network, NetworkServices> networkServices = {};
+  /// Service collections for all "active" networks (as defined in [Config.availableNetworks]).
+  final Map<NetworkName, NetworkServices> activeNetworks = {};
 
   /// Global configuration used when starting services.
   final Config config;
 
   /// Global service for performing HTTP calls.
-  final HttpService httpService;
+  final HttpService http;
 
   /// Global service for interacting with shared preferences.
   final SharedPreferencesService sharedPreferences;
 
-  ServiceRepository({required this.config, required this.httpService, required this.sharedPreferences});
+  ServiceRepository({required this.config, required this.http, required this.sharedPreferences});
 
-  /// Enable the network with the provided name.
+  /// Activate the network with the provided name.
   ///
   /// The services for interacting with the network are initialized using the global configuration.
-  /// Once the future completes, the services may be looked up by the network name in [networkServices].
-  Future<void> enableNetwork(NetworkName name) async {
+  /// Once the future completes, the services may be looked up by the network name in [activeNetworks].
+  Future<NetworkServices> activateNetwork(NetworkName name) async {
+    if (activeNetworks.containsKey(name)) {
+      throw Exception('network is already enabled');
+    }
     final n = config.availableNetworks[name];
     if (n == null) {
       throw Exception('unknown network');
     }
-    return _enableNetwork(n);
-  }
-
-  void _enableNetwork(Network n) {
-    if (networkServices.containsKey(n)) {
-      throw Exception('network is already enabled');
-    }
-    _setNetwork(n, NetworkServices.forNetwork(n, httpService: httpService));
-  }
-
-  void _setNetwork(Network n, NetworkServices services) {
-    networkServices[n] = services;
+    final res = NetworkServices.forNetwork(n, http: http);
+    activeNetworks[name] = res;
+    return res;
   }
 }
