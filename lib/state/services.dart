@@ -1,5 +1,5 @@
 import 'package:concordium_wallet/services/http.dart';
-import 'package:concordium_wallet/services/shared_preferences/service.dart';
+import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
@@ -37,7 +37,7 @@ class ServiceRepository {
   final HttpService http;
 
   /// Global service for interacting with storage.
-  final StorageService storage;
+  final StorageProvider storage;
 
   ServiceRepository({required this.config, required this.http, required this.storage});
 

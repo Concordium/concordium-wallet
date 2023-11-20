@@ -1,5 +1,5 @@
 import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
-import 'package:concordium_wallet/services/shared_preferences/service.dart';
+import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,10 +38,11 @@ class TermsAndConditionsAcceptanceState {
 /// State component of the currently accepted and valid Terms & Conditions.
 class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceState> {
   /// Service used to persist the accepted T&C version.
-  final StorageService _storage;
+  final StorageProvider _storage;
   final NetworkName networkName;
 
   TermsAndConditionAcceptance(this._storage, this.networkName) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
+
     final acceptedVersion = _storage.getAcceptedTermsAndConditions(networkName);
     if (acceptedVersion != null) {
       userAccepted(acceptedVersion);

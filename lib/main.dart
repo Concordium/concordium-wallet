@@ -1,6 +1,6 @@
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
-import 'package:concordium_wallet/services/shared_preferences/service.dart';
+import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
@@ -30,7 +30,7 @@ Future<Config> loadConfig(HttpService http) async {
 Future<ServiceRepository> bootstrap() async {
   const http = HttpService();
   final configFuture = loadConfig(http);
-  final storageFuture = StorageService.init();
+  final storageFuture = StorageProvider.init();
   final config = await configFuture;
   final storageService = await storageFuture;
   return ServiceRepository(

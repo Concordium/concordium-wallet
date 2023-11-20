@@ -1,23 +1,19 @@
-
-
-
 import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Service for interacting with [Hive].
-class StorageService {
+class StorageProvider {
   final Box<AcceptedTermsAndConditions> _acceptedTermsAndConditionBox;
   
-  const StorageService._(this._acceptedTermsAndConditionBox);
+  const StorageProvider._(this._acceptedTermsAndConditionBox);
 
-  static Future<StorageService> init() async {
+  static Future<StorageProvider> init() async {
     await Hive.initFlutter();
-    
     _registerAdapters();
     await _openBoxes();
 
-    return StorageService._(
+    return StorageProvider._(
       await Hive.openBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table)
     );
   }
