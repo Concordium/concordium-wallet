@@ -1,4 +1,4 @@
-name: Analyze and format
+name: CI
 
 on:
     # Trigger the workflow on pushes to the main and feature branches as well as PRs targeting them.
