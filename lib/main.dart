@@ -30,8 +30,10 @@ Future<Config> loadConfig(HttpService http) async {
 
 Future<ServiceRepository> bootstrap() async {
   const http = HttpService();
-  final config = await loadConfig(http);
-  final prefs = await SharedPreferences.getInstance();
+  final configFuture = loadConfig(http);
+  final prefsFuture = SharedPreferences.getInstance();
+  final config = await configFuture;
+  final prefs = await prefsFuture;
   return ServiceRepository(
     config: config,
     http: http,
