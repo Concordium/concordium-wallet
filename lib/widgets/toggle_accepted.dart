@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class ToggleAcceptedWidget extends StatelessWidget {
-  final bool isAccepted;
-  final Function(bool) setAccepted;
+class Toggle extends StatelessWidget {
+  final bool isEnabled;
+  final Function(bool) setEnabled;
 
-  ToggleAcceptedWidget({super.key, required this.isAccepted, required this.setAccepted});
+  Toggle({super.key, required this.isEnabled, required this.setEnabled});
 
   final MaterialStateProperty<Icon?> icon = MaterialStateProperty.resolveWith<Icon?>(
     (states) => Icon(_iconData(states)),
@@ -21,8 +21,8 @@ class ToggleAcceptedWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Switch(
       thumbIcon: icon,
-      value: isAccepted,
-      onChanged: setAccepted,
+      value: isEnabled,
+      onChanged: setEnabled,
     );
   }
 }

@@ -88,9 +88,9 @@ class App extends StatelessWidget {
                     },
                   ),
                 ],
-                child: MaterialApp(
-                  routes: appRoutes,
-                  theme: concordiumTheme(),
+                child: MaterialApp.router(
+                  routerConfig: appRouter,
+                  theme: globalTheme(),
                 ),
               );
             },
