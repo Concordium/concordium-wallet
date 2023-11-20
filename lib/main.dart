@@ -14,16 +14,18 @@ void main() {
   runApp(const App());
 }
 
+const testnetNetwork = Network(
+  name: NetworkName.testnet,
+  walletProxyConfig: WalletProxyConfig(
+    baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+  ),
+);
+
 /// Load fundamental configuration from the source of truth.
 Future<Config> loadConfig(HttpService http) async {
   // In the future, this will be loaded from a proper source rather than being hardcoded.
   return Config.ofNetworks([
-    const Network(
-      name: NetworkName.testnet,
-      walletProxyConfig: WalletProxyConfig(
-        baseUrl: 'https://wallet-proxy.testnet.concordium.com',
-      ),
-    ),
+    testnetNetwork,
   ]);
 }
 

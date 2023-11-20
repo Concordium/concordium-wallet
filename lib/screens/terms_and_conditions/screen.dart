@@ -1,17 +1,19 @@
 import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
+import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {
   final TermsAndConditions validTermsAndConditions;
   final String? acceptedTermsAndConditionsVersion;
+  final UrlLauncher urlLauncher;
 
-  const TermsAndConditionsScreen({super.key, required this.validTermsAndConditions, this.acceptedTermsAndConditionsVersion});
+  const TermsAndConditionsScreen(
+      {super.key, required this.validTermsAndConditions, this.acceptedTermsAndConditionsVersion, required this.urlLauncher});
 
   @override
   State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
@@ -131,8 +133,8 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   }
 
   void _launchUrl(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
+    if (await widget.urlLauncher.canLaunch(url)) {
+      await widget.urlLauncher.launch(url);
     } else {
       // TODO If this fails, open a dialog with the URL so the user can visit it manually.
       throw 'Could not launch $url';

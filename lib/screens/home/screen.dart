@@ -1,5 +1,6 @@
 import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
+import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
@@ -66,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return TermsAndConditionsScreen(
                 validTermsAndConditions: validTac.termsAndConditions,
                 acceptedTermsAndConditionsVersion: acceptedTac?.acceptedVersion,
+                urlLauncher: UrlLauncher(),
               );
             }
             return Column(
