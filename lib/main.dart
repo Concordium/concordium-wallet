@@ -9,7 +9,7 @@ import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() {
   runApp(const App());
@@ -31,11 +31,12 @@ Future<Config> loadConfig(HttpService http) async {
 Future<ServiceRepository> bootstrap() async {
   const http = HttpService();
   final config = await loadConfig(http);
-  final prefs = await SharedPreferences.getInstance();
+  final storageService = await StorageService.init();
+  await Hive.initFlutter();
   return ServiceRepository(
     config: config,
     http: http,
-    sharedPreferences: SharedPreferencesService(prefs),
+    sharedPreferences: storageService,
   );
 }
 
@@ -82,7 +83,7 @@ class App extends StatelessWidget {
                     create: (context) {
                       // Initialize T&C by loading the currently accepted version from shared preferences.
                       final prefs = context.read<ServiceRepository>().sharedPreferences;
-                      return TermsAndConditionAcceptance(prefs);
+                      return TermsAndConditionAcceptance(prefs, networkServices.network.name);
                     },
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
@@ -122,9 +123,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   Function()? _onAcceptButtonPressed(BuildContext context) {
     if (isAccepted) {
       return () {
-        final tac = AcceptedTermsAndConditions(
-          version: widget.validTermsAndConditions.version,
-        );
+        final tac = AcceptedTermsAndConditions.acceptNow(widget.validTermsAndConditions.version);
         context.read<TermsAndConditionAcceptance>().userAccepted(tac);
       };
     }

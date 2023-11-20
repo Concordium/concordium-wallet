@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/network.dart';
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (acceptedTac == null || !acceptedTac.isValid(validTac.termsAndConditions)) {
               return TermsAndConditionsScreen(
                 validTermsAndConditions: validTac.termsAndConditions,
-                acceptedTermsAndConditionsVersion: acceptedTac?.version,
+                acceptedTermsAndConditionsVersion: acceptedTac?.acceptedVersion,
               );
             }
             return Column(
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Column(
                     children: [
-                      Text('Accepted T&C version: ${tacState.accepted?.version}'),
+                      Text('Accepted T&C version: ${tacState.accepted?.acceptedVersion}'),
                       Text('Valid T&C last refreshed at ${tacState.valid?.refreshedAt}.'),
                     ],
                   ),
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () {
-                    const tac = AcceptedTermsAndConditions(version: '1.2.3');
+                    final tac = AcceptedTermsAndConditions.acceptNow('1.2.3');
                     context.read<TermsAndConditionAcceptance>().userAccepted(tac);
                   },
                   child: const Text('Set accepted T&C version to 1.2.3'),

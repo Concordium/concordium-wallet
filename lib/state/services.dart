@@ -37,7 +37,7 @@ class ServiceRepository {
   final HttpService http;
 
   /// Global service for interacting with shared preferences.
-  final SharedPreferencesService sharedPreferences;
+  final StorageService sharedPreferences;
 
   ServiceRepository({required this.config, required this.http, required this.sharedPreferences});
 

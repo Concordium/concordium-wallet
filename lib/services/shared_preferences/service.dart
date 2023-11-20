@@ -1,25 +1,50 @@
-import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service for interacting with [SharedPreferences].
-class SharedPreferencesService {
-  /// String key associated with the persisted accepted T&C version.
-  static const _tacAcceptedVersionKey = 'tac:accepted_version';
 
-  /// Wrapped instance.
-  final SharedPreferences _prefs;
 
-  const SharedPreferencesService(this._prefs);
+import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
+import 'package:concordium_wallet/state/network.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+/// Service for interacting with [Hive].
+class StorageService {
+  final Box<AcceptedTermsAndConditions> _acceptedTermsAndConditionBox;
+  
+  const StorageService._(this._acceptedTermsAndConditionBox);
+
+  static Future<StorageService> init() async {
+    await Hive.initFlutter();
+    
+    _registerAdapters();
+    await _openBoxes();
+
+    return StorageService._(
+      await Hive.openBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table)
+    );
+  }
+
+  /// Register all adapters needed for typed boxes.
+  static void _registerAdapters() {
+    Hive.registerAdapter(AcceptedTermsAndConditionsAdapter());
+  }
+
+  /// Opens all boxes asynchronously.
+  static Future<void> _openBoxes() async {
+    final atcFuture = Hive.openBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table);
+    await Future.wait([atcFuture]);
+  }  
 
   /// Reads the currently accepted T&C version.
-  String? get termsAndConditionsAcceptedVersion => _prefs.getString(_tacAcceptedVersionKey);
+  AcceptedTermsAndConditions? getAcceptedTermsAndConditions(NetworkName networkName) {
+    return _acceptedTermsAndConditionBox.get(networkName.name);
+  }
 
   /// Writes the currently accepted T&C version.
-  Future<void> writeTermsAndConditionsAcceptedVersion(String version) async {
-    await _prefs.setString(_tacAcceptedVersionKey, version);
+  Future<void> writeAcceptedTermsAndConditions(NetworkName networkName, AcceptedTermsAndConditions acceptedTermsAndConditions) {
+      return _acceptedTermsAndConditionBox.put(networkName.name, acceptedTermsAndConditions);
   }
 
   /// Deletes the currently accepted T&C version.
-  Future<void> deleteTermsAndConditionsAcceptedVersion() async {
-    await _prefs.remove(_tacAcceptedVersionKey);
+  Future<void> deleteTermsAndConditionsAcceptedVersion(NetworkName networkName) {
+    return _acceptedTermsAndConditionBox.delete(networkName);
   }
 }

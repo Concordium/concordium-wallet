@@ -1,19 +1,8 @@
+import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
 import 'package:concordium_wallet/services/shared_preferences/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
+import 'package:concordium_wallet/state/network.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-/// Version of the Terms & Conditions accepted by the user.
-class AcceptedTermsAndConditions {
-  /// Accepted version.
-  final String version;
-
-  const AcceptedTermsAndConditions({required this.version});
-
-  /// Whether the accepted version is valid with respect to the provided valid version.
-  bool isValid(TermsAndConditions tac) {
-    return version == tac.version;
-  }
-}
 
 /// Version of the Terms & Conditions that is considered valid.
 ///
@@ -49,12 +38,13 @@ class TermsAndConditionsAcceptanceState {
 /// State component of the currently accepted and valid Terms & Conditions.
 class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceState> {
   /// Service used to persist the accepted T&C version.
-  final SharedPreferencesService _prefs;
+  final StorageService _storage;
+  final NetworkName networkName;
 
-  TermsAndConditionAcceptance(this._prefs) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
-    final acceptedVersion = _prefs.termsAndConditionsAcceptedVersion;
+  TermsAndConditionAcceptance(this._storage, this.networkName) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
+    final acceptedVersion = _storage.getAcceptedTermsAndConditions(networkName);
     if (acceptedVersion != null) {
-      userAccepted(AcceptedTermsAndConditions(version: acceptedVersion));
+      userAccepted(acceptedVersion);
     }
   }
 
@@ -101,17 +91,17 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   void onChange(Change<TermsAndConditionsAcceptanceState> change) {
     super.onChange(change);
 
+    if (change.currentState == change.nextState) {
+      return;
+    }
     // TODO: Pass success/failure status to notification service.
-    _persistAcceptedVersionIfChanged(change.nextState.accepted?.version, change.currentState.accepted?.version);
+    _persistAcceptedVersionIfChanged(change.nextState.accepted);
   }
 
-  Future<void> _persistAcceptedVersionIfChanged(String? nextAcceptedVersion, String? currentAcceptedVersion) {
-    if (nextAcceptedVersion == currentAcceptedVersion) {
-      return Future.value();
-    }
+  Future<void> _persistAcceptedVersionIfChanged(AcceptedTermsAndConditions? nextAcceptedVersion) {
     if (nextAcceptedVersion == null) {
-      return _prefs.deleteTermsAndConditionsAcceptedVersion();
+      return _storage.deleteTermsAndConditionsAcceptedVersion(networkName);
     }
-    return _prefs.writeTermsAndConditionsAcceptedVersion(nextAcceptedVersion);
+    return _storage.writeAcceptedTermsAndConditions(networkName, nextAcceptedVersion);
   }
 }
