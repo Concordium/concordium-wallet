@@ -13,7 +13,7 @@ void main() {
       .setMockMethodCallHandler(
         const MethodChannel("plugins.flutter.io/path_provider"),
           (MethodCall methodCall)  async {
-            return ".";
+            return "./test/hive_storage_test";
           }
         );
   }
