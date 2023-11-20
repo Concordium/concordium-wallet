@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 /// Service for interacting with [Hive].
 class StorageProvider {
   final Box<AcceptedTermsAndConditions> _acceptedTermsAndConditionBox;
-  
+
   const StorageProvider._(this._acceptedTermsAndConditionBox);
 
   static Future<StorageProvider> init() async {
@@ -13,9 +13,7 @@ class StorageProvider {
     _registerAdapters();
     await _openBoxes();
 
-    return StorageProvider._(
-      await Hive.openBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table)
-    );
+    return StorageProvider._(await Hive.openBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table));
   }
 
   /// Register all adapters needed for typed boxes.
@@ -27,7 +25,7 @@ class StorageProvider {
   static Future<void> _openBoxes() async {
     final atcFuture = Hive.openBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table);
     await Future.wait([atcFuture]);
-  }  
+  }
 
   /// Reads the currently accepted T&C version.
   AcceptedTermsAndConditions? getAcceptedTermsAndConditions(NetworkName networkName) {
@@ -36,7 +34,7 @@ class StorageProvider {
 
   /// Writes the currently accepted T&C version.
   Future<void> writeAcceptedTermsAndConditions(NetworkName networkName, AcceptedTermsAndConditions acceptedTermsAndConditions) {
-      return _acceptedTermsAndConditionBox.put(networkName.name, acceptedTermsAndConditions);
+    return _acceptedTermsAndConditionBox.put(networkName.name, acceptedTermsAndConditions);
   }
 
   /// Deletes the currently accepted T&C version.

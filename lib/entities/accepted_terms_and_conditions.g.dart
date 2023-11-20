@@ -6,8 +6,7 @@ part of 'accepted_terms_and_conditions.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AcceptedTermsAndConditionsAdapter
-    extends TypeAdapter<AcceptedTermsAndConditions> {
+class AcceptedTermsAndConditionsAdapter extends TypeAdapter<AcceptedTermsAndConditions> {
   @override
   final int typeId = 1;
 
@@ -38,8 +37,5 @@ class AcceptedTermsAndConditionsAdapter
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AcceptedTermsAndConditionsAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is AcceptedTermsAndConditionsAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

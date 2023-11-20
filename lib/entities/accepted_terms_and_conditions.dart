@@ -22,5 +22,5 @@ class AcceptedTermsAndConditions {
   /// Whether the accepted version is valid with respect to the provided valid version.
   bool isValid(TermsAndConditions tac) {
     return acceptedVersion == tac.version;
-  }  
+  }
 }

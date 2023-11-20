@@ -14,7 +14,7 @@ env:
     flutter_version: 3.13.6
 
 jobs:
-    analyze-format:
+    analyze-format-test:
         runs-on: ubuntu-22.04
         steps:
             - name: Checkout repository

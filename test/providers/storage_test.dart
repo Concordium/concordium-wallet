@@ -6,17 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 
 void main() {
-
   /// Mock getApplicationDocumentsDirectory on channel plugins.flutter.io/path_provider
   mockPathProvider() {
     TestWidgetsFlutterBinding.ensureInitialized();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(
-        const MethodChannel("plugins.flutter.io/path_provider"),
-          (MethodCall methodCall)  async {
-            return "./test/hive_storage_test";
-          }
-        );
+        .setMockMethodCallHandler(const MethodChannel("plugins.flutter.io/path_provider"), (MethodCall methodCall) async {
+      return "./test/hive_storage_test";
+    });
   }
 
   late StorageProvider storage;
@@ -47,7 +43,7 @@ void main() {
   });
 
   test("When delete accepted terms and condition from storage, then empty", () async {
-    // Arrange  
+    // Arrange
     const name = "foobar";
     const expectedVersion = "0.0.42";
     const networkName = NetworkName(name);

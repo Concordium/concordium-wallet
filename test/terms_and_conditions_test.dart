@@ -34,8 +34,7 @@ void main() {
 
       final terms = TermsAndConditions(Uri.parse("localhost"), validVersion);
       state = TermsAndConditionsAcceptanceState(
-          accepted: AcceptedTermsAndConditions.acceptNow(acceptedVersion),
-          valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms));
+          accepted: AcceptedTermsAndConditions.acceptNow(acceptedVersion), valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms));
 
       // Build the terms and condition screen we wish to test
       final rawTacScreen = TermsAndConditionsScreen(validTermsAndConditions: terms, urlLauncher: MockUrlLauncher());

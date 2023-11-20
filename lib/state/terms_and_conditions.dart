@@ -42,7 +42,6 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   final NetworkName networkName;
 
   TermsAndConditionAcceptance(this._storage, this.networkName) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
-
     final acceptedVersion = _storage.getAcceptedTermsAndConditions(networkName);
     if (acceptedVersion != null) {
       userAccepted(acceptedVersion);
