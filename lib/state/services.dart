@@ -36,10 +36,10 @@ class ServiceRepository {
   /// Global service for performing HTTP calls.
   final HttpService http;
 
-  /// Global service for interacting with shared preferences.
-  final StorageService sharedPreferences;
+  /// Global service for interacting with storage.
+  final StorageService storage;
 
-  ServiceRepository({required this.config, required this.http, required this.sharedPreferences});
+  ServiceRepository({required this.config, required this.http, required this.storage});
 
   /// Activate the network with the provided name.
   ///
