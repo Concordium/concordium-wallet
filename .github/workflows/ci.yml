@@ -31,3 +31,6 @@ jobs:
 
             - name: Check format
               run: dart format --output=none --set-exit-if-changed . -l 150
+
+            - name: Test
+              run: flutter test
