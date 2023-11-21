@@ -19,13 +19,13 @@ class WidgetbookApp extends StatelessWidget {
       addons: [
         AlignmentAddon(),
       ],
-      directories: [_button(), _buttonMaterial(), _buttonGenerated(), _accountSummaryCard()],
+      directories: [__buttons(), _accountSummaryCard()],
     );
   }
 
-  WidgetbookComponent _button() {
+  WidgetbookComponent __buttons() {
     return WidgetbookComponent(
-      name: '$Button',
+      name: 'Buttons',
       useCases: [
         WidgetbookUseCase(
           name: 'Default',
@@ -47,17 +47,9 @@ class WidgetbookApp extends StatelessWidget {
               ),
             );
           },
-        )
-      ],
-    );
-  }
-
-  WidgetbookComponent _buttonMaterial() {
-    return WidgetbookComponent(
-      name: '$ButtonMaterial',
-      useCases: [
+        ),
         WidgetbookUseCase(
-          name: 'Default',
+          name: 'Material',
           builder: (context) {
             return ButtonMaterial(
               decoration: decoration,
@@ -76,17 +68,9 @@ class WidgetbookApp extends StatelessWidget {
               ),
             );
           },
-        )
-      ],
-    );
-  }
-
-  WidgetbookComponent _buttonGenerated() {
-    return WidgetbookComponent(
-      name: '$ColorGradientMineralIconFalseSizeMedium',
-      useCases: [
+        ),
         WidgetbookUseCase(
-          name: 'Default',
+          name: 'Generated',
           builder: (context) {
             return ColorGradientMineralIconFalseSizeMedium();
           },
