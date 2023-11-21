@@ -21,7 +21,7 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
 
   var _isEnableBiometricsChecked = false;
   bool? _doPasswordsMatch;
-  
+
   var _isTermsAndConditionsAccepted = false;
 
   @override
@@ -47,6 +47,7 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
       _isEnableBiometricsChecked = val;
     });
   }
+
   void _setTermsAndConditionsAccepted(bool val) {
     // TODO: Should just persist immediately
     setState(() {
@@ -94,13 +95,15 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    Center(
-                      child: SvgPicture.asset(
-                        'assets/graphics/fingerprint.svg',
-                        semanticsLabel: 'Fingerprint',
-                        height: 100,
-                        width: 100,
-                      ),
+                    Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Container(color: const Color.fromRGBO(235, 236, 238, 1)),
+                        ),
+                        const Center(
+                          child: Image(image: AssetImage('assets/graphics/fingerprint.png')),
+                        )
+                      ],
                     ),
                     Text(
                       'Security',
@@ -124,12 +127,10 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
                           child: Row(
                             children: [
                               SvgPicture.asset(
-                                'assets/graphics/fingerprint.svg',
-                                width: 30,
-                                height: 30,
-                                color: Colors.blueGrey,
+                                'assets/graphics/face_id.svg',
                                 semanticsLabel: 'Fingerprint',
                               ),
+                              const SizedBox(width: 6),
                               const Text('Enable biometric authentication'),
                             ],
                           ),

@@ -27,7 +27,9 @@ ThemeData globalTheme() {
     ),
     appBarTheme: const AppBarTheme(
       titleTextStyle: TextStyle(
-        fontSize: 1.0,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Color.fromRGBO(82, 167, 178, 1),
       ),
     ),
   );

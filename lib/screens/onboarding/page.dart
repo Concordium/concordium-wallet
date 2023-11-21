@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OnboardingPage extends StatelessWidget {
-  static const backgroundColor = Color.fromRGBO(210, 210, 210, 1);
+  static const backgroundColor = Color.fromRGBO(251, 251, 251, 1);
 
   final String? title;
   final Widget body;
@@ -14,8 +14,8 @@ class OnboardingPage extends StatelessWidget {
       appBar: title == null
           ? null
           : AppBar(
-              title: Text(title!),
-              backgroundColor: backgroundColor,
+              title: Center(child: Text(title!)),
+              // backgroundColor: backgroundColor,
             ),
       backgroundColor: backgroundColor,
       body: Container(
