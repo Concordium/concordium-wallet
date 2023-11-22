@@ -9,6 +9,10 @@ final buttonStyle = GoogleFonts.getFont(
   color: Colors.white,
 );
 
+const defaultButtonDecoration = BoxDecoration(
+  gradient: LinearGradient(begin: Alignment(1.00, -0.08), end: Alignment(-1, 0.08), colors: [Color(0xFF48A2AE), Color(0xFF005A78)]),
+);
+
 final _borderRadius = BorderRadius.circular(16);
 const _boxShadow = [
   BoxShadow(

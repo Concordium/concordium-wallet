@@ -32,7 +32,6 @@ class WidgetbookApp extends StatelessWidget {
           name: 'Default',
           builder: (context) {
             return Button(
-              decoration: decoration,
               onTap: context.knobs.listOrNull(label: "onTap", options: [() {}]),
               width: context.knobs.double.input(
                 label: 'Width',
@@ -53,7 +52,7 @@ class WidgetbookApp extends StatelessWidget {
           name: 'Material',
           builder: (context) {
             return ButtonMaterial(
-              decoration: decoration,
+              decoration: defaultButtonDecoration,
               onTap: context.knobs.listOrNull(label: "onTap", options: [() {}]),
               width: context.knobs.double.input(
                 label: 'Width',
