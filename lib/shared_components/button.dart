@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// TODO: Move to appropiate file/folder
 final buttonStyle = GoogleFonts.getFont(
   "IBM Plex Sans",
   fontWeight: FontWeight.w600,
@@ -9,8 +8,7 @@ final buttonStyle = GoogleFonts.getFont(
   color: const Color(0xFFFFFFFF),
 );
 
-// TODO: Move/Rename
-const decoration = BoxDecoration(
+const _defaultButtonDecoration = BoxDecoration(
   gradient: LinearGradient(begin: Alignment(1.00, -0.08), end: Alignment(-1, 0.08), colors: [Color(0xFF48A2AE), Color(0xFF005A78)]),
 );
 
@@ -35,7 +33,7 @@ class Button extends StatelessWidget {
     super.key,
     required this.text,
     this.onTap,
-    required this.decoration,
+    this.decoration = _defaultButtonDecoration,
     this.width = double.infinity,
     this.height = 40,
   });

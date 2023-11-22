@@ -1,10 +1,11 @@
 import 'package:concordium_wallet/shared_components/account_summary_card/account_summary_card.dart';
 import 'package:concordium_wallet/shared_components/account_summary_card/card_decorations.dart';
-import 'package:concordium_wallet/shared_components/button_generated.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:concordium_wallet/shared_components/button.dart';
-import 'package:concordium_wallet/shared_components/button_material.dart';
+
+import 'components/button_material.dart';
+import 'components/button_generated.dart';
 
 void main() {
   runApp(const WidgetbookApp());

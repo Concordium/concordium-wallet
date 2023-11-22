@@ -1,33 +1,7 @@
 import 'package:concordium_wallet/shared_components/account_summary_card/card_decorations.dart';
+import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-// TODO move fonts to a more general place
-
-final bodyL = GoogleFonts.getFont(
-  "IBM Plex Sans",
-  fontWeight: FontWeight.w400,
-  fontSize: 16,
-);
-
-final bodyS = GoogleFonts.getFont(
-  "IBM Plex Sans",
-  fontWeight: FontWeight.w400,
-  fontSize: 12,
-);
-
-final heading2 = GoogleFonts.getFont(
-  "IBM Plex Sans",
-  fontWeight: FontWeight.w500,
-  fontSize: 24,
-);
-
-final heading5 = GoogleFonts.getFont(
-  "IBM Plex Sans",
-  fontWeight: FontWeight.w500,
-  fontSize: 16,
-);
 
 class AccountSummaryCard extends StatelessWidget {
   final int accounts;

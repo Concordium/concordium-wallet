@@ -112,7 +112,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               ],
             ),
             const SizedBox(height: 9),
-            Button(key: const Key("Continue"), onTap: _onAcceptButtonPressed(context), text: 'Continue', decoration: decoration),
+            Button(onTap: _onAcceptButtonPressed(context), text: 'Continue'),
           ],
         ),
       ],
