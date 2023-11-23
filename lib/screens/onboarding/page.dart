@@ -6,22 +6,27 @@ class OnboardingPage extends StatelessWidget {
   final String? title;
   final Widget body;
 
-  const OnboardingPage({super.key, required this.title, required this.body});
+  const OnboardingPage({super.key, this.title, required this.body});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: title == null
-          ? null
-          : AppBar(
-              title: Center(child: Text(title!)),
-              // backgroundColor: backgroundColor,
-            ),
+      appBar: _appBar(),
       backgroundColor: backgroundColor,
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
         child: body,
       ),
+      resizeToAvoidBottomInset: false, // avoid bottom things to be pushed above the keyboard when it appears
     );
+  }
+
+  AppBar? _appBar() {
+    return title == null
+        ? null
+        : AppBar(
+            title: Center(child: Text(title!)),
+            // backgroundColor: backgroundColor,
+          );
   }
 }

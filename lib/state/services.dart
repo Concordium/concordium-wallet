@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/services/auth/service.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/shared_preferences/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
@@ -36,18 +37,22 @@ class ServiceRepository {
   /// Global service for performing HTTP calls.
   final HttpService http;
 
+  /// Global service for managing authentication.
+  final AuthService auth;
+
   /// Global service for interacting with shared preferences.
   final SharedPreferencesService sharedPreferences;
 
-  ServiceRepository({required this.config, required this.http, required this.sharedPreferences});
+  ServiceRepository({required this.config, required this.http, required this.auth, required this.sharedPreferences});
 
   /// Activate the network with the provided name.
   ///
   /// The services for interacting with the network are initialized using the global configuration.
   /// Once the future completes, the services may be looked up by the network name in [activeNetworks].
   Future<NetworkServices> activateNetwork(NetworkName name) async {
+    print('activating network');
     if (activeNetworks.containsKey(name)) {
-      throw Exception('network is already enabled');
+      throw Exception('network is already active');
     }
     final n = config.availableNetworks[name];
     if (n == null) {

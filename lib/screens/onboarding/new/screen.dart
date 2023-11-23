@@ -1,11 +1,13 @@
 import 'package:concordium_wallet/screens/onboarding/page.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
+import 'package:concordium_wallet/state/auth.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/widgets/toggle_accepted.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OnboardingNewScreen extends StatefulWidget {
@@ -18,9 +20,11 @@ class OnboardingNewScreen extends StatefulWidget {
 class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
   final _passwordController1 = TextEditingController();
   final _passwordController2 = TextEditingController();
+  
+  var _password1 = '';
+  var _password2 = '';
 
   var _isEnableBiometricsChecked = false;
-  bool? _doPasswordsMatch;
 
   var _isTermsAndConditionsAccepted = false;
 
@@ -28,6 +32,17 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
   void initState() {
     super.initState();
     _refreshValidTermsAndConditions(context);
+
+    _passwordController1.addListener(() {
+      setState(() {
+        _password1 = _passwordController1.value.text;
+      });
+    });
+    _passwordController2.addListener(() {
+      setState(() {
+        _password2 = _passwordController2.value.text;
+      });
+    });
   }
 
   static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
@@ -41,27 +56,45 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
     _updateValidTac(network.services.walletProxy, tacAcceptance);
   }
 
-  void _setEnableBiometricsChecked(bool val) {
-    // TODO: Add error that biometrics aren't yet supported...
-    setState(() {
-      _isEnableBiometricsChecked = val;
-    });
-  }
-
   void _setTermsAndConditionsAccepted(bool val) {
-    // TODO: Should just persist immediately
     setState(() {
       _isTermsAndConditionsAccepted = val;
     });
   }
 
-  // TODO: Should return (i.e. disable it) if passwords don't match or T&C aren't accepted.
-  _onContinuePressed(BuildContext context) {
-    // TODO: Check T&C acceptance.
-    // TODO: Persist T&C acceptance (if that hasn't happened already).
-    // TODO: Check that passwords match.
-    // TODO: Persist password (if that hasn't happened already).
-    // TODO: Navigate to home screen.
+  static bool isValidPassword(String p) {
+    // Will likely add some requirements to length/strength.
+    return p.isNotEmpty;
+  }
+
+  static String? passwordIfValidAndConfirmed(String password1, String password2) {
+    return isValidPassword(password1) && password1 == password2 ? password1 : null;
+  }
+
+  Function()? _onContinuePressed(BuildContext context, ValidTermsAndConditions validTac) {
+    // Disable button if T&C is not accepted.
+    if (!_isTermsAndConditionsAccepted) {
+      return null; // disable button
+    }
+    // Disable button if passwords don't match.
+    var password = passwordIfValidAndConfirmed(_password1, _password2);
+    if (password == null) {
+      return null; // disable button
+    }
+    // Enable button with the following click handler.
+    return () {
+      // Persist password.
+      final auth = context.read<Auth>();
+      auth.setPassword(password);
+      // TODO: Persist biometrics stuff.
+
+      // Persist T&C acceptance.
+      final tac = context.read<TermsAndConditionAcceptance>();
+      tac.userAccepted(AcceptedTermsAndConditions(version: validTac.termsAndConditions.version));
+
+      // Navigate to home screen.
+      context.push('/home');
+    };
   }
 
   @override
@@ -85,7 +118,7 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 16),
-                Center(child: Text('Waiting for enforced Terms & Conditions...')),
+                Center(child: Text('Loading Terms & Conditions...')),
               ],
             );
           }
@@ -135,9 +168,16 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
                             ],
                           ),
                         ),
-                        Toggle(
-                          isEnabled: _isEnableBiometricsChecked,
-                          setEnabled: _setEnableBiometricsChecked,
+                        GestureDetector(
+                          child: Toggle(
+                            isEnabled: _isEnableBiometricsChecked,
+                            setEnabled: null, // disable toggle
+                          ),
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Biometrics support is not yet implemented.'),
+                            ));
+                          },
                         ),
                       ],
                     )
@@ -148,7 +188,7 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
                 children: [
                   Row(
                     children: [
-                      Flexible(
+                      Expanded(
                         child: GestureDetector(
                           onTap: () {
                             _launchUrl(validTac.termsAndConditions.url);
@@ -176,10 +216,19 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 9),
+                  const SizedBox(height: 8),
                   ElevatedButton(
-                    onPressed: _onContinuePressed(context),
-                    child: const Text('Continue →'), // TODO: Use real graphics for arrow.
+                    onPressed: _onContinuePressed(context, validTac),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Continue'),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/graphics/arrow_forward.svg',
+                        ),
+                      ],
+                    ), // TODO: Use real graphics for arrow.
                   ),
                 ],
               )
@@ -198,5 +247,13 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
       // TODO: If this fails, open a dialog with the URL so the user can visit it manually.
       throw 'Could not launch $url';
     }
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controllers once the widget is removed from the tree.
+    _passwordController1.dispose();
+    _passwordController2.dispose();
+    super.dispose();
   }
 }

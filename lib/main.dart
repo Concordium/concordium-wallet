@@ -1,7 +1,9 @@
 import 'package:concordium_wallet/screens/routes.dart';
+import 'package:concordium_wallet/services/auth/service.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/shared_preferences/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
+import 'package:concordium_wallet/state/auth.dart';
 import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
@@ -37,6 +39,7 @@ Future<ServiceRepository> bootstrap() async {
   return ServiceRepository(
     config: config,
     http: http,
+    auth: AuthService(prefs),
     sharedPreferences: SharedPreferencesService(prefs),
   );
 }
@@ -49,10 +52,62 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize configuration and service repository.
+    return _WithBootstrap(
+      child: _WithInitialNetwork(
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) {
+                // Initialize T&C by loading the currently accepted version from shared preferences.
+                final prefs = context.read<ServiceRepository>().sharedPreferences;
+                return TermsAndConditionAcceptance(prefs);
+              },
+            ),
+            BlocProvider(
+              create: (context) {
+                // Initialize auth.
+                final prefs = context.read<ServiceRepository>().sharedPreferences;
+                return Auth(prefs);
+              },
+            ),
+          ],
+          child: MaterialApp.router(
+            routerConfig: appRouter,
+            theme: globalTheme(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WithBootstrap extends StatefulWidget {
+  final Widget child;
+
+  const _WithBootstrap({super.key, required this.child});
+
+  @override
+  State<_WithBootstrap> createState() => _WithBootstrapState();
+}
+
+class _WithBootstrapState extends State<_WithBootstrap> {
+  Future<ServiceRepository>? _bootstrapping;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _bootstrapping = bootstrap();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<ServiceRepository>(
-      future: bootstrap(),
+      future: _bootstrapping,
       builder: (_, snapshot) {
         final services = snapshot.data;
+        // print('services = $services');
         if (services == null) {
           // Initializing configuration and service repository.
           return const _Initializing();
@@ -62,39 +117,52 @@ class App extends StatelessWidget {
         // Then activate the initial network (starting services related to that network).
         return RepositoryProvider(
           create: (_) => services,
-          child: FutureBuilder(
-            future: services.activateNetwork(initialNetwork),
-            builder: (_, snapshot) {
-              final networkServices = snapshot.data;
-              if (networkServices == null) {
-                // Initializing network services.
-                return const _Initializing();
-              }
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
 
-              // Initialize blocs/cubits.
-              return MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (_) {
-                      // Initialize selected network as the one that was just activated.
-                      return SelectedNetwork(networkServices);
-                    },
-                  ),
-                  BlocProvider(
-                    create: (context) {
-                      // Initialize T&C by loading the currently accepted version from shared preferences.
-                      final prefs = context.read<ServiceRepository>().sharedPreferences;
-                      return TermsAndConditionAcceptance(prefs);
-                    },
-                  ),
-                ],
-                child: MaterialApp.router(
-                  routerConfig: appRouter,
-                  theme: globalTheme(),
-                ),
-              );
-            },
-          ),
+class _WithInitialNetwork extends StatefulWidget {
+  final Widget child;
+
+  const _WithInitialNetwork({super.key, required this.child});
+
+  @override
+  State<_WithInitialNetwork> createState() => _WithInitialNetworkState();
+}
+
+class _WithInitialNetworkState extends State<_WithInitialNetwork> {
+  Future<NetworkServices>? _future;
+
+  @override
+  void initState() {
+    super.initState();
+    final services = context.read<ServiceRepository>();
+    setState(() {
+      _future = services.activateNetwork(initialNetwork);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _future,
+      builder: (_, snapshot) {
+        final networkServices = snapshot.data;
+        // print('snapshot = $snapshot');
+        if (networkServices == null) {
+          // Initializing network services.
+          // print('initializing 2');
+          return const _Initializing();
+        }
+        return BlocProvider(
+          create: (context) {
+            // Initialize selected network as the one that was just activated.
+            return SelectedNetwork(networkServices);
+          },
+          child: widget.child,
         );
       },
     );

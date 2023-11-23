@@ -44,6 +44,12 @@ class TermsAndConditionsAcceptanceState {
   final ValidTermsAndConditions? valid;
 
   const TermsAndConditionsAcceptanceState({required this.accepted, required this.valid});
+
+  bool isValidAccepted() {
+    final acceptedTac = accepted;
+    final validTac = valid?.termsAndConditions;
+    return acceptedTac != null && validTac != null && acceptedTac.isValid(validTac);
+  }
 }
 
 /// State component of the currently accepted and valid Terms & Conditions.

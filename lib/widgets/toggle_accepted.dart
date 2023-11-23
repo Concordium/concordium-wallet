@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class Toggle extends StatelessWidget {
   final bool isEnabled;
-  final Function(bool) setEnabled;
+  final Function(bool)? setEnabled;
 
-  Toggle({super.key, required this.isEnabled, required this.setEnabled});
+  Toggle({super.key, required this.isEnabled, this.setEnabled});
 
   final MaterialStateProperty<Icon?> icon = MaterialStateProperty.resolveWith<Icon?>(
     (states) => Icon(_iconData(states)),

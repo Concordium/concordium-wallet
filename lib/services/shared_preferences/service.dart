@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPreferencesService {
   /// String key associated with the persisted accepted T&C version.
   static const _tacAcceptedVersionKey = 'tac:accepted_version';
+  static const _passwordKey = 'password';
 
   /// Wrapped instance.
   final SharedPreferences _prefs;
@@ -21,5 +22,17 @@ class SharedPreferencesService {
   /// Deletes the currently accepted T&C version.
   Future<void> deleteTermsAndConditionsAcceptedVersion() async {
     await _prefs.remove(_tacAcceptedVersionKey);
+  }
+
+  /// Reads the password.
+  String? get password => _prefs.getString(_passwordKey);
+
+  /// Writes the password.
+  Future<void> writePassword(String password) async {
+    await _prefs.setString(_passwordKey, password);
+  }
+
+  Future<void> deletePassword() async {
+    await _prefs.remove(_passwordKey);
   }
 }
