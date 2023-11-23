@@ -19,3 +19,12 @@ See for example [`wallet_proxy/model.dart`](./lib/services/wallet_proxy/model.da
 which expands into [`wallet_proxy/model.g.dart`](./lib/services/wallet_proxy/model.g.dart).
 
 The generated class is checked into the repo, but imports always refer to the original one.
+
+## Licenses
+
+To see the allowed licenses, check out `scripts/license.yaml`.
+
+To get a (readable) list of the licenses of dependencies run:
+```
+dart run license_checker check-licenses --config scripts/license.yaml
+```
