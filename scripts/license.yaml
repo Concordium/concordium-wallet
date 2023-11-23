@@ -1,0 +1,14 @@
+permittedLicenses:
+  - MIT
+  - BSD-3-Clause
+
+rejectedLicenses:
+  - GPL
+  - GPL-1
+  - GPL-2
+  - GPL-3
+
+omitDisclaimer:
+  - flutter_test
+  - flutter_web_plugins 
+
