@@ -29,7 +29,7 @@ jobs:
 
             - run: dart pub get
 
-            - name: Check format
+            - name: Check licenses
               run: dart run scripts/check_license.dart
 
     analyze-format:

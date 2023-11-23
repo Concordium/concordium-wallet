@@ -81,23 +81,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-      ElevatedButton(
-        onPressed: () {
-          PackageInfo.fromPlatform().then((packageInfo) {
-              showAboutDialog(
-                context: context,
-                applicationName: packageInfo.appName,
-                applicationVersion: packageInfo.version,
-                applicationIcon: SvgPicture.asset(
-                    'assets/graphics/CCD.svg',
+                ElevatedButton(
+                  onPressed: () {
+                    PackageInfo.fromPlatform().then((packageInfo) {
+                      showAboutDialog(
+                        context: context,
+                        applicationName: packageInfo.appName,
+                        applicationVersion: packageInfo.version,
+                        applicationIcon: SvgPicture.asset(
+                          'assets/graphics/CCD.svg',
                           semanticsLabel: 'CCD Logo',
                         ),
-              );
-          });
-
-        },
-        child: const Text('Show About'),
-      ),
+                      );
+                    });
+                  },
+                  child: const Text('Show About'),
+                ),
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () => context.read<TermsAndConditionAcceptance>().testResetValidTime(),
