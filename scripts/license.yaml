@@ -1,6 +1,9 @@
 permittedLicenses:
   - MIT
   - BSD-3-Clause
+  - Apache-2.0
+  - MIT-Modern-Variant
+  - Zlib
 
 rejectedLicenses:
   - GPL
@@ -8,7 +11,11 @@ rejectedLicenses:
   - GPL-2
   - GPL-3
 
+packageLicenseOverride:
+  flutter_test: BSD-3-Clause
+  flutter_web_plugins: BSD-3-Clause
+
 omitDisclaimer:
   - flutter_test
-  - flutter_web_plugins 
+  - flutter_web_plugins
 
