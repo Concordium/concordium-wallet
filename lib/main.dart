@@ -83,7 +83,7 @@ class _WithServiceRepository extends StatefulWidget {
 }
 
 class _WithServiceRepositoryState extends State<_WithServiceRepository> {
-  Future<ServiceRepository>? _future;
+  late final Future<ServiceRepository> _future;
 
   @override
   void initState() {
@@ -123,7 +123,7 @@ class _WithSelectedNetwork extends StatefulWidget {
 }
 
 class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
-  Future<NetworkServices>? _future;
+  late final Future<NetworkServices> _future;
 
   @override
   void initState() {
