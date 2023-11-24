@@ -76,27 +76,27 @@ class App extends StatelessWidget {
 class _WithServiceRepository extends StatefulWidget {
   final Widget child;
 
-  const _WithServiceRepository({super.key, required this.child});
+  const _WithServiceRepository({required this.child});
 
   @override
   State<_WithServiceRepository> createState() => _WithServiceRepositoryState();
 }
 
 class _WithServiceRepositoryState extends State<_WithServiceRepository> {
-  late final Future<ServiceRepository> _future;
+  late final Future<ServiceRepository> _bootstrapping;
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _future = bootstrap();
+      _bootstrapping = bootstrap();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ServiceRepository>(
-      future: _future,
+      future: _bootstrapping,
       builder: (_, snapshot) {
         final services = snapshot.data;
         if (services == null) {
@@ -116,28 +116,28 @@ class _WithSelectedNetwork extends StatefulWidget {
   final NetworkName initialNetwork;
   final Widget child;
 
-  const _WithSelectedNetwork({super.key, required this.initialNetwork, required this.child});
+  const _WithSelectedNetwork({required this.initialNetwork, required this.child});
 
   @override
   State<_WithSelectedNetwork> createState() => _WithSelectedNetworkState();
 }
 
 class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
-  late final Future<NetworkServices> _future;
+  late final Future<NetworkServices> _activating;
 
   @override
   void initState() {
     super.initState();
     final services = context.read<ServiceRepository>();
     setState(() {
-      _future = services.activateNetwork(initialNetwork);
+      _activating = services.activateNetwork(initialNetwork);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _future,
+      future: _activating,
       builder: (_, snapshot) {
         final networkServices = snapshot.data;
         if (networkServices == null) {
