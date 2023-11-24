@@ -13,7 +13,7 @@ class StorageProvider {
     _registerAdapters();
     await _openBoxes();
 
-    return StorageProvider._(await Hive.openBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table));
+    return StorageProvider._(Hive.box<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table));
   }
 
   /// Register all adapters needed for typed boxes.

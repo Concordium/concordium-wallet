@@ -91,14 +91,14 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   void onChange(Change<TermsAndConditionsAcceptanceState> change) {
     super.onChange(change);
 
-    if (change.currentState == change.nextState) {
-      return;
+    if (change.currentState != change.nextState) {
+      // TODO: Pass success/failure status to notification service.
+      _persistAcceptedVersion(change.nextState.accepted);
     }
-    // TODO: Pass success/failure status to notification service.
-    _persistAcceptedVersionIfChanged(change.nextState.accepted);
+    
   }
 
-  Future<void> _persistAcceptedVersionIfChanged(AcceptedTermsAndConditions? nextAcceptedVersion) {
+  Future<void> _persistAcceptedVersion(AcceptedTermsAndConditions? nextAcceptedVersion) {
     if (nextAcceptedVersion == null) {
       return _storage.deleteTermsAndConditionsAcceptedVersion(networkName);
     }

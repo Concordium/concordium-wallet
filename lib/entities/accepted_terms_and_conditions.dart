@@ -8,9 +8,9 @@ part 'accepted_terms_and_conditions.g.dart';
 class AcceptedTermsAndConditions {
   static const table = "accepted_terms_and_conditions";
 
-  @HiveField(1)
+  @HiveField(0)
   final String acceptedVersion;
-  @HiveField(2)
+  @HiveField(1)
   final DateTime acceptedAt;
 
   AcceptedTermsAndConditions({required this.acceptedVersion, required this.acceptedAt});
