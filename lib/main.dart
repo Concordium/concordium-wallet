@@ -50,53 +50,108 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize configuration and service repository.
+    return _WithServiceRepository(
+      child: _WithSelectedNetwork(
+        initialNetwork: initialNetwork,
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) {
+                // Initialize T&C by loading the currently accepted version from shared preferences.
+                final prefs = context.read<ServiceRepository>().sharedPreferences;
+                return TermsAndConditionAcceptance(prefs);
+              },
+            ),
+          ],
+          child: MaterialApp(
+            routes: appRoutes,
+            theme: concordiumTheme(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WithServiceRepository extends StatefulWidget {
+  final Widget child;
+
+  const _WithServiceRepository({super.key, required this.child});
+
+  @override
+  State<_WithServiceRepository> createState() => _WithServiceRepositoryState();
+}
+
+class _WithServiceRepositoryState extends State<_WithServiceRepository> {
+  Future<ServiceRepository>? _future;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _future = bootstrap();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<ServiceRepository>(
-      future: bootstrap(),
+      future: _future,
       builder: (_, snapshot) {
         final services = snapshot.data;
         if (services == null) {
           // Initializing configuration and service repository.
           return const _Initializing();
         }
-        // Provide initialized service repository to the nested components
-        // (including the blocs created in the child provider).
-        // Then activate the initial network (starting services related to that network).
         return RepositoryProvider(
           create: (_) => services,
-          child: FutureBuilder(
-            future: services.activateNetwork(initialNetwork),
-            builder: (_, snapshot) {
-              final networkServices = snapshot.data;
-              if (networkServices == null) {
-                // Initializing network services.
-                return const _Initializing();
-              }
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
 
-              // Initialize blocs/cubits.
-              return MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (_) {
-                      // Initialize selected network as the one that was just activated.
-                      return SelectedNetwork(networkServices);
-                    },
-                  ),
-                  BlocProvider(
-                    create: (context) {
-                      // Initialize T&C by loading the currently accepted version from shared preferences.
-                      final prefs = context.read<ServiceRepository>().sharedPreferences;
-                      return TermsAndConditionAcceptance(prefs);
-                    },
-                  ),
-                ],
-                child: MaterialApp(
-                  routes: appRoutes,
-                  theme: concordiumTheme(),
-                ),
-              );
-            },
-          ),
+class _WithSelectedNetwork extends StatefulWidget {
+  final NetworkName initialNetwork;
+  final Widget child;
+
+  const _WithSelectedNetwork({super.key, required this.initialNetwork, required this.child});
+
+  @override
+  State<_WithSelectedNetwork> createState() => _WithSelectedNetworkState();
+}
+
+class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
+  Future<NetworkServices>? _future;
+
+  @override
+  void initState() {
+    super.initState();
+    final services = context.read<ServiceRepository>();
+    setState(() {
+      _future = services.activateNetwork(initialNetwork);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _future,
+      builder: (_, snapshot) {
+        final networkServices = snapshot.data;
+        if (networkServices == null) {
+          // Initializing network services.
+          return const _Initializing();
+        }
+
+        // Initialize blocs/cubits.
+        return BlocProvider(
+          create: (_) {
+            // Initialize selected network as the one that was just activated.
+            return SelectedNetwork(networkServices);
+          },
+          child: widget.child,
         );
       },
     );
