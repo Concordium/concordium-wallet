@@ -50,14 +50,18 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize configuration for the service repository and provide it to nested widgets.
     return _WithServiceRepository(
+      // Activate the initial network; i.e. start services related to that network and provide them to nested widgets.
       child: _WithSelectedNetwork(
         initialNetwork: initialNetwork,
+        // Initialize blocs/cubits that don't require async initialization.
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
               create: (context) {
-                // Initialize T&C by loading the currently accepted version from shared preferences.
+                // Initialize T&C by loading the currently accepted version from shared preferences
+                // (provided by '_WithServiceRepository').
                 final prefs = context.read<ServiceRepository>().sharedPreferences;
                 return TermsAndConditionAcceptance(prefs);
               },
@@ -128,6 +132,8 @@ class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
   @override
   void initState() {
     super.initState();
+    // Activate the initial network on the service repository
+    // (provided by '_WithServiceRepository').
     final services = context.read<ServiceRepository>();
     setState(() {
       _future = services.activateNetwork(initialNetwork);
@@ -145,7 +151,7 @@ class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
           return const _Initializing();
         }
 
-        // Initialize blocs/cubits.
+        // Register selected network.
         return BlocProvider(
           create: (_) {
             // Initialize selected network as the one that was just activated.
