@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/screens/home/about_button.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
@@ -5,8 +6,6 @@ import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -81,22 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    PackageInfo.fromPlatform().then((packageInfo) {
-                      showAboutDialog(
-                        context: context,
-                        applicationName: packageInfo.appName,
-                        applicationVersion: packageInfo.version,
-                        applicationIcon: SvgPicture.asset(
-                          'assets/graphics/CCD.svg',
-                          semanticsLabel: 'CCD Logo',
-                        ),
-                      );
-                    });
-                  },
-                  child: const Text('Show About'),
-                ),
+                const AboutButton(),
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () => context.read<TermsAndConditionAcceptance>().testResetValidTime(),

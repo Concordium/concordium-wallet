@@ -22,14 +22,14 @@ void main() async {
       required String packageName,
       required LicenseStatus licenseStatus,
     }) =>
-        '$packageName $licenseName ${licenseStatus.toString()}',
+        '$packageName - $licenseName',
   );
 
   if (lic.isNotEmpty) {
-    print('Unapproved licenses used!');
+    print('Unapproved licenses used, see below:');
     for (final x in lic) {
       print(x.display);
     }
-    throw "Unapproved licenses used!";
+    throw "Stopping due to unapproved licenses used!";
   }
 }
