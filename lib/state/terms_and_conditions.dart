@@ -95,7 +95,6 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
       // TODO: Pass success/failure status to notification service.
       _persistAcceptedVersion(change.nextState.accepted);
     }
-    
   }
 
   Future<void> _persistAcceptedVersion(AcceptedTermsAndConditions? nextAcceptedVersion) {
