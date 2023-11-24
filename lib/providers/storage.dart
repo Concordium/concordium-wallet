@@ -1,5 +1,4 @@
 import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
-import 'package:concordium_wallet/state/network.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Service for interacting with [Hive].
@@ -27,18 +26,5 @@ class StorageProvider {
     await Future.wait([atcFuture]);
   }
 
-  /// Reads the currently accepted T&C version.
-  AcceptedTermsAndConditions? getAcceptedTermsAndConditions(NetworkName networkName) {
-    return _acceptedTermsAndConditionBox.get(networkName.name);
-  }
-
-  /// Writes the currently accepted T&C version.
-  Future<void> writeAcceptedTermsAndConditions(NetworkName networkName, AcceptedTermsAndConditions acceptedTermsAndConditions) {
-    return _acceptedTermsAndConditionBox.put(networkName.name, acceptedTermsAndConditions);
-  }
-
-  /// Deletes the currently accepted T&C version.
-  Future<void> deleteTermsAndConditionsAcceptedVersion(NetworkName networkName) {
-    return _acceptedTermsAndConditionBox.delete(networkName.name);
-  }
+  Box<AcceptedTermsAndConditions> get acceptedTermsAndConditionBox => _acceptedTermsAndConditionBox;
 }

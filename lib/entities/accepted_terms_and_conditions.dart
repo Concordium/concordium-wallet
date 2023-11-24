@@ -1,4 +1,3 @@
-import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'accepted_terms_and_conditions.g.dart';
@@ -14,13 +13,4 @@ class AcceptedTermsAndConditions {
   final DateTime acceptedAt;
 
   AcceptedTermsAndConditions({required this.version, required this.acceptedAt});
-
-  factory AcceptedTermsAndConditions.acceptNow(String acceptedVersion) {
-    return AcceptedTermsAndConditions(version: acceptedVersion, acceptedAt: DateTime.now());
-  }
-
-  /// Whether the accepted version is valid with respect to the provided valid version.
-  bool isValid(TermsAndConditions tac) {
-    return version == tac.version;
-  }
 }
