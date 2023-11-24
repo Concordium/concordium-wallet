@@ -39,7 +39,7 @@ void main() {
     // Assert
     final actual = storage.getAcceptedTermsAndConditions(networkName);
     expect(actual, isNotNull);
-    expect(actual!.acceptedVersion, expectedVersion);
+    expect(actual!.version, expectedVersion);
   });
 
   test("When delete accepted terms and condition from storage, then empty", () async {

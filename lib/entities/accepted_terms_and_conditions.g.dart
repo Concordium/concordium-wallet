@@ -17,7 +17,7 @@ class AcceptedTermsAndConditionsAdapter extends TypeAdapter<AcceptedTermsAndCond
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AcceptedTermsAndConditions(
-      acceptedVersion: fields[1] as String,
+      version: fields[1] as String,
       acceptedAt: fields[2] as DateTime,
     );
   }
@@ -27,7 +27,7 @@ class AcceptedTermsAndConditionsAdapter extends TypeAdapter<AcceptedTermsAndCond
     writer
       ..writeByte(2)
       ..writeByte(1)
-      ..write(obj.acceptedVersion)
+      ..write(obj.version)
       ..writeByte(2)
       ..write(obj.acceptedAt);
   }

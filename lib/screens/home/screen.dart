@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (acceptedTac == null || !acceptedTac.isValid(validTac.termsAndConditions)) {
               return TermsAndConditionsScreen(
                 validTermsAndConditions: validTac.termsAndConditions,
-                acceptedTermsAndConditionsVersion: acceptedTac?.acceptedVersion,
+                acceptedTermsAndConditionsVersion: acceptedTac?.version,
                 urlLauncher: UrlLauncher(),
               );
             }
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Column(
                     children: [
-                      Text('Accepted T&C version: ${tacState.accepted?.acceptedVersion}'),
+                      Text('Accepted T&C version: ${tacState.accepted?.version}'),
                       Text('Valid T&C last refreshed at ${tacState.valid?.refreshedAt}.'),
                     ],
                   ),

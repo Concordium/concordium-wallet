@@ -9,18 +9,18 @@ class AcceptedTermsAndConditions {
   static const table = "accepted_terms_and_conditions";
 
   @HiveField(0)
-  final String acceptedVersion;
+  final String version;
   @HiveField(1)
   final DateTime acceptedAt;
 
-  AcceptedTermsAndConditions({required this.acceptedVersion, required this.acceptedAt});
+  AcceptedTermsAndConditions({required this.version, required this.acceptedAt});
 
   factory AcceptedTermsAndConditions.acceptNow(String acceptedVersion) {
-    return AcceptedTermsAndConditions(acceptedVersion: acceptedVersion, acceptedAt: DateTime.now());
+    return AcceptedTermsAndConditions(version: acceptedVersion, acceptedAt: DateTime.now());
   }
 
   /// Whether the accepted version is valid with respect to the provided valid version.
   bool isValid(TermsAndConditions tac) {
-    return acceptedVersion == tac.version;
+    return version == tac.version;
   }
 }
