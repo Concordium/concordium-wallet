@@ -31,7 +31,7 @@ class StorageProvider {
 }
 
 /// A bit modified DateTimeWithTimezoneAdapter (https://github.com/hivedb/hive/blob/master/hive/lib/src/adapters/date_time_adapter.dart#L25-L42)
-/// This adapter is relevant because by default, [Hive] only stores datetimes down to millisecond precision. 
+/// This adapter is relevant because by default, [Hive] only stores datetimes down to millisecond precision.
 /// It's derived from issue in link and proposed as a solution (https://github.com/isar/hive/issues/474#issuecomment-730562545).
 class PerciseDateTimeAdapter extends TypeAdapter<DateTime> {
   @override
