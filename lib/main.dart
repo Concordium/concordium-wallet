@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/providers/storage.dart';
@@ -83,9 +84,9 @@ class App extends StatelessWidget {
                   ),
                   BlocProvider(
                     create: (context) {
-                      // Initialize T&C by loading the currently accepted version from shared preferences.
-                      final prefs = context.read<ServiceRepository>().storage;
-                      return TermsAndConditionAcceptance(prefs, networkServices.network.name);
+                      // Initialize T&C by loading the currently accepted version.
+                      final storage = context.read<ServiceRepository>().storage;
+                      return TermsAndConditionAcceptance(TermsAndConditionsRepository(storageProvider: storage));
                     },
                   ),
                 ],

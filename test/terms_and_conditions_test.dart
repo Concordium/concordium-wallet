@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:concordium_wallet/entities/accepted_terms_and_conditions.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +25,7 @@ void main() {
     const String acceptedVersion = "1.0.0";
 
     setUpAll(() {
-      registerFallbackValue(AcceptedTermsAndConditions.acceptNow(validVersion));
+      registerFallbackValue(AcceptedTermsAndConditionsState.acceptNow(validVersion));
     });
 
     setUp(() {
@@ -34,7 +33,7 @@ void main() {
 
       final terms = TermsAndConditions(Uri.parse("localhost"), validVersion);
       state = TermsAndConditionsAcceptanceState(
-          accepted: AcceptedTermsAndConditions.acceptNow(acceptedVersion), valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms));
+          accepted: AcceptedTermsAndConditionsState.acceptNow(acceptedVersion), valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms));
 
       // Build the terms and condition screen we wish to test
       final rawTacScreen = TermsAndConditionsScreen(validTermsAndConditions: terms, urlLauncher: MockUrlLauncher());
