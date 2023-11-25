@@ -7,8 +7,7 @@ class TermsAndConditionsRepository {
 
   final StorageProvider _storageProvider;
 
-  const TermsAndConditionsRepository({required StorageProvider storageProvider}) 
-  : _storageProvider = storageProvider;
+  const TermsAndConditionsRepository({required StorageProvider storageProvider}) : _storageProvider = storageProvider;
 
   /// Reads the currently accepted T&C version.
   AcceptedTermsAndConditionsState? getAcceptedTermsAndConditions() {
