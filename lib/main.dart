@@ -180,9 +180,11 @@ class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndCondition
           if (snapshot.connectionState != ConnectionState.done) {
             return const _Initializing();
           }
-          return BlocProvider(create: (_) {
-            return TermsAndConditionAcceptance(_repository, snapshot.data);
-          });
+          return BlocProvider(
+              create: (_) {
+                return TermsAndConditionAcceptance(_repository, snapshot.data);
+              },
+              child: widget.child);
         });
   }
 }
