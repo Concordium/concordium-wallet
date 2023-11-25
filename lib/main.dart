@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/providers/storage.dart';
@@ -52,21 +53,11 @@ class App extends StatelessWidget {
     return _WithServiceRepository(
       child: _WithSelectedNetwork(
         initialNetwork: initialNetwork,
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) {
-                // Initialize T&C by loading the currently accepted version from shared preferences.
-                final prefs = context.read<ServiceRepository>().sharedPreferences;
-                return TermsAndConditionAcceptance(prefs);
-              },
-            ),
-          ],
-          child: MaterialApp(
-            routes: appRoutes,
-            theme: concordiumTheme(),
-          ),
-        ),
+        child: _WithTermsAndConditionAcceptance(
+            child: MaterialApp(
+          routes: appRoutes,
+          theme: concordiumTheme(),
+        )),
       ),
     );
   }
@@ -154,6 +145,45 @@ class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
         );
       },
     );
+  }
+}
+
+class _WithTermsAndConditionAcceptance extends StatefulWidget {
+  final Widget child;
+
+  const _WithTermsAndConditionAcceptance({required this.child});
+
+  @override
+  State<_WithTermsAndConditionAcceptance> createState() => _WithTermsAndConditionAcceptanceState();
+}
+
+class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndConditionAcceptance> {
+  late final Future<AcceptedTermsAndConditionsState?> _lastAccepted;
+  late final TermsAndConditionsRepository _repository;
+
+  @override
+  void initState() {
+    super.initState();
+    final storage = context.read<ServiceRepository>().storage;
+    setState(() {
+      _repository = TermsAndConditionsRepository(storageProvider: storage);
+      _lastAccepted = _repository.getAcceptedTermsAndConditions();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: _lastAccepted,
+        builder: (_, snapshot) {
+          // Check on the connection state since last accepted possible null
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const _Initializing();
+          }
+          return BlocProvider(create: (_) {
+            return TermsAndConditionAcceptance(_repository, snapshot.data);
+          });
+        });
   }
 }
 

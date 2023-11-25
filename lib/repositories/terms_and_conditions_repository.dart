@@ -10,8 +10,8 @@ class TermsAndConditionsRepository {
   const TermsAndConditionsRepository({required StorageProvider storageProvider}) : _storageProvider = storageProvider;
 
   /// Reads the currently accepted T&C version.
-  AcceptedTermsAndConditionsState? getAcceptedTermsAndConditions() {
-    var model = _storageProvider.acceptedTermsAndConditionBox.get(key);
+  Future<AcceptedTermsAndConditionsState?> getAcceptedTermsAndConditions() async {
+    var model = await _storageProvider.acceptedTermsAndConditionBox.get(key);
     return _toState(model);
   }
 

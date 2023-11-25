@@ -56,8 +56,8 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   /// Service used to persist the accepted T&C version.
   final TermsAndConditionsRepository _termsAndConditionRepo;
 
-  TermsAndConditionAcceptance(this._termsAndConditionRepo) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
-    final acceptedVersion = _termsAndConditionRepo.getAcceptedTermsAndConditions();
+  TermsAndConditionAcceptance(this._termsAndConditionRepo, AcceptedTermsAndConditionsState? acceptedVersion)
+      : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
     if (acceptedVersion != null) {
       userAccepted(acceptedVersion);
     }

@@ -26,7 +26,7 @@ void main() {
 
   tearDownAll(() => Hive.deleteFromDisk());
 
-  tearDown(() => Hive.box<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).clear());
+  tearDown(() => Hive.lazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).clear());
 
   test('When add accepted terms and condition to storage, then saved', () async {
     // Arrange
@@ -37,7 +37,7 @@ void main() {
     await repository.writeAcceptedTermsAndConditions(accepted);
 
     // Assert
-    final actual = repository.getAcceptedTermsAndConditions();
+    final actual = await repository.getAcceptedTermsAndConditions();
     expect(actual, isNotNull);
     expect(actual!.version, expectedVersion);
   });
@@ -47,13 +47,13 @@ void main() {
     const expectedVersion = "0.0.42";
     final accepted = AcceptedTermsAndConditionsState.acceptNow(expectedVersion);
     await repository.writeAcceptedTermsAndConditions(accepted);
-    expect(Hive.box<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).get(TermsAndConditionsRepository.key), isNotNull);
+    expect(await Hive.lazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).get(TermsAndConditionsRepository.key), isNotNull);
 
     // Act
     await repository.deleteTermsAndConditionsAcceptedVersion();
 
     // Assert
-    final actual = repository.getAcceptedTermsAndConditions();
+    final actual = await repository.getAcceptedTermsAndConditions();
     expect(actual, null);
   });
 
@@ -64,13 +64,13 @@ void main() {
     final oldAccepted = AcceptedTermsAndConditionsState.acceptNow(oldVersion);
     final newAccepted = AcceptedTermsAndConditionsState.acceptNow(newVersion);
     await repository.writeAcceptedTermsAndConditions(oldAccepted);
-    expect(Hive.box<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).get(TermsAndConditionsRepository.key), isNotNull);
+    expect(await Hive.lazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).get(TermsAndConditionsRepository.key), isNotNull);
 
     // Act
     await repository.writeAcceptedTermsAndConditions(newAccepted);
 
     // Assert
-    final actual = repository.getAcceptedTermsAndConditions();
+    final actual = await repository.getAcceptedTermsAndConditions();
     expect(actual, isNotNull);
     expect(actual!.acceptedAt, newAccepted.acceptedAt);
     expect(actual.version, newAccepted.version);
