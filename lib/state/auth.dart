@@ -55,7 +55,7 @@ class Auth extends Cubit<AuthState> {
   void _setAuthenticated(bool authenticated) {
     emit(AuthState(authenticated));
   }
-  
+
   Future<bool> setPassword(String password) async {
     await _prefs.writePassword(password);
     // Automatically authenticate the user.

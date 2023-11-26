@@ -8,6 +8,7 @@ enum WalletProxyEndpoint {
   termsAndConditionsVersion('v0/termsAndConditionsVersion'),
   ;
 
+  /// URL path of the endpoint.
   final String path;
 
   const WalletProxyEndpoint(this.path);

@@ -17,16 +17,18 @@ void main() {
   runApp(const App());
 }
 
+const testnetNetwork = Network(
+  name: NetworkName.testnet,
+  walletProxyConfig: WalletProxyConfig(
+    baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+  ),
+);
+
 /// Load fundamental configuration from the source of truth.
 Future<Config> loadConfig(HttpService http) async {
   // In the future, this will be loaded from a proper source rather than being hardcoded.
   return Config.ofNetworks([
-    const Network(
-      name: NetworkName.testnet,
-      walletProxyConfig: WalletProxyConfig(
-        baseUrl: 'https://wallet-proxy.testnet.concordium.com',
-      ),
-    ),
+    testnetNetwork,
   ]);
 }
 
@@ -51,9 +53,9 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize configuration and service repository.
-    return _WithBootstrap(
-      child: _WithInitialNetwork(
+    return _WithServiceRepository(
+      child: _WithSelectedNetwork(
+        initialNetwork: initialNetwork,
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
@@ -81,17 +83,17 @@ class App extends StatelessWidget {
   }
 }
 
-class _WithBootstrap extends StatefulWidget {
+class _WithServiceRepository extends StatefulWidget {
   final Widget child;
 
-  const _WithBootstrap({super.key, required this.child});
+  const _WithServiceRepository({required this.child});
 
   @override
-  State<_WithBootstrap> createState() => _WithBootstrapState();
+  State<_WithServiceRepository> createState() => _WithServiceRepositoryState();
 }
 
-class _WithBootstrapState extends State<_WithBootstrap> {
-  Future<ServiceRepository>? _bootstrapping;
+class _WithServiceRepositoryState extends State<_WithServiceRepository> {
+  late final Future<ServiceRepository> _bootstrapping;
 
   @override
   void initState() {
@@ -107,14 +109,10 @@ class _WithBootstrapState extends State<_WithBootstrap> {
       future: _bootstrapping,
       builder: (_, snapshot) {
         final services = snapshot.data;
-        // print('services = $services');
         if (services == null) {
           // Initializing configuration and service repository.
           return const _Initializing();
         }
-        // Provide initialized service repository to the nested components
-        // (including the blocs created in the child provider).
-        // Then activate the initial network (starting services related to that network).
         return RepositoryProvider(
           create: (_) => services,
           child: widget.child,
@@ -124,41 +122,42 @@ class _WithBootstrapState extends State<_WithBootstrap> {
   }
 }
 
-class _WithInitialNetwork extends StatefulWidget {
+class _WithSelectedNetwork extends StatefulWidget {
+  final NetworkName initialNetwork;
   final Widget child;
 
-  const _WithInitialNetwork({super.key, required this.child});
+  const _WithSelectedNetwork({required this.initialNetwork, required this.child});
 
   @override
-  State<_WithInitialNetwork> createState() => _WithInitialNetworkState();
+  State<_WithSelectedNetwork> createState() => _WithSelectedNetworkState();
 }
 
-class _WithInitialNetworkState extends State<_WithInitialNetwork> {
-  Future<NetworkServices>? _future;
+class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
+  late final Future<NetworkServices> _activating;
 
   @override
   void initState() {
     super.initState();
     final services = context.read<ServiceRepository>();
     setState(() {
-      _future = services.activateNetwork(initialNetwork);
+      _activating = services.activateNetwork(initialNetwork);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _future,
+      future: _activating,
       builder: (_, snapshot) {
         final networkServices = snapshot.data;
-        // print('snapshot = $snapshot');
         if (networkServices == null) {
           // Initializing network services.
-          // print('initializing 2');
           return const _Initializing();
         }
+
+        // Initialize blocs/cubits.
         return BlocProvider(
-          create: (context) {
+          create: (_) {
             // Initialize selected network as the one that was just activated.
             return SelectedNetwork(networkServices);
           },

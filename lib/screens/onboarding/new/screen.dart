@@ -20,7 +20,7 @@ class OnboardingNewScreen extends StatefulWidget {
 class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
   final _passwordController1 = TextEditingController();
   final _passwordController2 = TextEditingController();
-  
+
   var _password1 = '';
   var _password2 = '';
 
