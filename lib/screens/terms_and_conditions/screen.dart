@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+// TODO: Remove once tests have been migrated!
 class TermsAndConditionsScreen extends StatefulWidget {
   final TermsAndConditions validTermsAndConditions;
   final String? acceptedTermsAndConditionsVersion;

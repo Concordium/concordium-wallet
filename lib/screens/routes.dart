@@ -17,7 +17,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/onboarding/new',
-      builder: (context, state) => const OnboardingNewScreen(),
+      builder: (context, state) => const OnboardingNewWalletScreen(),
     ),
     GoRoute(
       path: '/onboarding/recover',

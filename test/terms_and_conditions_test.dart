@@ -1,13 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
+import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/widgets/toggle_accepted.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
-import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'helpers.dart';
 
@@ -33,8 +33,9 @@ void main() {
 
       final terms = TermsAndConditions(Uri.parse("localhost"), validVersion);
       state = TermsAndConditionsAcceptanceState(
-          accepted: const AcceptedTermsAndConditions(version: acceptedVersion),
-          valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms));
+        accepted: const AcceptedTermsAndConditions(version: acceptedVersion),
+        valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms),
+      );
 
       // Build the terms and condition screen we wish to test
       final rawTacScreen = TermsAndConditionsScreen(validTermsAndConditions: terms, urlLauncher: MockUrlLauncher());
