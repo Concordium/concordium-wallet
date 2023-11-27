@@ -35,7 +35,7 @@ class StorageProvider {
 /// It's derived from issue in link and proposed as a solution (https://github.com/isar/hive/issues/474#issuecomment-730562545).
 class PerciseDateTimeAdapter extends TypeAdapter<DateTime> {
   @override
-  final typeId = 18;
+  final typeId = 0;
 
   @override
   DateTime read(BinaryReader reader) {
