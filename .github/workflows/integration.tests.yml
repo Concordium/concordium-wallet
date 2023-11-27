@@ -68,5 +68,4 @@ jobs:
           channel: 'stable'
           cache: true
       - uses: nanasess/setup-chromedriver@v2
-      # TODO find a nice way to run all integration test files
-      - run: chromedriver --port=4444 & flutter drive --driver=test_driver/integration_test.dart --target=integration_test/tac_test.dart -d web-server
+      - run: chromedriver --port=4444 & ./integration_test/run_tests.sh
