@@ -18,7 +18,7 @@ class StorageProvider {
   /// Register all adapters needed for typed boxes.
   static void _registerAdapters() {
     Hive.registerAdapter(AcceptedTermsAndConditionsAdapter());
-    Hive.registerAdapter(PerciseDateTimeAdapter(), override: true, internal: true);
+    Hive.registerAdapter(PreciseDateTimeAdapter(), override: true, internal: true);
   }
 
   /// Opens all boxes asynchronously.
@@ -30,12 +30,13 @@ class StorageProvider {
   LazyBox<AcceptedTermsAndConditions> get acceptedTermsAndConditionBox => _acceptedTermsAndConditionBox;
 }
 
-/// A bit modified DateTimeWithTimezoneAdapter (https://github.com/hivedb/hive/blob/master/hive/lib/src/adapters/date_time_adapter.dart#L25-L42)
+/// A bit modified DateTimeWithTimezoneAdapter (https://github.com/isar/hive/blob/470473ffc1ba39f6c90f31ababe0ee63b76b69fe/hive/lib/src/adapters/date_time_adapter.dart#L25)
 /// This adapter is relevant because by default, [Hive] only stores datetimes down to millisecond precision.
 /// It's derived from issue in link and proposed as a solution (https://github.com/isar/hive/issues/474#issuecomment-730562545).
-class PerciseDateTimeAdapter extends TypeAdapter<DateTime> {
+/// The type ID needs to be 18 as it's required to overwrite the existing one registered. (https://github.com/isar/hive/blob/470473ffc1ba39f6c90f31ababe0ee63b76b69fe/hive/lib/src/adapters/date_time_adapter.dart#L28). 
+class PreciseDateTimeAdapter extends TypeAdapter<DateTime> {
   @override
-  final typeId = 0;
+  final typeId = 18;
 
   @override
   DateTime read(BinaryReader reader) {
