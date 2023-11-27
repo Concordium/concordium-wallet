@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/screens/onboarding/new/terms_and_conditions_content_widget.dart';
 import 'package:concordium_wallet/screens/onboarding/page.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/auth.dart';
@@ -191,7 +192,35 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            _launchUrl(validTac.termsAndConditions.url);
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              useSafeArea: true,
+                              builder: (context) => Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        const Text(
+                                          'Terms and Conditions',
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: () => Navigator.pop(context),
+                                        ),
+                                      ],
+                                    ),
+                                    Expanded(child: TermsAndConditionsContentWidget(url: validTac.termsAndConditions.url)),
+                                  ],
+                                ),
+                              ),
+                            );
                           },
                           child: RichText(
                             text: TextSpan(
@@ -237,16 +266,6 @@ class _OnboardingNewScreenState extends State<OnboardingNewScreen> {
         },
       ),
     );
-  }
-
-  // TODO: Open in modal instead.
-  void _launchUrl(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      // TODO: If this fails, open a dialog with the URL so the user can visit it manually.
-      throw 'Could not launch $url';
-    }
   }
 
   @override

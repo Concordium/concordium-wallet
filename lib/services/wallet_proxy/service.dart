@@ -5,8 +5,7 @@ import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 
 /// Paths of the wallet-proxy endpoints.
 enum WalletProxyEndpoint {
-  termsAndConditionsVersion('v0/termsAndConditionsVersion'),
-  ;
+  termsAndConditionsVersion('v0/termsAndConditionsVersion');
 
   /// URL path of the endpoint.
   final String path;
