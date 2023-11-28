@@ -8,6 +8,7 @@ import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/theme.dart';
+import 'package:concordium_wallet/types/future_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -158,7 +159,7 @@ class _WithTermsAndConditionAcceptance extends StatefulWidget {
 }
 
 class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndConditionAcceptance> {
-  late final Future<AcceptedTermsAndConditionsState?> _lastAccepted;
+  late final Future<FutureValue<AcceptedTermsAndConditionsState?>> _lastAccepted;
   late final TermsAndConditionsRepository _repository;
 
   @override
@@ -167,7 +168,7 @@ class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndCondition
     final storage = context.read<ServiceRepository>().storage;
     setState(() {
       _repository = TermsAndConditionsRepository(storageProvider: storage);
-      _lastAccepted = _repository.getAcceptedTermsAndConditions();
+      _lastAccepted = _repository.getAcceptedTermsAndConditions().then((value) => FutureValue(value));
     });
   }
 
@@ -177,12 +178,12 @@ class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndCondition
         future: _lastAccepted,
         builder: (_, snapshot) {
           // Check on the connection state since last accepted possible null
-          if (snapshot.connectionState != ConnectionState.done) {
+          if (snapshot.data == null) {
             return const _Initializing();
           }
           return BlocProvider(
               create: (_) {
-                return TermsAndConditionAcceptance(_repository, snapshot.data);
+                return TermsAndConditionAcceptance(_repository, snapshot.data!.value);
               },
               child: widget.child);
         });
