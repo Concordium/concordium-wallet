@@ -1,13 +1,18 @@
-import 'package:concordium_wallet/services/shared_preferences/service.dart';
+import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Version of the Terms & Conditions accepted by the user.
-class AcceptedTermsAndConditions {
+class AcceptedTermsAndConditionsState {
   /// Accepted version.
   final String version;
+  final DateTime acceptedAt;
 
-  const AcceptedTermsAndConditions({required this.version});
+  const AcceptedTermsAndConditionsState({required this.version, required this.acceptedAt});
+
+  factory AcceptedTermsAndConditionsState.acceptNow(String acceptedVersion) {
+    return AcceptedTermsAndConditionsState(version: acceptedVersion, acceptedAt: DateTime.now());
+  }
 
   /// Whether the accepted version is valid with respect to the provided valid version.
   bool isValid(TermsAndConditions tac) {
@@ -37,8 +42,8 @@ class ValidTermsAndConditions {
 class TermsAndConditionsAcceptanceState {
   /// Currently accepted T&C.
   ///
-  /// The accepted version is persisted into shared preferences.
-  final AcceptedTermsAndConditions? accepted;
+  /// The accepted version persisted.
+  final AcceptedTermsAndConditionsState? accepted;
 
   /// Currently valid T&C.
   final ValidTermsAndConditions? valid;
@@ -49,19 +54,19 @@ class TermsAndConditionsAcceptanceState {
 /// State component of the currently accepted and valid Terms & Conditions.
 class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceState> {
   /// Service used to persist the accepted T&C version.
-  final SharedPreferencesService _prefs;
+  final TermsAndConditionsRepository _termsAndConditionRepo;
 
-  TermsAndConditionAcceptance(this._prefs) : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
-    final acceptedVersion = _prefs.termsAndConditionsAcceptedVersion;
+  TermsAndConditionAcceptance(this._termsAndConditionRepo, AcceptedTermsAndConditionsState? acceptedVersion)
+      : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
     if (acceptedVersion != null) {
-      userAccepted(AcceptedTermsAndConditions(version: acceptedVersion));
+      userAccepted(acceptedVersion);
     }
   }
 
   /// Update the currently accepted T&C and persist the new value.
   ///
   /// Use [resetAccepted] to revoke acceptance.
-  void userAccepted(AcceptedTermsAndConditions tac) {
+  void userAccepted(AcceptedTermsAndConditionsState tac) {
     emit(TermsAndConditionsAcceptanceState(accepted: tac, valid: state.valid));
   }
 
@@ -101,17 +106,16 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   void onChange(Change<TermsAndConditionsAcceptanceState> change) {
     super.onChange(change);
 
-    // TODO: Pass success/failure status to notification service.
-    _persistAcceptedVersionIfChanged(change.nextState.accepted?.version, change.currentState.accepted?.version);
+    if (change.currentState != change.nextState) {
+      // TODO: Pass success/failure status to notification service.
+      _persistAcceptedVersion(change.nextState.accepted);
+    }
   }
 
-  Future<void> _persistAcceptedVersionIfChanged(String? nextAcceptedVersion, String? currentAcceptedVersion) {
-    if (nextAcceptedVersion == currentAcceptedVersion) {
-      return Future.value();
-    }
+  Future<void> _persistAcceptedVersion(AcceptedTermsAndConditionsState? nextAcceptedVersion) {
     if (nextAcceptedVersion == null) {
-      return _prefs.deleteTermsAndConditionsAcceptedVersion();
+      return _termsAndConditionRepo.deleteTermsAndConditionsAcceptedVersion();
     }
-    return _prefs.writeTermsAndConditionsAcceptedVersion(nextAcceptedVersion);
+    return _termsAndConditionRepo.writeAcceptedTermsAndConditions(nextAcceptedVersion);
   }
 }

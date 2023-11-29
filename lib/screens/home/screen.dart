@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () {
-                    const tac = AcceptedTermsAndConditions(version: '1.2.3');
+                    final tac = AcceptedTermsAndConditionsState.acceptNow('1.2.3');
                     context.read<TermsAndConditionAcceptance>().userAccepted(tac);
                   },
                   child: const Text('Set accepted T&C version to 1.2.3'),
