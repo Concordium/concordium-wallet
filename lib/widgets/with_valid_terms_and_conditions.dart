@@ -17,7 +17,16 @@ class WithValidTermsAndConditions extends StatefulWidget {
 class _WithValidTermsAndConditionsState extends State<WithValidTermsAndConditions> {
   late final Future<ValidTermsAndConditions> _updating;
 
-  static Future<ValidTermsAndConditions> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
+  static Future<ValidTermsAndConditions> _updateValidTac(
+    WalletProxyService walletProxy,
+    TermsAndConditionAcceptance tacAcceptance,
+    DateTime latestValidTime,
+  ) async {
+    final validTac = tacAcceptance.state.valid;
+    // Reuse any existing value if it's newer than the latest valid time.
+    if (validTac != null && validTac.refreshedAt.isAfter(latestValidTime)) {
+      return Future.value(validTac);
+    }
     final tac = await walletProxy.fetchTermsAndConditions();
     final result = ValidTermsAndConditions.refreshedNow(termsAndConditions: tac);
     tacAcceptance.validVersionUpdated(result);
@@ -30,13 +39,11 @@ class _WithValidTermsAndConditionsState extends State<WithValidTermsAndCondition
     final network = context.read<SelectedNetwork>().state;
     final tacAcceptance = context.read<TermsAndConditionAcceptance>();
 
-    // Reload if there's no existing value or if it's older than 'maxAge'.
-    final validTac = tacAcceptance.state.valid;
-    if (validTac == null || validTac.refreshedAt.isBefore(DateTime.now().subtract(widget.maxAge))) {
-      _updating = _updateValidTac(network.services.walletProxy, tacAcceptance);
-    } else {
-      _updating = Future.value(validTac);
-    }
+    _updating = _updateValidTac(
+      network.services.walletProxy,
+      tacAcceptance,
+      DateTime.now().subtract(widget.maxAge),
+    );
   }
 
   @override
@@ -44,6 +51,7 @@ class _WithValidTermsAndConditionsState extends State<WithValidTermsAndCondition
     return FutureBuilder<ValidTermsAndConditions>(
       future: _updating,
       builder: (context, snapshot) {
+        // TODO: Handle error.
         final validTac = snapshot.data;
         if (validTac == null) {
           return const Column(

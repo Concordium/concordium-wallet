@@ -14,7 +14,7 @@ class TermsAndConditionsContentWidget extends StatefulWidget {
 
 class _TermsAndConditionsContentWidgetState extends State<TermsAndConditionsContentWidget> {
   static final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
-    Factory(() => EagerGestureRecognizer())
+    Factory(() => EagerGestureRecognizer()),
   };
 
   final _tacContentWebViewController = WebViewController()

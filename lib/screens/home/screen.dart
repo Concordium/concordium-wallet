@@ -58,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         final authentication = context.read<Authentication>();
                         await services.auth.resetPassword();
                         authentication.setAuthenticated(false);
-
                       },
                       child: const Text('Reset password'),
                     ),
