@@ -1,0 +1,38 @@
+name: Build and release
+
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:
+      - '*' # Push events to every tag not containing /
+
+    # Allows us to run the workflow manually from the Actions tab
+    workflow_dispatch:
+
+env:
+    flutter_version: 3.13.6
+
+jobs:
+    chrome-extension-build-and-upload:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        - name: Setup Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            flutter-version: ${{ env.flutter_version }}
+            channel: 'stable'
+            cache: true
+        - name: Download pub dependencies
+          run: flutter pub get
+        - name: Build Extension
+          run: flutter build web --web-renderer html --csp --release
+        - name: Upload Bundle
+          uses: actions/upload-artifact@v3
+          with:
+            name: concordium-wallet-web-${{ github.ref_name }}
+            # We package everything except the canvaskit, which we don't use
+            path: |
+              "${{github.workspace}}/build/web/"
+              !"${{github.workspace}}/build/web/canvaskit"

@@ -19,3 +19,13 @@ See for example [`wallet_proxy/model.dart`](./lib/services/wallet_proxy/model.da
 which expands into [`wallet_proxy/model.g.dart`](./lib/services/wallet_proxy/model.g.dart).
 
 The generated class is checked into the repo, but imports always refer to the original one.
+
+
+## Chrome extension
+
+To build the wallet as a chrome extension, run:
+```shell
+flutter build web --web-renderer html --csp
+```
+Then the `build/web/` directory will contain the files for the extension.
+This folder should be chosen to "load-unpacked" the extension in chrome, and can be zipped for submitting to the chrome store.
