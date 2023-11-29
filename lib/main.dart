@@ -168,7 +168,7 @@ class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndCondition
     final storage = context.read<ServiceRepository>().storage;
     setState(() {
       _repository = TermsAndConditionsRepository(storageProvider: storage);
-      _lastAccepted = _repository.getAcceptedTermsAndConditions().then((value) => FutureValue(value));
+      _lastAccepted = _repository.getAcceptedTermsAndConditions().then(FutureValue.new);
     });
   }
 
@@ -177,15 +177,16 @@ class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndCondition
     return FutureBuilder(
         future: _lastAccepted,
         builder: (_, snapshot) {
-          // Check on the connection state since last accepted possible null
-          if (snapshot.data == null) {
-            return const _Initializing();
+          if (snapshot.data != null) {
+            return BlocProvider(
+                create: (_) {
+                  return TermsAndConditionAcceptance(_repository, snapshot.requireData.value);
+                },
+                child: widget.child);
+          } else if (snapshot.hasError) {
+            // TODO Handle error
           }
-          return BlocProvider(
-              create: (_) {
-                return TermsAndConditionAcceptance(_repository, snapshot.data!.value);
-              },
-              child: widget.child);
+          return const _Initializing();
         });
   }
 }
