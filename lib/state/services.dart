@@ -50,7 +50,6 @@ class ServiceRepository {
   /// The services for interacting with the network are initialized using the global configuration.
   /// Once the future completes, the services may be looked up by the network name in [activeNetworks].
   Future<NetworkServices> activateNetwork(NetworkName name) async {
-    print('activating network');
     if (activeNetworks.containsKey(name)) {
       throw Exception('network is already active');
     }

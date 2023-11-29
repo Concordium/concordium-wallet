@@ -113,8 +113,8 @@ class _WithServiceRepositoryState extends State<_WithServiceRepository> {
           // Initializing configuration and service repository.
           return const _Initializing();
         }
-        return RepositoryProvider(
-          create: (_) => services,
+        return RepositoryProvider.value(
+          value: services,
           child: widget.child,
         );
       },
