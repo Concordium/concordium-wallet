@@ -5,19 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class WithValidTermsAndConditions extends StatefulWidget {
+  final Duration maxAge;
   final Widget Function(ValidTermsAndConditions) builder;
 
-  const WithValidTermsAndConditions({super.key, required this.builder});
+  const WithValidTermsAndConditions({super.key, this.maxAge = const Duration(minutes: 10), required this.builder});
 
   @override
   State<WithValidTermsAndConditions> createState() => _WithValidTermsAndConditionsState();
 }
 
 class _WithValidTermsAndConditionsState extends State<WithValidTermsAndConditions> {
+  late final Future<ValidTermsAndConditions> _updating;
 
-  static Future<void> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
+  static Future<ValidTermsAndConditions> _updateValidTac(WalletProxyService walletProxy, TermsAndConditionAcceptance tacAcceptance) async {
     final tac = await walletProxy.fetchTermsAndConditions();
-    tacAcceptance.validVersionUpdated(ValidTermsAndConditions.refreshedNow(termsAndConditions: tac));
+    final result = ValidTermsAndConditions.refreshedNow(termsAndConditions: tac);
+    tacAcceptance.validVersionUpdated(result);
+    return result;
   }
 
   @override
@@ -25,17 +29,23 @@ class _WithValidTermsAndConditionsState extends State<WithValidTermsAndCondition
     super.initState();
     final network = context.read<SelectedNetwork>().state;
     final tacAcceptance = context.read<TermsAndConditionAcceptance>();
-    _updateValidTac(network.services.walletProxy, tacAcceptance);
+
+    // Reload if there's no existing value or if it's older than 'maxAge'.
+    final validTac = tacAcceptance.state.valid;
+    if (validTac == null || validTac.refreshedAt.isBefore(DateTime.now().subtract(widget.maxAge))) {
+      _updating = _updateValidTac(network.services.walletProxy, tacAcceptance);
+    } else {
+      _updating = Future.value(validTac);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TermsAndConditionAcceptance, TermsAndConditionsAcceptanceState>(
-      builder: (context, tacState) {
-        final validTac = tacState.valid;
+    return FutureBuilder<ValidTermsAndConditions>(
+      future: _updating,
+      builder: (context, snapshot) {
+        final validTac = snapshot.data;
         if (validTac == null) {
-          // Show spinner if no valid T&C have been resolved yet (not as a result of actually ongoing fetch).
-          // Should store the future from '_updateValidTac' and use that in a wrapping 'FutureBuilder'..?
           return const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -45,7 +55,6 @@ class _WithValidTermsAndConditionsState extends State<WithValidTermsAndCondition
             ],
           );
         }
-
         return widget.builder(validTac);
       },
     );

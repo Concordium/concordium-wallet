@@ -25,7 +25,7 @@ class _OnboardingStartScreenState extends State<OnboardingStartScreen> {
     final auth = context.read<ServiceRepository>().auth;
     if (auth.canAuthenticate() && tacState.accepted != null) {
       // Onboarding is already complete; navigate straight to home screen.
-      Future(() => context.push('/home'));
+      Future(() => context.go('/home')); // using 'go' instead of 'push' to disallow going back
     }
   }
 

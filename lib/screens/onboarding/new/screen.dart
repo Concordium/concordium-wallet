@@ -1,4 +1,4 @@
-import 'package:concordium_wallet/screens/onboarding/new/refresh.dart';
+import 'package:concordium_wallet/widgets/with_valid_terms_and_conditions.dart';
 import 'package:concordium_wallet/screens/onboarding/new/terms_and_conditions_content_widget.dart';
 import 'package:concordium_wallet/screens/onboarding/page.dart';
 import 'package:concordium_wallet/state/auth.dart';
@@ -24,6 +24,7 @@ class OnboardingNewWalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OnboardingPage(
+      title: 'Security',
       body: WithValidTermsAndConditions(
         builder: (tac) {
           return OnboardingNewWalletForm(
@@ -47,7 +48,7 @@ class OnboardingNewWalletScreen extends StatelessWidget {
 
               // Navigate to home screen (mount check necessary because we're awaiting the password set above).
               if (!context.mounted) return;
-              context.push('/home'); // TODO: Using go would remove ability to go back?
+              context.go('/home'); // using 'go' instead of 'push' to disallow going back
             },
           );
         },
