@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 class SetupWalletData {
   final String password;
   final bool enableBiometrics;
-  final AcceptedTermsAndConditions acceptedTermsAndConditions;
+  final AcceptedTermsAndConditionsState acceptedTermsAndConditions;
 
   const SetupWalletData({required this.password, required this.enableBiometrics, required this.acceptedTermsAndConditions});
 }
@@ -124,8 +124,8 @@ class _OnboardingNewWalletFormState extends State<OnboardingNewWalletForm> {
         SetupWalletData(
           password: password,
           enableBiometrics: _isEnableBiometricsChecked,
-          acceptedTermsAndConditions: AcceptedTermsAndConditions(
-            version: widget.validTermsAndConditions.termsAndConditions.version,
+          acceptedTermsAndConditions: AcceptedTermsAndConditionsState.acceptNow(
+            widget.validTermsAndConditions.termsAndConditions.version,
           ),
         ),
       );

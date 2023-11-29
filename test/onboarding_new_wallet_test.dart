@@ -1,17 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:concordium_wallet/screens/onboarding/new/screen.dart';
-import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state/auth.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 
 import 'helpers.dart';
-
-class MockUrlLauncher extends Mock implements UrlLauncher {}
 
 class MockTACCubit extends MockCubit<TermsAndConditionsAcceptanceState> implements TermsAndConditionAcceptance {}
 

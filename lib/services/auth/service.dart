@@ -1,12 +1,12 @@
-import 'package:concordium_wallet/services/shared_preferences/service.dart';
+import 'package:concordium_wallet/services/secure_storage/service.dart';
 
 class AuthenticationService {
-  final SharedPreferencesService _prefs;
+  final SecureStorageService _secureStorage;
 
-  const AuthenticationService(this._prefs);
+  const AuthenticationService(this._secureStorage);
 
-  String _loadActualPassword() {
-    final res = _prefs.password;
+  Future<String> _loadActualPassword() async {
+    final res = await _secureStorage.password;
     if (res == null) {
       throw Exception("no password has been set");
     }
@@ -14,9 +14,9 @@ class AuthenticationService {
   }
 
   /// Check whether a password has been stored.
-  bool canAuthenticate() {
+  Future<bool> canAuthenticate() async {
     try {
-      _loadActualPassword();
+      await _loadActualPassword();
       return true;
     } catch (_) {
       return false;
@@ -26,18 +26,18 @@ class AuthenticationService {
   /// Attempts to authenticate the user using the provided password.
   /// Returns true if authentication was successful.
   /// Throws an exception if there's no persisted password to authenticate against.
-  bool authenticate(String providedPassword) {
-    final actualPassword = _loadActualPassword();
+  Future<bool> authenticate(String providedPassword) async {
+    final actualPassword = await _loadActualPassword();
     return actualPassword == providedPassword;
   }
 
   Future<bool> setPassword(String password) async {
-    await _prefs.writePassword(password);
+    await _secureStorage.writePassword(password);
     // Automatically authenticate the user.
     return authenticate(password);
   }
 
   Future<void> resetPassword() async {
-    await _prefs.deletePassword();
+    await _secureStorage.deletePassword();
   }
 }
