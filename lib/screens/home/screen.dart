@@ -1,4 +1,5 @@
 import 'package:concordium_wallet/state/auth.dart';
+import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    final auth = context.read<Auth>();
+    final auth = context.read<Authentication>();
     if (auth.state.needsAuthentication()) {
       // TODO: Navigate to authentication screen (or do biometrics magic).
     }
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
         child: BlocBuilder<TermsAndConditionAcceptance, TermsAndConditionsAcceptanceState>(
           builder: (context, tacState) {
-            return BlocBuilder<Auth, AuthState>(
+            return BlocBuilder<Authentication, AuthenticationState>(
               builder: (context, authState) {
                 return Column(
                   children: [
@@ -52,7 +53,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
-                      onPressed: () => context.read<Auth>().resetPassword(),
+                      onPressed: () async {
+                        final services = context.read<ServiceRepository>();
+                        final authentication = context.read<Authentication>();
+                        await services.auth.resetPassword();
+                        authentication.setAuthenticated(false);
+
+                      },
                       child: const Text('Reset password'),
                     ),
                     const SizedBox(height: 8),

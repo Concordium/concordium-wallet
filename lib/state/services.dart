@@ -38,7 +38,7 @@ class ServiceRepository {
   final HttpService http;
 
   /// Global service for managing authentication.
-  final AuthService auth;
+  final AuthenticationService auth;
 
   /// Global service for interacting with shared preferences.
   final SharedPreferencesService sharedPreferences;

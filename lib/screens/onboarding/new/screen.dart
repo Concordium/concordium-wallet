@@ -2,6 +2,7 @@ import 'package:concordium_wallet/screens/onboarding/new/refresh.dart';
 import 'package:concordium_wallet/screens/onboarding/new/terms_and_conditions_content_widget.dart';
 import 'package:concordium_wallet/screens/onboarding/page.dart';
 import 'package:concordium_wallet/state/auth.dart';
+import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/widgets/toggle_accepted.dart';
 import 'package:flutter/material.dart';
@@ -27,18 +28,26 @@ class OnboardingNewWalletScreen extends StatelessWidget {
         builder: (tac) {
           return OnboardingNewWalletForm(
             validTermsAndConditions: tac,
-            onContinuePressed: (data) {
-              // Persist password.
-              final auth = context.read<Auth>();
-              auth.setPassword(data.password);
-              // TODO: Persist biometrics stuff.
+            onContinuePressed: (data) async {
+              final services = context.read<ServiceRepository>();
+              final authentication = context.read<Authentication>();
+              final tac = context.read<TermsAndConditionAcceptance>();
+
+              // Persist password and then register the user as authenticated.
+              final isPasswordPersisted = await services.auth.setPassword(data.password);
+              if (!isPasswordPersisted) {
+                throw Exception('cannot persist provided password');
+              }
+              authentication.setAuthenticated(true);
+
+              // TODO: Enable biometrics if requested.
 
               // Persist T&C acceptance.
-              final tac = context.read<TermsAndConditionAcceptance>();
               tac.userAccepted(data.acceptedTermsAndConditions);
 
-              // Navigate to home screen.
-              context.push('/home'); // TODO Using go removes ability to go back?
+              // Navigate to home screen (mount check necessary because we're awaiting the password set above).
+              if (!context.mounted) return;
+              context.push('/home'); // TODO: Using go would remove ability to go back?
             },
           );
         },

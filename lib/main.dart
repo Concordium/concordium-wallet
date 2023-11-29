@@ -38,11 +38,12 @@ Future<ServiceRepository> bootstrap() async {
   final prefsFuture = SharedPreferences.getInstance();
   final config = await configFuture;
   final prefs = await prefsFuture;
+  final sharedPreferences = SharedPreferencesService(prefs);
   return ServiceRepository(
     config: config,
     http: http,
-    auth: AuthService(prefs),
-    sharedPreferences: SharedPreferencesService(prefs),
+    auth: AuthenticationService(sharedPreferences),
+    sharedPreferences: sharedPreferences,
   );
 }
 
@@ -65,13 +66,7 @@ class App extends StatelessWidget {
                 return TermsAndConditionAcceptance(prefs);
               },
             ),
-            BlocProvider(
-              create: (context) {
-                // Initialize auth.
-                final prefs = context.read<ServiceRepository>().sharedPreferences;
-                return Auth(prefs);
-              },
-            ),
+            BlocProvider.value(value: Authentication()),
           ],
           child: MaterialApp.router(
             routerConfig: appRouter,

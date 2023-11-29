@@ -1,5 +1,6 @@
 import 'package:concordium_wallet/screens/onboarding/page.dart';
 import 'package:concordium_wallet/state/auth.dart';
+import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,11 +18,11 @@ class _OnboardingStartScreenState extends State<OnboardingStartScreen> {
   void initState() {
     super.initState();
     final tacState = context.read<TermsAndConditionAcceptance>().state;
-    final auth = context.read<Auth>();
     // Check if onboarding is already complete.
     // For now we only check if *any* T&C version has been accepted
     // as the valid version currently isn't fetched until we enter the "new" screen.
     // (It isn't clear atm what the actual desired T&C refresh behavior is.)
+    final auth = context.read<ServiceRepository>().auth;
     if (auth.canAuthenticate() && tacState.accepted != null) {
       // Onboarding is already complete; navigate straight to home screen.
       Future(() => context.push('/home'));

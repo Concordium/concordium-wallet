@@ -15,7 +15,7 @@ class MockUrlLauncher extends Mock implements UrlLauncher {}
 
 class MockTACCubit extends MockCubit<TermsAndConditionsAcceptanceState> implements TermsAndConditionAcceptance {}
 
-class MockAuthCubit extends MockCubit<AuthState> implements Auth {}
+class MockAuthCubit extends MockCubit<AuthenticationState> implements Authentication {}
 
 void main() {
   group('Onboarding: New wallet screen', () {
@@ -94,9 +94,6 @@ void main() {
     });
 
     testWidgets('Continue button sets password and T&C acceptance, then navigates to home', (WidgetTester tester) async {
-      when(() => mockTACCubit.userAccepted(const AcceptedTermsAndConditions(version: validVersion))).thenAnswer((_) {});
-      when(() => mockAuthCubit.setPassword('p4ssw0rd')).thenAnswer((_) => Future.value(true));
-
       final continueButtonFinder = find.byKey(const Key('button:continue'));
       final passwordInput1Finder = find.byKey(const Key('input:password1'));
       final passwordInput2Finder = find.byKey(const Key('input:password2'));
