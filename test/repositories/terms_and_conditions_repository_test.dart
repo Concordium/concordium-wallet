@@ -26,12 +26,12 @@ void main() {
 
   tearDownAll(() => Hive.deleteFromDisk());
 
-  tearDown(() => Hive.lazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).clear());
+  tearDown(() => Hive.lazyBox<AcceptedTermsAndConditionsEntity>(AcceptedTermsAndConditionsEntity.table).clear());
 
   test('When add accepted terms and condition to storage, then saved', () async {
     // Arrange
     const expectedVersion = "0.0.42";
-    final accepted = AcceptedTermsAndConditionsState.acceptNow(expectedVersion);
+    final accepted = AcceptedTermsAndConditions.acceptedNow(expectedVersion);
 
     // Act
     await repository.writeAcceptedTermsAndConditions(accepted);
@@ -45,9 +45,10 @@ void main() {
   test("When delete accepted terms and condition from storage, then empty", () async {
     // Arrange
     const expectedVersion = "0.0.42";
-    final accepted = AcceptedTermsAndConditionsState.acceptNow(expectedVersion);
+    final accepted = AcceptedTermsAndConditions.acceptedNow(expectedVersion);
     await repository.writeAcceptedTermsAndConditions(accepted);
-    expect(await Hive.lazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).get(TermsAndConditionsRepository.key), isNotNull);
+    expect(await Hive.lazyBox<AcceptedTermsAndConditionsEntity>(AcceptedTermsAndConditionsEntity.table).get(TermsAndConditionsRepository.key),
+        isNotNull);
 
     // Act
     await repository.deleteTermsAndConditionsAcceptedVersion();
@@ -61,10 +62,11 @@ void main() {
     // Arrange
     const oldVersion = "0.0.42";
     const newVersion = "0.0.84";
-    final oldAccepted = AcceptedTermsAndConditionsState.acceptNow(oldVersion);
-    final newAccepted = AcceptedTermsAndConditionsState.acceptNow(newVersion);
+    final oldAccepted = AcceptedTermsAndConditions.acceptedNow(oldVersion);
+    final newAccepted = AcceptedTermsAndConditions.acceptedNow(newVersion);
     await repository.writeAcceptedTermsAndConditions(oldAccepted);
-    expect(await Hive.lazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table).get(TermsAndConditionsRepository.key), isNotNull);
+    expect(await Hive.lazyBox<AcceptedTermsAndConditionsEntity>(AcceptedTermsAndConditionsEntity.table).get(TermsAndConditionsRepository.key),
+        isNotNull);
 
     // Act
     await repository.writeAcceptedTermsAndConditions(newAccepted);

@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 /// Service for interacting with [Hive].
 class StorageProvider {
-  final LazyBox<AcceptedTermsAndConditions> _acceptedTermsAndConditionBox;
+  final LazyBox<AcceptedTermsAndConditionsEntity> _acceptedTermsAndConditionBox;
 
   const StorageProvider._(this._acceptedTermsAndConditionBox);
 
@@ -12,22 +12,22 @@ class StorageProvider {
     _registerAdapters();
     await _openBoxes();
 
-    return StorageProvider._(Hive.lazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table));
+    return StorageProvider._(Hive.lazyBox<AcceptedTermsAndConditionsEntity>(AcceptedTermsAndConditionsEntity.table));
   }
 
   /// Register all adapters needed for typed boxes.
   static void _registerAdapters() {
-    Hive.registerAdapter(AcceptedTermsAndConditionsAdapter());
+    Hive.registerAdapter(AcceptedTermsAndConditionsEntityAdapter());
     Hive.registerAdapter(PreciseDateTimeAdapter(), override: true, internal: true);
   }
 
   /// Opens all boxes asynchronously.
   static Future<void> _openBoxes() async {
-    final atcFuture = Hive.openLazyBox<AcceptedTermsAndConditions>(AcceptedTermsAndConditions.table);
+    final atcFuture = Hive.openLazyBox<AcceptedTermsAndConditionsEntity>(AcceptedTermsAndConditionsEntity.table);
     await Future.wait([atcFuture]);
   }
 
-  LazyBox<AcceptedTermsAndConditions> get acceptedTermsAndConditionBox => _acceptedTermsAndConditionBox;
+  LazyBox<AcceptedTermsAndConditionsEntity> get acceptedTermsAndConditionBox => _acceptedTermsAndConditionBox;
 }
 
 /// A bit modified DateTimeWithTimezoneAdapter (https://github.com/isar/hive/blob/470473ffc1ba39f6c90f31ababe0ee63b76b69fe/hive/lib/src/adapters/date_time_adapter.dart#L25)

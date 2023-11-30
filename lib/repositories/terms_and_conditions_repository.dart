@@ -10,13 +10,13 @@ class TermsAndConditionsRepository {
   const TermsAndConditionsRepository({required StorageProvider storageProvider}) : _storageProvider = storageProvider;
 
   /// Reads the currently accepted T&C version.
-  Future<AcceptedTermsAndConditionsState?> getAcceptedTermsAndConditions() async {
+  Future<AcceptedTermsAndConditions?> getAcceptedTermsAndConditions() async {
     var model = await _storageProvider.acceptedTermsAndConditionBox.get(key);
     return _toState(model);
   }
 
   /// Writes the currently accepted T&C version.
-  Future<void> writeAcceptedTermsAndConditions(AcceptedTermsAndConditionsState acceptedTermsAndConditions) {
+  Future<void> writeAcceptedTermsAndConditions(AcceptedTermsAndConditions acceptedTermsAndConditions) {
     return _storageProvider.acceptedTermsAndConditionBox.put(key, _fromState(acceptedTermsAndConditions));
   }
 
@@ -25,14 +25,14 @@ class TermsAndConditionsRepository {
     return _storageProvider.acceptedTermsAndConditionBox.delete(key);
   }
 
-  AcceptedTermsAndConditions _fromState(AcceptedTermsAndConditionsState state) {
-    return AcceptedTermsAndConditions(version: state.version, acceptedAt: state.acceptedAt);
+  AcceptedTermsAndConditionsEntity _fromState(AcceptedTermsAndConditions state) {
+    return AcceptedTermsAndConditionsEntity(version: state.version, acceptedAt: state.acceptedAt);
   }
 
-  AcceptedTermsAndConditionsState? _toState(AcceptedTermsAndConditions? model) {
+  AcceptedTermsAndConditions? _toState(AcceptedTermsAndConditionsEntity? model) {
     if (model == null) {
       return null;
     }
-    return AcceptedTermsAndConditionsState(version: model.version, acceptedAt: model.acceptedAt);
+    return AcceptedTermsAndConditions(version: model.version, acceptedAt: model.acceptedAt);
   }
 }

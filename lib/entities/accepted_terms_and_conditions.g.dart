@@ -6,29 +6,29 @@ part of 'accepted_terms_and_conditions.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AcceptedTermsAndConditionsAdapter extends TypeAdapter<AcceptedTermsAndConditions> {
+class AcceptedTermsAndConditionsEntityAdapter extends TypeAdapter<AcceptedTermsAndConditionsEntity> {
   @override
   final int typeId = 1;
 
   @override
-  AcceptedTermsAndConditions read(BinaryReader reader) {
+  AcceptedTermsAndConditionsEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AcceptedTermsAndConditions(
-      version: fields[1] as String,
-      acceptedAt: fields[2] as DateTime,
+    return AcceptedTermsAndConditionsEntity(
+      version: fields[0] as String,
+      acceptedAt: fields[1] as DateTime,
     );
   }
 
   @override
-  void write(BinaryWriter writer, AcceptedTermsAndConditions obj) {
+  void write(BinaryWriter writer, AcceptedTermsAndConditionsEntity obj) {
     writer
       ..writeByte(2)
-      ..writeByte(1)
+      ..writeByte(0)
       ..write(obj.version)
-      ..writeByte(2)
+      ..writeByte(1)
       ..write(obj.acceptedAt);
   }
 
@@ -37,5 +37,5 @@ class AcceptedTermsAndConditionsAdapter extends TypeAdapter<AcceptedTermsAndCond
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is AcceptedTermsAndConditionsAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
+      identical(this, other) || other is AcceptedTermsAndConditionsEntityAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }
