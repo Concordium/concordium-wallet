@@ -29,7 +29,7 @@ flutter test
 
 For integration tests on android or ios, make sure you have the test device connected and run:
 ``` shell
-flutter test integration_test/
+flutter test integration_test
 ```
 
 To run integration tests for web, you must install chromedriver, and run it in a separate terminal:
