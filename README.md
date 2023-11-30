@@ -48,3 +48,11 @@ flutter drive --driver=integration_test/test_driver.dart --target=integration_te
 ```
 You can replace `-d web-server` with `-d chrome` for the test to not run headless.
 
+## Licenses
+
+To see the allowed licenses, check out `scripts/license.yaml`.
+
+To get a (readable) list of the licenses of dependencies run:
+```
+dart run license_checker check-licenses --config scripts/license.yaml
+```

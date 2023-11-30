@@ -14,6 +14,24 @@ env:
     flutter_version: 3.13.6
 
 jobs:
+    check-licenses:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: ${{ env.flutter_version }}
+                channel: 'stable'
+                cache: true
+
+            - run: dart pub get
+
+            - name: Check licenses
+              run: dart run scripts/check_license.dart
+
     analyze-format:
         runs-on: ubuntu-22.04
         steps:

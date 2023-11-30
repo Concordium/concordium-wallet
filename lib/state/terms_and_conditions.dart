@@ -2,16 +2,18 @@ import 'package:concordium_wallet/repositories/terms_and_conditions_repository.d
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Version of the Terms & Conditions accepted by the user.
-class AcceptedTermsAndConditionsState {
+/// Version of the Terms & Conditions accepted by the user and time of acceptance.
+class AcceptedTermsAndConditions {
   /// Accepted version.
   final String version;
+
+  /// Time of acceptance.
   final DateTime acceptedAt;
 
-  const AcceptedTermsAndConditionsState({required this.version, required this.acceptedAt});
+  const AcceptedTermsAndConditions({required this.version, required this.acceptedAt});
 
-  factory AcceptedTermsAndConditionsState.acceptNow(String acceptedVersion) {
-    return AcceptedTermsAndConditionsState(version: acceptedVersion, acceptedAt: DateTime.now());
+  factory AcceptedTermsAndConditions.acceptedNow(String acceptedVersion) {
+    return AcceptedTermsAndConditions(version: acceptedVersion, acceptedAt: DateTime.now());
   }
 
   /// Whether the accepted version is valid with respect to the provided valid version.
@@ -43,7 +45,7 @@ class TermsAndConditionsAcceptanceState {
   /// Currently accepted T&C.
   ///
   /// The accepted version persisted.
-  final AcceptedTermsAndConditionsState? accepted;
+  final AcceptedTermsAndConditions? accepted;
 
   /// Currently valid T&C.
   final ValidTermsAndConditions? valid;
@@ -56,7 +58,7 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   /// Service used to persist the accepted T&C version.
   final TermsAndConditionsRepository _termsAndConditionRepo;
 
-  TermsAndConditionAcceptance(this._termsAndConditionRepo, AcceptedTermsAndConditionsState? acceptedVersion)
+  TermsAndConditionAcceptance(this._termsAndConditionRepo, AcceptedTermsAndConditions? acceptedVersion)
       : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
     if (acceptedVersion != null) {
       userAccepted(acceptedVersion);
@@ -66,7 +68,7 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
   /// Update the currently accepted T&C and persist the new value.
   ///
   /// Use [resetAccepted] to revoke acceptance.
-  void userAccepted(AcceptedTermsAndConditionsState tac) {
+  void userAccepted(AcceptedTermsAndConditions tac) {
     emit(TermsAndConditionsAcceptanceState(accepted: tac, valid: state.valid));
   }
 
@@ -112,7 +114,7 @@ class TermsAndConditionAcceptance extends Cubit<TermsAndConditionsAcceptanceStat
     }
   }
 
-  Future<void> _persistAcceptedVersion(AcceptedTermsAndConditionsState? nextAcceptedVersion) {
+  Future<void> _persistAcceptedVersion(AcceptedTermsAndConditions? nextAcceptedVersion) {
     if (nextAcceptedVersion == null) {
       return _termsAndConditionRepo.deleteTermsAndConditionsAcceptedVersion();
     }
