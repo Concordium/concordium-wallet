@@ -40,5 +40,5 @@ jobs:
             name: concordium-wallet-web-${{ steps.package_version.outputs.result }}
             # We package everything except the canvaskit, which we don't use
             path: |
-              "${{github.workspace}}/build/web/"
-              !"${{github.workspace}}/build/web/canvaskit"
+              ${{github.workspace}}/build/web/
+              !${{github.workspace}}/build/web/canvaskit/*
