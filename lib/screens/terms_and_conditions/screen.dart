@@ -5,6 +5,7 @@ import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {
   final TermsAndConditions validTermsAndConditions;
@@ -53,18 +54,17 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               const SizedBox(height: 24),
               Center(
                 child: Text(
-                  'Before you begin',
+                  AppLocalizations.of(context).before_you_begin,
                   style: Theme.of(context).textTheme.displaySmall,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.all(16),
-                child: const Column(
+                child: Column(
                   children: [
-                    Text('Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.'),
-                    SizedBox(height: 9),
-                    Text(
-                        'It is very important that you keep your passcode safe, because it is the only way to access your accounts. Concordium is not able to change your passcode or help you unlock your wallet if you lose your passcode.'),
+                    Text(AppLocalizations.of(context).intro_text0),
+                    const SizedBox(height: 9),
+                    Text(AppLocalizations.of(context).intro_text1),
                   ],
                 ),
               ),
@@ -84,9 +84,9 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                       text: TextSpan(
                         style: Theme.of(context).textTheme.bodySmall,
                         children: [
-                          const TextSpan(text: 'I have read and agree to the '),
+                          TextSpan(text: AppLocalizations.of(context).read_and_agree),
                           TextSpan(
-                            text: 'Terms and Conditions v${widget.validTermsAndConditions.version}',
+                            text: AppLocalizations.of(context).terms_and_conditions(widget.validTermsAndConditions.version),
                             style: const TextStyle(
                               color: Colors.indigo,
                               fontWeight: FontWeight.bold,
@@ -95,7 +95,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                           switch (widget.acceptedTermsAndConditionsVersion) {
                             null => const TextSpan(text: '.'),
                             String v => TextSpan(
-                                text: ' (you previously accepted v$v).',
+                                text: AppLocalizations.of(context).previously_accepted(v),
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                           },
@@ -113,7 +113,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             const SizedBox(height: 9),
             ElevatedButton(
               onPressed: _onAcceptButtonPressed(context),
-              child: const Text('Continue'),
+              child: Text(AppLocalizations.of(context).cont),
             ),
           ],
         ),
