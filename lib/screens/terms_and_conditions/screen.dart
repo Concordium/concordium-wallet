@@ -1,7 +1,7 @@
-import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
+import 'package:concordium_wallet/widgets/toggle_accepted.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -104,9 +104,9 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                     ),
                   ),
                 ),
-                ToggleAcceptedWidget(
-                  isAccepted: isAccepted,
-                  setAccepted: _setAccepted,
+                Toggle(
+                  isEnabled: isAccepted,
+                  setEnabled: _setAccepted,
                 ),
               ],
             ),

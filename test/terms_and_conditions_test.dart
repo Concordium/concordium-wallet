@@ -1,9 +1,9 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
+import 'package:concordium_wallet/widgets/toggle_accepted.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:concordium_wallet/screens/terms_and_conditions/widget.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ void main() {
       await tester.pumpWidget(tacScreen);
 
       // Act
-      await tester.tap(find.byType(ToggleAcceptedWidget));
+      await tester.tap(find.byType(Toggle));
 
       await tester.pump();
 

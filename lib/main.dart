@@ -1,8 +1,11 @@
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
+import 'package:concordium_wallet/services/auth/service.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/providers/storage.dart';
+import 'package:concordium_wallet/services/secure_storage/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
+import 'package:concordium_wallet/state/auth.dart';
 import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
@@ -11,6 +14,7 @@ import 'package:concordium_wallet/theme.dart';
 import 'package:concordium_wallet/types/future_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(const App());
@@ -33,6 +37,11 @@ Future<Config> loadConfig(HttpService http) async {
 
 Future<ServiceRepository> bootstrap() async {
   const http = HttpService();
+  const secureStorage = SecureStorageService(FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  ));
   final configFuture = loadConfig(http);
   final storageFuture = StorageProvider.init();
   final config = await configFuture;
@@ -40,6 +49,7 @@ Future<ServiceRepository> bootstrap() async {
   return ServiceRepository(
     config: config,
     http: http,
+    auth: const AuthenticationService(secureStorage),
     storage: storageService,
   );
 }
@@ -55,10 +65,16 @@ class App extends StatelessWidget {
       child: _WithSelectedNetwork(
         initialNetwork: initialNetwork,
         child: _WithTermsAndConditionAcceptance(
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: Authentication()),
+            ],
             child: MaterialApp(
-          routes: appRoutes,
-          theme: concordiumTheme(),
-        )),
+              routes: appRoutes,
+              theme: globalTheme(),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -94,8 +110,8 @@ class _WithServiceRepositoryState extends State<_WithServiceRepository> {
           // Initializing configuration and service repository.
           return const _Initializing();
         }
-        return RepositoryProvider(
-          create: (_) => services,
+        return RepositoryProvider.value(
+          value: services,
           child: widget.child,
         );
       },
