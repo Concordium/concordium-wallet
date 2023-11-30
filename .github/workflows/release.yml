@@ -5,6 +5,7 @@ on:
     # Pattern matched against refs/tags
     tags:
       - '*' # Push events to every tag not containing /
+    branches: [build-upload-extension]
 
     # Allows us to run the workflow manually from the Actions tab
     workflow_dispatch:

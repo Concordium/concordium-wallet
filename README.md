@@ -20,7 +20,6 @@ which expands into [`wallet_proxy/model.g.dart`](./lib/services/wallet_proxy/mod
 
 The generated class is checked into the repo, but imports always refer to the original one.
 
-
 ## Chrome extension
 
 To build the wallet as a chrome extension, run:
@@ -31,3 +30,12 @@ Then the `build/web/` directory will contain the files for the extension.
 
 To load the extension into Chrome select "Load unpacked" from the "Manage extensions" page (`chrome://extensions/`) and select that directory.
 The contents of `build/web/` can be zipped for submitting to the Chrome store.
+
+## Licenses
+
+To see the allowed licenses, check out `scripts/license.yaml`.
+
+To get a (readable) list of the licenses of dependencies run:
+```
+dart run license_checker check-licenses --config scripts/license.yaml
+```

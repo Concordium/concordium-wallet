@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/screens/home/about_button.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
@@ -79,6 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+                const AboutButton(),
+                const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () => context.read<TermsAndConditionAcceptance>().testResetValidTime(),
                   child: const Text('Reset update time of valid T&C'),
@@ -92,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () {
-                    const tac = AcceptedTermsAndConditions(version: '1.2.3');
+                    final tac = AcceptedTermsAndConditions.acceptedNow('1.2.3');
                     context.read<TermsAndConditionAcceptance>().userAccepted(tac);
                   },
                   child: const Text('Set accepted T&C version to 1.2.3'),
