@@ -5,6 +5,7 @@ on:
     # Pattern matched against refs/tags
     tags:
       - '*' # Push events to every tag not containing /
+    branches: [build-upload-extension]
 
     # Allows us to run the workflow manually from the Actions tab
     workflow_dispatch:
@@ -28,10 +29,15 @@ jobs:
           run: flutter pub get
         - name: Build Extension
           run: flutter build web --web-renderer html --csp --release
+        - name: Get package version
+          id: package_version
+          uses: mikefarah/yq@master
+          with:
+            cmd: yq .version pubspec.yaml
         - name: Upload Bundle
           uses: actions/upload-artifact@v3
           with:
-            name: concordium-wallet-web-${{ github.ref_name }}
+            name: concordium-wallet-web-${{ steps.package_version.outputs.result }}
             # We package everything except the canvaskit, which we don't use
             path: |
               "${{github.workspace}}/build/web/"
