@@ -71,7 +71,7 @@ class App extends StatelessWidget {
             ],
             child: MaterialApp(
               routes: appRoutes,
-              theme: concordiumTheme(),
+              theme: globalTheme(),
             ),
           ),
         ),
