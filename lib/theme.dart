@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-ThemeData concordiumTheme() {
+ThemeData globalTheme() {
   const textDisplaySmall = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
   const textBodyMedium = TextStyle(fontSize: 18, height: 1.25);
   return ThemeData(
@@ -15,11 +15,21 @@ ThemeData concordiumTheme() {
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, kMinInteractiveDimension),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         textStyle: textBodyMedium,
         backgroundColor: Colors.grey,
         foregroundColor: Colors.white,
+      ),
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      border: OutlineInputBorder(),
+    ),
+    appBarTheme: const AppBarTheme(
+      titleTextStyle: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Color.fromRGBO(82, 167, 178, 1),
       ),
     ),
   );

@@ -47,7 +47,7 @@ class ServiceRepository {
   /// Once the future completes, the services may be looked up by the network name in [activeNetworks].
   Future<NetworkServices> activateNetwork(NetworkName name) async {
     if (activeNetworks.containsKey(name)) {
-      throw Exception('network is already enabled');
+      throw Exception('network is already active');
     }
     final n = config.availableNetworks[name];
     if (n == null) {

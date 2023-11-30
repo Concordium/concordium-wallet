@@ -1,7 +1,7 @@
+import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
-import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
@@ -55,10 +55,11 @@ class App extends StatelessWidget {
       child: _WithSelectedNetwork(
         initialNetwork: initialNetwork,
         child: _WithTermsAndConditionAcceptance(
-            child: MaterialApp(
-          routes: appRoutes,
-          theme: concordiumTheme(),
-        )),
+          child: MaterialApp.router(
+            routerConfig: appRouter,
+            theme: globalTheme(),
+          ),
+        ),
       ),
     );
   }
@@ -94,8 +95,8 @@ class _WithServiceRepositoryState extends State<_WithServiceRepository> {
           // Initializing configuration and service repository.
           return const _Initializing();
         }
-        return RepositoryProvider(
-          create: (_) => services,
+        return RepositoryProvider.value(
+          value: services,
           child: widget.child,
         );
       },
