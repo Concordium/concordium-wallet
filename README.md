@@ -44,7 +44,7 @@ If the HEADER environment variable is set, the tests run with a header.
 
 To run a specific test file, examplified here with `test_file_name`, run::
 ```shell
-flutter drive --driver=integration_test/test_driver.dart --target=integration_test/test_file_name.dart   -d web-server
+flutter drive --driver=integration_test/test_driver.dart --target=integration_test/test_file_name.dart -d web-server
 ```
 You can replace `-d web-server` with `-d chrome` for the test to not run headless.
 

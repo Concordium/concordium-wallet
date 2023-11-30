@@ -9,7 +9,7 @@ void main() {
   // TODO Remove / change this test when we remove temp reset T&C page
   testWidgets('Confirming T&C on the initial page brings us to the reset T&C page and resetting accepted T&C brings us back.', (tester) async {
     // Load app widget.
-    await tester.pumpWidget(const App());
+    start.main();
 
     await tester.pumpAndSettle();
 
