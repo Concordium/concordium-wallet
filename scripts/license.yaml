@@ -1,3 +1,4 @@
+# Please check that licenses are appropiate before adding them here, and never add any that are already in rejectedLicenses
 permittedLicenses:
   - MIT
   - BSD-3-Clause
@@ -5,6 +6,7 @@ permittedLicenses:
   - MIT-Modern-Variant
   - Zlib
 
+# List of licenses that we are sure should not be used
 rejectedLicenses:
   - GPL
   - GPL-1
