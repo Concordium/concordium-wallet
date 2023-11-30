@@ -25,7 +25,7 @@ void main() {
     const String acceptedVersion = "1.0.0";
 
     setUpAll(() {
-      registerFallbackValue(const AcceptedTermsAndConditions(version: validVersion));
+      registerFallbackValue(AcceptedTermsAndConditionsState.acceptNow(validVersion));
     });
 
     setUp(() {
@@ -33,7 +33,7 @@ void main() {
 
       final terms = TermsAndConditions(Uri.parse("localhost"), validVersion);
       state = TermsAndConditionsAcceptanceState(
-          accepted: const AcceptedTermsAndConditions(version: acceptedVersion),
+          accepted: AcceptedTermsAndConditionsState.acceptNow(acceptedVersion),
           valid: ValidTermsAndConditions.refreshedNow(termsAndConditions: terms));
 
       // Build the terms and condition screen we wish to test
