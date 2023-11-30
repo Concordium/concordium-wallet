@@ -26,8 +26,9 @@ jobs:
           flutter-version: ${{ env.flutter_version }}
           channel: 'stable'
           cache: true
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v2
         with:
+          distribution: 'zulu'
           java-version: '11'
 
       # Run integration test with android emulator
