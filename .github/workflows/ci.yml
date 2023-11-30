@@ -1,4 +1,4 @@
-name: Analyze and format
+name: Analyze, format and test
 
 on:
     # Trigger the workflow on pushes to the main and feature branches as well as PRs targeting them.
@@ -49,3 +49,20 @@ jobs:
 
             - name: Check format
               run: dart format --output=none --set-exit-if-changed . -l 150
+
+    test:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: ${{ env.flutter_version }}
+                channel: 'stable'
+                cache: true
+
+            - name: Test
+              run: flutter test
+            
