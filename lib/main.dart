@@ -175,7 +175,7 @@ class _WithTermsAndConditionAcceptance extends StatefulWidget {
 }
 
 class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndConditionAcceptance> {
-  late final Future<FutureValue<AcceptedTermsAndConditionsState?>> _lastAccepted;
+  late final Future<FutureValue<AcceptedTermsAndConditions?>> _lastAccepted;
   late final TermsAndConditionsRepository _repository;
 
   @override
