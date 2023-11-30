@@ -28,4 +28,6 @@ To build the wallet as a chrome extension, run:
 flutter build web --web-renderer html --csp
 ```
 Then the `build/web/` directory will contain the files for the extension.
-This folder should be chosen to "load-unpacked" the extension in chrome, and can be zipped for submitting to the chrome store.
+
+To load the extension into Chrome select "Load unpacked" from the "Manage extensions" page (`chrome://extensions/`) and select that directory.
+The contents of `build/web/` can be zipped for submitting to the Chrome store.
