@@ -7,7 +7,7 @@ else
     DEVICE=chrome
 fi
 
-for filename in integration_test/*_test.dart integration_test/**/*_test.dart; do
+find integration_test -type f -name '*_test.dart' | while read -r filename; do
     [ -e "$filename" ] || continue
     flutter drive --driver=integration_test/test_driver.dart --target=$filename -d $DEVICE
 done
