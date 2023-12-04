@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
-import 'package:concordium_wallet/widgets/toggle_accepted.dart';
+import 'package:concordium_wallet/widgets/toggle.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';

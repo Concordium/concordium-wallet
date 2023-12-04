@@ -18,6 +18,7 @@ class SecureStorageService {
     await _secureStorage.write(key: _passwordKey, value: password);
   }
 
+  /// Deletes the password.
   Future<void> deletePassword() async {
     await _secureStorage.delete(key: _passwordKey);
   }

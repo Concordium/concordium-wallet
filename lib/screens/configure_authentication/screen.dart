@@ -1,7 +1,7 @@
-import 'package:concordium_wallet/screens/page.dart';
+import 'package:concordium_wallet/widgets/base_page.dart';
 import 'package:concordium_wallet/state/auth.dart';
 import 'package:concordium_wallet/state/services.dart';
-import 'package:concordium_wallet/widgets/toggle_accepted.dart';
+import 'package:concordium_wallet/widgets/toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,10 +26,7 @@ class ConfigureAuthenticationScreen extends StatelessWidget {
           final authentication = context.read<Authentication>();
 
           // Persist password and then register the user as authenticated.
-          final isPasswordPersisted = await services.auth.setPassword(data.password);
-          if (!isPasswordPersisted) {
-            throw Exception('cannot persist provided password');
-          }
+          await services.auth.setPassword(data.password);
           authentication.setAuthenticated(true);
 
           // TODO: Enable biometrics if requested.

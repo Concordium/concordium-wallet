@@ -1,42 +1,41 @@
 import 'package:concordium_wallet/services/secure_storage/service.dart';
 
+/// Global service for persisting authentication secrets to persistent storage and verifying credentials provided by the user.
 class AuthenticationService {
+  /// Service for writing credentials to secure storage and reading it back.
   final SecureStorageService _secureStorage;
 
   const AuthenticationService(this._secureStorage);
 
-  Future<String> _loadActualPassword() async {
-    final res = await _secureStorage.password;
-    if (res == null) {
+  /// Check whether a password has been persisted to secure storage.
+  Future<bool> hasPassword() async {
+    final password = await _secureStorage.password;
+    return password != null;
+  }
+
+  /// Verifies that the password provided by the user matches one persisted in secure storage.
+  /// Throws an exception if there's no persisted password to authenticate against.
+  Future<bool> checkPassword(String providedPassword) async {
+    final actualPassword = await _secureStorage.password;
+    if (actualPassword == null) {
       throw Exception("no password has been set");
     }
-    return res;
-  }
-
-  /// Check whether a password has been stored.
-  Future<bool> canAuthenticate() async {
-    try {
-      await _loadActualPassword();
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  /// Attempts to authenticate the user using the provided password.
-  /// Returns true if authentication was successful.
-  /// Throws an exception if there's no persisted password to authenticate against.
-  Future<bool> authenticate(String providedPassword) async {
-    final actualPassword = await _loadActualPassword();
     return actualPassword == providedPassword;
   }
 
-  Future<bool> setPassword(String password) async {
+  /// Persists the provided password to secure storage, overwriting any exiting one.
+  Future<void> setPassword(String password) async {
     await _secureStorage.writePassword(password);
-    // Automatically authenticate the user.
-    return authenticate(password);
+    final c = await checkPassword(password);
+    if (!c) {
+      throw Exception('cannot persist provided password');
+    }
   }
 
+  /// Deletes the current password from secure storage.
+  ///
+  /// Note that until a new password is set with [setPassword],
+  /// subsequent calls to [hasPassword] will return false and [checkPassword] will throw an exception.
   Future<void> resetPassword() async {
     await _secureStorage.deletePassword();
   }
