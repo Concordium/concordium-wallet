@@ -1,0 +1,71 @@
+name: Integration tests
+
+on:
+    # Trigger the workflow on pushes to the main and feature branches.
+    push:
+        branches: [main, feature/**]
+
+    # Allows us to run the workflow manually from the Actions tab
+    workflow_dispatch:
+
+env:
+    flutter_version: 3.13.6
+    iphone_model: iPhone 8
+    android_profile: Nexus 6
+    android_api_level: 29
+    android_target: google_apis
+
+jobs:
+  android-integration-tests:
+    # It should be most efficient to use the macOS because of hardware acceleration available here.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter_version }}
+          channel: 'stable'
+          cache: true
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      # Run integration test with android emulator
+      - name: Run Flutter integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          target: ${{ env.android_target }}
+          api-level: ${{ env.android_api_level }}
+          arch: x86_64
+          profile: ${{ env.android_profile }}
+          script: flutter test integration_test/
+
+  iOS-integration-tests:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter_version }}
+          channel: 'stable'
+          cache: true
+
+      # Start iOS simulator
+      - uses: futureware-tech/simulator-action@v3
+        with:
+          model: ${{ env.iphone_model }}
+
+      # Run integration test
+      - run: flutter test integration_test/
+
+  web-integration-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter_version }}
+          channel: 'stable'
+          cache: true
+      - uses: nanasess/setup-chromedriver@v2
+      - run: chromedriver --port=4444 & ./integration_test/run_tests.sh
