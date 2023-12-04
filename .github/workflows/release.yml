@@ -41,3 +41,41 @@ jobs:
             path: |
               ${{github.workspace}}/build/web/
               !${{github.workspace}}/build/web/canvaskit/*
+    android-build-and-release:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        - name: Setup Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            flutter-version: ${{ env.flutter_version }}
+            channel: 'stable'
+            cache: true
+        - name: Download pub dependencies
+          run: flutter pub get
+        - name: Build Android App Bundle
+          run: flutter build appbundle
+        - name: Get package version
+          id: package_version
+          uses: mikefarah/yq@master
+          with:
+            cmd: yq .version pubspec.yaml
+        - name: Upload Bundle
+          uses: actions/upload-artifact@v3
+          with:
+            name: concordium-wallet-${{ steps.package_version.outputs.result }}.aab
+            path: "${{github.workspace}}/build/app/outputs/bundle/release/app-release.aab"
+        - name: Setup Ruby
+          uses: ruby/setup-ruby@v1
+          with:
+            ruby-version: '3.2'
+            bundler-cache: true
+        - name: Release to Google Play (Internal)
+          env:
+            SUPPLY_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+            SUPPLY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+            run: |
+              bundle exec fastlane supply \
+              --aab build/app/outputs/bundle/release/app-release.aab \
+              --track internal
