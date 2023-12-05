@@ -10,7 +10,7 @@ class BasePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-                gradient: LinearGradient(colors: [Color(0xFFF2F2F2), Color(0xFFFFFFFF)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+          gradient: LinearGradient(colors: [Color(0xFFF2F2F2), Color(0xFFFFFFFF)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
       child: Scaffold(
         backgroundColor: Colors.transparent.withOpacity(0),
         appBar: appBar,
