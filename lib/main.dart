@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
+import 'package:concordium_wallet/screens/start/terms_and_conditions_content_widget.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/config.dart';
@@ -8,6 +11,7 @@ import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/theme.dart';
+import 'package:concordium_wallet/widgets/toggle_accepted.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,9 +33,15 @@ Future<Config> loadConfig(HttpService http) async {
 class BootstrapData {
   final ServiceRepository services;
   final SelectedNetwork selectedNetwork;
+  final ValidTermsAndConditions validTermsAndConditions;
   final TermsAndConditionsAcceptance termsAndConditionsAcceptance;
 
-  const BootstrapData({required this.services, required this.selectedNetwork, required this.termsAndConditionsAcceptance});
+  const BootstrapData({
+    required this.services,
+    required this.selectedNetwork,
+    required this.validTermsAndConditions,
+    required this.termsAndConditionsAcceptance,
+  });
 }
 
 class BootstrapProgress {
@@ -57,9 +67,8 @@ Future<ServiceRepository> startGlobalServices(HttpService http) async {
   return ServiceRepository(config: config, http: http, storage: storageService);
 }
 
-Future<SelectedNetwork> startSelectedNetwork(NetworkName initialNetworkName, ServiceRepository services) async {
-  final networkServices = await services.activateNetwork(initialNetworkName);
-  return SelectedNetwork(networkServices);
+Future<NetworkServices> startSelectedNetwork(NetworkName initialNetworkName, ServiceRepository services) async {
+  return services.activateNetwork(initialNetworkName);
 }
 
 Future<TermsAndConditionsAcceptance> loadAcceptedTermsAndConditions(StorageProvider storage) async {
@@ -73,45 +82,128 @@ Stream<BootstrapProgress> bootstrap(NetworkName initialNetworkName) async* {
   yield BootstrapProgress.incomplete(progressPercentage: 0);
 
   final startingGlobalServices = startGlobalServices(http);
-  final startingGlobalServicesDelay = Future.delayed(const Duration(milliseconds: 1500));
+  await Future.delayed(const Duration(milliseconds: 1500)); // add concurrent delay to let the user see that something's happening
   final services = await startingGlobalServices;
-  await startingGlobalServicesDelay;
   yield BootstrapProgress.incomplete(progressPercentage: 20);
 
-  final selectingNetwork = startSelectedNetwork(initialNetworkName, services);
-  final selectingNetworkDelay = Future.delayed(const Duration(milliseconds: 500));
-  final selectedNetwork = await selectingNetwork;
-  await selectingNetworkDelay;
+  final activatingNetwork = services.activateNetwork(initialNetwork);
+  await Future.delayed(const Duration(milliseconds: 500));
+  final activatedNetworkServices = await activatingNetwork;
   yield BootstrapProgress.incomplete(progressPercentage: 70);
 
+  // Loading valid T&C. This is necessary if the user hasn't previously accepted.
+  // If this wasn't loaded via some global config instead of Wallet Proxy there would be no need for activating a network yet.
+  final fetchingValidTac = activatedNetworkServices.walletProxy.fetchTermsAndConditions();
   final loadingAcceptedTac = loadAcceptedTermsAndConditions(services.storage);
-  final loadingAcceptedTacDelay = Future.delayed(const Duration(milliseconds: 1000));
-  final tac = await loadingAcceptedTac;
-  await loadingAcceptedTacDelay;
+  await Future.delayed(const Duration(milliseconds: 1000));
+  final validTac = await fetchingValidTac;
+  final acceptedTac = await loadingAcceptedTac;
   yield BootstrapProgress.incomplete(progressPercentage: 100);
 
-  final finalDelay = Future.delayed(const Duration(milliseconds: 1000));
-  await finalDelay;
+  await Future.delayed(const Duration(milliseconds: 1000));
 
   yield BootstrapProgress.complete(
     result: BootstrapData(
       services: services,
-      selectedNetwork: selectedNetwork,
-      termsAndConditionsAcceptance: tac,
+      selectedNetwork: SelectedNetwork(activatedNetworkServices),
+      validTermsAndConditions: ValidTermsAndConditions.refreshedNow(termsAndConditions: validTac),
+      termsAndConditionsAcceptance: acceptedTac,
     ),
   );
 }
 
+// TODO: We can probably defer network activation until we hit the landing page.
 const initialNetwork = NetworkName.testnet;
 
 void main() {
-  runApp(App(bootstrap(initialNetwork)));
+  runApp(const App(initialNetwork: initialNetwork));
 }
 
-class App extends StatelessWidget {
-  final Stream<BootstrapProgress> _bootstrapping;
+class App extends StatefulWidget {
+  final NetworkName initialNetwork;
 
-  const App(this._bootstrapping, {super.key});
+  const App({super.key, required this.initialNetwork});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  BootstrapData? _data;
+
+  @override
+  Widget build(BuildContext context) {
+    final data = _data;
+    if (data == null) {
+      return MaterialApp(
+        home: StartScreen(
+          onContinue: (data) {
+            setState(() {
+              _data = data;
+            });
+          },
+        ),
+        theme: globalTheme(),
+      );
+    }
+    // App is ready and T&C has been accepted. Load landing page...
+    return RepositoryProvider.value(
+      value: data.services,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: data.selectedNetwork),
+          BlocProvider.value(value: data.termsAndConditionsAcceptance),
+        ],
+        child: MaterialApp.router(
+          routerConfig: appRouter,
+          theme: globalTheme(),
+        ),
+      ),
+    );
+  }
+}
+
+class StartScreen extends StatelessWidget {
+  final Function(BootstrapData) onContinue;
+
+  const StartScreen({super.key, required this.onContinue});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
+        child: Column(
+          children: [
+            const Expanded(child: Center(child: Text('Concordium Logo'))),
+            Bootstrapping(initialNetwork: initialNetwork, onContinue: onContinue),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Bootstrapping extends StatefulWidget {
+  final NetworkName initialNetwork;
+  final Function(BootstrapData) onContinue;
+
+  const Bootstrapping({super.key, required this.initialNetwork, required this.onContinue});
+
+  @override
+  State<Bootstrapping> createState() => _BootstrappingState();
+}
+
+class _BootstrappingState extends State<Bootstrapping> {
+  late final Stream<BootstrapProgress> _bootstrapping;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _bootstrapping = bootstrap(widget.initialNetwork);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,26 +212,155 @@ class App extends StatelessWidget {
       builder: (context, snapshot) {
         final data = snapshot.data;
         if (data == null) {
+          // Bootstrapping didn't start yet.
           return const _Initializing(progressPercentage: 0);
         }
         final result = data.result;
         if (result == null) {
+          // Bootstrapping didn't complete yet.
           return _Initializing(progressPercentage: data.progressPercentage);
         }
-        return RepositoryProvider.value(
-          value: result.services,
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider.value(value: result.selectedNetwork),
-              BlocProvider.value(value: result.termsAndConditionsAcceptance),
-            ],
-            child: MaterialApp.router(
-              routerConfig: appRouter,
-              theme: globalTheme(),
-            ),
-          ),
+        // Bootstrapping completed.
+        var acceptedTac = result.termsAndConditionsAcceptance.state.accepted;
+        return BootstrapCompletion(
+          acceptedTermsAndConditions: acceptedTac,
+          validTermsAndConditions: result.validTermsAndConditions,
+          // TODO: Ensure that accepted T&C is persisted!
+          onContinue: () => widget.onContinue(result),
         );
       },
+    );
+  }
+}
+
+class BootstrapCompletion extends StatefulWidget {
+  final AcceptedTermsAndConditions? acceptedTermsAndConditions;
+  final ValidTermsAndConditions validTermsAndConditions;
+  final Function() onContinue;
+
+  const BootstrapCompletion({
+    super.key,
+    required this.acceptedTermsAndConditions,
+    required this.validTermsAndConditions,
+    required this.onContinue,
+  });
+
+  @override
+  State<BootstrapCompletion> createState() => _BootstrapCompletionState();
+}
+
+class _BootstrapCompletionState extends State<BootstrapCompletion> {
+  var _tacAccepted = false;
+
+  void _setTacAccepted(bool v) {
+    setState(() {
+      _tacAccepted = v;
+    });
+  }
+
+  Function()? _onContinuePressed() {
+    if (widget.acceptedTermsAndConditions == null && !_tacAccepted) {
+      // No terms are already accepted and switch isn't toggled: Disable button.
+      return null;
+    }
+    return widget.onContinue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var acceptedTac = widget.acceptedTermsAndConditions;
+    return Column(
+      children: [
+        if (acceptedTac == null)
+          TermsAndConditionsAcceptanceToggle(
+            validTermsAndConditions: widget.validTermsAndConditions,
+            isAccepted: _tacAccepted,
+            setAccepted: _setTacAccepted,
+          ),
+        ElevatedButton(onPressed: _onContinuePressed(), child: const Text('Continue')),
+      ],
+    );
+  }
+}
+
+class TermsAndConditionsAcceptanceToggle extends StatelessWidget {
+  final ValidTermsAndConditions validTermsAndConditions;
+  final bool isAccepted;
+  final Function(bool) setAccepted;
+
+  const TermsAndConditionsAcceptanceToggle({
+    super.key,
+    required this.validTermsAndConditions,
+    required this.isAccepted,
+    required this.setAccepted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.9,
+                ),
+                builder: (context) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Terms and Conditions',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: TermsAndConditionsContentWidget(
+                          url: validTermsAndConditions.termsAndConditions.url,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+            child: RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodySmall,
+                children: const [
+                  TextSpan(text: 'I agree with the '),
+                  TextSpan(
+                    text: 'Terms and Conditions',
+                    style: TextStyle(
+                      color: Colors.indigo,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Toggle(
+          key: const Key('input:accept-tac'),
+          isEnabled: isAccepted,
+          setEnabled: setAccepted,
+        ),
+      ],
     );
   }
 }
@@ -154,9 +375,7 @@ class _Initializing extends StatefulWidget {
 }
 
 class _InitializingState extends State<_Initializing> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-  );
+  late final AnimationController _controller = AnimationController(vsync: this);
 
   @override
   void didUpdateWidget(covariant _Initializing oldWidget) {
@@ -170,10 +389,9 @@ class _InitializingState extends State<_Initializing> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Column(
+    return Center(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AnimatedBuilder(
             animation: _controller,
@@ -183,13 +401,10 @@ class _InitializingState extends State<_Initializing> with SingleTickerProviderS
               return CircularProgressIndicator(value: v > .99 ? null : v);
             },
           ),
-          // CircularProgressIndicator(value: widget.progressPercentage / 100.0),
           const SizedBox(height: 16),
-          // Setting text direction is required because we're outside 'MaterialApp' widget.
           const Text('Initializing...'),
         ],
       ),
-      theme: globalTheme(),
     );
   }
 }
