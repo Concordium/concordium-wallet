@@ -16,7 +16,7 @@ class StartScreen extends StatelessWidget {
         child: Column(
           children: [
             const Expanded(child: Center(child: Text('Concordium Logo'))),
-            BlocBuilder<TermsAndConditionAcceptance, TermsAndConditionsAcceptanceState>(
+            BlocBuilder<TermsAndConditionsAcceptance, TermsAndConditionsAcceptanceState>(
               builder: (context, state) {
                 final acceptedTac = state.accepted;
                 if (acceptedTac != null) {

@@ -19,7 +19,7 @@ class _WithValidTermsAndConditionsState extends State<WithValidTermsAndCondition
 
   static Future<ValidTermsAndConditions> _updateValidTac(
     WalletProxyService walletProxy,
-    TermsAndConditionAcceptance tacAcceptance,
+    TermsAndConditionsAcceptance tacAcceptance,
     DateTime latestValidTime,
   ) async {
     final validTac = tacAcceptance.state.valid;
@@ -37,7 +37,7 @@ class _WithValidTermsAndConditionsState extends State<WithValidTermsAndCondition
   void initState() {
     super.initState();
     final network = context.read<SelectedNetwork>().state;
-    final tacAcceptance = context.read<TermsAndConditionAcceptance>();
+    final tacAcceptance = context.read<TermsAndConditionsAcceptance>();
 
     _updating = _updateValidTac(
       network.services.walletProxy,

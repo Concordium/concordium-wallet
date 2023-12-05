@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
-        child: BlocBuilder<TermsAndConditionAcceptance, TermsAndConditionsAcceptanceState>(
+        child: BlocBuilder<TermsAndConditionsAcceptance, TermsAndConditionsAcceptanceState>(
           builder: (context, tacState) {
             return Column(
               children: [
@@ -29,12 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().testResetValidTime(),
+                  onPressed: () => context.read<TermsAndConditionsAcceptance>().testResetValidTime(),
                   child: const Text('Reset update time of valid T&C'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().resetValid(),
+                  onPressed: () => context.read<TermsAndConditionsAcceptance>().resetValid(),
                   // NOTE: This resets the valid T&C which is picked up by the BlocConsumer's listener above to automatically trigger a re-fetch.
                   child: const Text('Reset valid T&C'),
                 ),
@@ -42,13 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton(
                   onPressed: () {
                     final tac = AcceptedTermsAndConditions.acceptedNow('1.2.3');
-                    context.read<TermsAndConditionAcceptance>().userAccepted(tac);
+                    context.read<TermsAndConditionsAcceptance>().userAccepted(tac);
                   },
                   child: const Text('Set accepted T&C version to 1.2.3'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionAcceptance>().resetAccepted(),
+                  onPressed: () => context.read<TermsAndConditionsAcceptance>().resetAccepted(),
                   child: const Text('Reset accepted T&C'),
                 ),
               ],

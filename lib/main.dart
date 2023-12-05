@@ -8,13 +8,8 @@ import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/theme.dart';
-import 'package:concordium_wallet/types/future_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-void main() {
-  runApp(const App());
-}
 
 const testnetNetwork = Network(
   name: NetworkName.testnet,
@@ -31,181 +26,170 @@ Future<Config> loadConfig(HttpService http) async {
   ]);
 }
 
-Future<ServiceRepository> bootstrap() async {
-  const http = HttpService();
+class BootstrapData {
+  final ServiceRepository services;
+  final SelectedNetwork selectedNetwork;
+  final TermsAndConditionsAcceptance termsAndConditionsAcceptance;
+
+  const BootstrapData({required this.services, required this.selectedNetwork, required this.termsAndConditionsAcceptance});
+}
+
+class BootstrapProgress {
+  final int progressPercentage;
+  final BootstrapData? result;
+
+  const BootstrapProgress({required this.progressPercentage, required this.result});
+
+  factory BootstrapProgress.incomplete({required int progressPercentage}) {
+    return BootstrapProgress(progressPercentage: progressPercentage, result: null);
+  }
+
+  factory BootstrapProgress.complete({required BootstrapData result}) {
+    return BootstrapProgress(progressPercentage: 100, result: result);
+  }
+}
+
+Future<ServiceRepository> startGlobalServices(HttpService http) async {
   final configFuture = loadConfig(http);
   final storageFuture = StorageProvider.init();
   final config = await configFuture;
   final storageService = await storageFuture;
-  return ServiceRepository(
-    config: config,
-    http: http,
-    storage: storageService,
+  return ServiceRepository(config: config, http: http, storage: storageService);
+}
+
+Future<SelectedNetwork> startSelectedNetwork(NetworkName initialNetworkName, ServiceRepository services) async {
+  final networkServices = await services.activateNetwork(initialNetworkName);
+  return SelectedNetwork(networkServices);
+}
+
+Future<TermsAndConditionsAcceptance> loadAcceptedTermsAndConditions(StorageProvider storage) async {
+  final repo = TermsAndConditionsRepository(storageProvider: storage);
+  final tac = await repo.getAcceptedTermsAndConditions();
+  return TermsAndConditionsAcceptance(repo, tac);
+}
+
+Stream<BootstrapProgress> bootstrap(NetworkName initialNetworkName) async* {
+  const http = HttpService();
+  yield BootstrapProgress.incomplete(progressPercentage: 0);
+
+  final startingGlobalServices = startGlobalServices(http);
+  final startingGlobalServicesDelay = Future.delayed(const Duration(milliseconds: 1500));
+  final services = await startingGlobalServices;
+  await startingGlobalServicesDelay;
+  yield BootstrapProgress.incomplete(progressPercentage: 20);
+
+  final selectingNetwork = startSelectedNetwork(initialNetworkName, services);
+  final selectingNetworkDelay = Future.delayed(const Duration(milliseconds: 500));
+  final selectedNetwork = await selectingNetwork;
+  await selectingNetworkDelay;
+  yield BootstrapProgress.incomplete(progressPercentage: 70);
+
+  final loadingAcceptedTac = loadAcceptedTermsAndConditions(services.storage);
+  final loadingAcceptedTacDelay = Future.delayed(const Duration(milliseconds: 1000));
+  final tac = await loadingAcceptedTac;
+  await loadingAcceptedTacDelay;
+  yield BootstrapProgress.incomplete(progressPercentage: 100);
+
+  final finalDelay = Future.delayed(const Duration(milliseconds: 1000));
+  await finalDelay;
+
+  yield BootstrapProgress.complete(
+    result: BootstrapData(
+      services: services,
+      selectedNetwork: selectedNetwork,
+      termsAndConditionsAcceptance: tac,
+    ),
   );
 }
 
 const initialNetwork = NetworkName.testnet;
 
+void main() {
+  runApp(App(bootstrap(initialNetwork)));
+}
+
 class App extends StatelessWidget {
-  const App({super.key});
+  final Stream<BootstrapProgress> _bootstrapping;
+
+  const App(this._bootstrapping, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return _WithServiceRepository(
-      child: _WithSelectedNetwork(
-        initialNetwork: initialNetwork,
-        child: _WithTermsAndConditionAcceptance(
-          child: MaterialApp.router(
-            routerConfig: appRouter,
-            theme: globalTheme(),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _WithServiceRepository extends StatefulWidget {
-  final Widget child;
-
-  const _WithServiceRepository({required this.child});
-
-  @override
-  State<_WithServiceRepository> createState() => _WithServiceRepositoryState();
-}
-
-class _WithServiceRepositoryState extends State<_WithServiceRepository> {
-  late final Future<ServiceRepository> _bootstrapping;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _bootstrapping = bootstrap();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<ServiceRepository>(
-      future: _bootstrapping,
-      builder: (_, snapshot) {
-        final services = snapshot.data;
-        if (services == null) {
-          // Initializing configuration and service repository.
-          return const _Initializing();
+    return StreamBuilder<BootstrapProgress>(
+      stream: _bootstrapping,
+      builder: (context, snapshot) {
+        final data = snapshot.data;
+        if (data == null) {
+          return const _Initializing(progressPercentage: 0);
+        }
+        final result = data.result;
+        if (result == null) {
+          return _Initializing(progressPercentage: data.progressPercentage);
         }
         return RepositoryProvider.value(
-          value: services,
-          child: widget.child,
+          value: result.services,
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: result.selectedNetwork),
+              BlocProvider.value(value: result.termsAndConditionsAcceptance),
+            ],
+            child: MaterialApp.router(
+              routerConfig: appRouter,
+              theme: globalTheme(),
+            ),
+          ),
         );
       },
     );
   }
 }
 
-class _WithSelectedNetwork extends StatefulWidget {
-  final NetworkName initialNetwork;
-  final Widget child;
+class _Initializing extends StatefulWidget {
+  final int progressPercentage;
 
-  const _WithSelectedNetwork({required this.initialNetwork, required this.child});
+  const _Initializing({required this.progressPercentage});
 
   @override
-  State<_WithSelectedNetwork> createState() => _WithSelectedNetworkState();
+  State<_Initializing> createState() => _InitializingState();
 }
 
-class _WithSelectedNetworkState extends State<_WithSelectedNetwork> {
-  late final Future<NetworkServices> _activating;
+class _InitializingState extends State<_Initializing> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+  );
 
   @override
-  void initState() {
-    super.initState();
-    final services = context.read<ServiceRepository>();
-    setState(() {
-      _activating = services.activateNetwork(initialNetwork);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _activating,
-      builder: (_, snapshot) {
-        final networkServices = snapshot.data;
-        if (networkServices == null) {
-          // Initializing network services.
-          return const _Initializing();
-        }
-
-        // Initialize blocs/cubits.
-        return BlocProvider(
-          create: (_) {
-            // Initialize selected network as the one that was just activated.
-            return SelectedNetwork(networkServices);
-          },
-          child: widget.child,
-        );
-      },
+  void didUpdateWidget(covariant _Initializing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller.animateTo(
+      widget.progressPercentage / 100.0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
     );
   }
-}
-
-class _WithTermsAndConditionAcceptance extends StatefulWidget {
-  final Widget child;
-
-  const _WithTermsAndConditionAcceptance({required this.child});
-
-  @override
-  State<_WithTermsAndConditionAcceptance> createState() => _WithTermsAndConditionAcceptanceState();
-}
-
-class _WithTermsAndConditionAcceptanceState extends State<_WithTermsAndConditionAcceptance> {
-  late final Future<FutureValue<AcceptedTermsAndConditions?>> _lastAccepted;
-  late final TermsAndConditionsRepository _repository;
-
-  @override
-  void initState() {
-    super.initState();
-    final storage = context.read<ServiceRepository>().storage;
-    setState(() {
-      _repository = TermsAndConditionsRepository(storageProvider: storage);
-      _lastAccepted = _repository.getAcceptedTermsAndConditions().then(FutureValue.new);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _lastAccepted,
-        builder: (_, snapshot) {
-          if (snapshot.data != null) {
-            return BlocProvider(
-                create: (_) {
-                  return TermsAndConditionAcceptance(_repository, snapshot.requireData.value);
-                },
-                child: widget.child);
-          } else if (snapshot.hasError) {
-            // TODO Handle error
-          }
-          return const _Initializing();
-        });
-  }
-}
-
-class _Initializing extends StatelessWidget {
-  const _Initializing();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CircularProgressIndicator(),
-        SizedBox(height: 16),
-        // Setting text direction is required because we're outside 'MaterialApp' widget.
-        Text('Initializing...', textDirection: TextDirection.ltr),
-      ],
+    return MaterialApp(
+      home: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (_, __) {
+              final v = _controller.value;
+              // Render as spinner (i.e. indeterminate value) when complete instead of being stuck at full circle.
+              return CircularProgressIndicator(value: v > .99 ? null : v);
+            },
+          ),
+          // CircularProgressIndicator(value: widget.progressPercentage / 100.0),
+          const SizedBox(height: 16),
+          // Setting text direction is required because we're outside 'MaterialApp' widget.
+          const Text('Initializing...'),
+        ],
+      ),
+      theme: globalTheme(),
     );
   }
 }
