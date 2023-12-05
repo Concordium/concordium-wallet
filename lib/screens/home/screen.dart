@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/screens/example_base_page.dart';
 import 'package:concordium_wallet/screens/home/about_button.dart';
 import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/url_launcher.dart';
@@ -80,6 +81,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ExampleBasePage()));
+                    },
+                    child: const Text("Base Page")),
+                const SizedBox(height: 8),
                 const AboutButton(),
                 const SizedBox(height: 8),
                 ElevatedButton(
