@@ -1,8 +1,8 @@
+import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/auth/service.dart';
 import 'package:concordium_wallet/services/http.dart';
-import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/services/secure_storage/service.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:concordium_wallet/state/auth.dart';
@@ -37,11 +37,11 @@ Future<Config> loadConfig(HttpService http) async {
 
 Future<ServiceRepository> bootstrap() async {
   const http = HttpService();
-  const secureStorage = SecureStorageService(FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
+  const secureStorage = SecureStorageService(
+    FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
     ),
-  ));
+  );
   final configFuture = loadConfig(http);
   final storageFuture = StorageProvider.init();
   final config = await configFuture;
