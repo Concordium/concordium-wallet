@@ -59,14 +59,13 @@ class BasePageCustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.purple, width: 3),
-          gradient: const LinearGradient(colors: [Colors.yellow, Color(0xFFFFFFFF)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-      padding: const EdgeInsets.all(8),
-      child: Scaffold(
-        backgroundColor: Colors.transparent.withOpacity(0),
-        body: Column(children: [if (appBar != null) appBar!, child]),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.purple, width: 3),
+            gradient: const LinearGradient(colors: [Colors.yellow, Color(0xFFFFFFFF)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        padding: const EdgeInsets.all(8),
+        child: Column(children: [if (appBar != null) appBar!, child]),
       ),
     );
   }
