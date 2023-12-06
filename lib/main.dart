@@ -206,8 +206,8 @@ class _Initializing extends StatelessWidget {
       children: [
         const CircularProgressIndicator(),
         const SizedBox(height: 16),
-        // Setting text direction is required because we're outside 'MaterialApp' widget.
-        Text(AppLocalizations.of(context).initializing, textDirection: TextDirection.ltr),
+        // Setting hardcoded text and text direction is required because we're outside 'MaterialApp' widget.
+        const Text("Initializing...", textDirection: TextDirection.ltr),
       ],
     );
   }
