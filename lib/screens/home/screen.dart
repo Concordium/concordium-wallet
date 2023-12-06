@@ -94,6 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: const Text("Base with position page")),
                 const SizedBox(height: 8),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ExampleBaseWithPositionPageCustomAppBar()));
+                    },
+                    child: const Text("Base with custom app bar")),
+                const SizedBox(height: 8),
                 const AboutButton(),
                 const SizedBox(height: 8),
                 ElevatedButton(

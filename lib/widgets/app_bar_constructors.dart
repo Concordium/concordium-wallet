@@ -23,4 +23,23 @@ class AppBarConstructors {
       ],
     );
   }
+
+  static Widget customInfo(BuildContext context, String title, Widget infoWidget) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: SvgPicture.asset("assets/graphics/arrow_left.svg")),
+      Text(
+        title,
+        style: const TextStyle(color: Color(0xFF48A2AE)),
+      ),
+      IconButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => infoWidget));
+          },
+          icon: SvgPicture.asset("assets/graphics/help.svg")),
+    ]);
+  }
 }
