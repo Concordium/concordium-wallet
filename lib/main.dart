@@ -89,7 +89,11 @@ Stream<BootstrapProgress> bootstrap(NetworkName initialNetworkName) async* {
   await Future.delayed(const Duration(milliseconds: 1000)); // concurrent delay
   final validTac = await fetchingValidTac;
   final acceptedTac = await loadingAcceptedTac;
-  final tac = TermsAndConditionsAcceptance(tacRepo, acceptedTac, ValidTermsAndConditions.refreshedNow(termsAndConditions: validTac),);
+  final tac = TermsAndConditionsAcceptance(
+    tacRepo,
+    acceptedTac,
+    ValidTermsAndConditions.refreshedNow(termsAndConditions: validTac),
+  );
   yield BootstrapProgress.incomplete(progressPercentage: 100);
 
   await Future.delayed(const Duration(milliseconds: 500)); // delay
@@ -304,47 +308,41 @@ class TermsAndConditionsAcceptanceToggle extends StatelessWidget {
                 isScrollControlled: true,
                 useSafeArea: true,
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.9,
+                  // Limit sheet to 90% of the screen height.
+                  maxHeight: MediaQuery.of(context).size.height * 0.9,
                 ),
-                builder: (context) =>
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
+                builder: (context) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Terms and Conditions',
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                            ],
-                          ),
-                          Expanded(
-                            child: TermsAndConditionsContentWidget(
-                              url: validTermsAndConditions.termsAndConditions.url,
+                          const Text(
+                            'Terms and Conditions',
+                            style: TextStyle(
+                              fontSize: 18.0,
                             ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
                           ),
                         ],
                       ),
-                    ),
+                      Expanded(
+                        child: TermsAndConditionsContentWidget(
+                          url: validTermsAndConditions.termsAndConditions.url,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
             child: RichText(
               text: TextSpan(
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodySmall,
+                style: Theme.of(context).textTheme.bodySmall,
                 children: const [
                   TextSpan(text: 'I agree with the '),
                   TextSpan(
