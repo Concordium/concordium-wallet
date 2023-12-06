@@ -8,6 +8,7 @@ import 'package:concordium_wallet/screens/terms_and_conditions/screen.dart';
 import 'package:concordium_wallet/services/wallet_proxy/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 
 import 'helpers.dart';
 
@@ -52,8 +53,7 @@ void main() {
       await tester.pumpWidget(wrapMaterial(child: tacScreen));
 
       // Act
-      // TODO use internationalized version here.
-      await tester.tap(find.text("Continue", findRichText: true));
+      await tester.tap(find.text(AppLocalizationsEn().cont, findRichText: true));
 
       // Assert
       expect(checked, false);
@@ -68,8 +68,7 @@ void main() {
 
       await tester.pump();
 
-      // TODO use internationalized version here.
-      await tester.tap(find.text("Continue", findRichText: true));
+      await tester.tap(find.text(AppLocalizationsEn().cont, findRichText: true));
 
       await tester.pump();
 
@@ -95,8 +94,7 @@ void main() {
     when(() => launcher.launch(uri)).thenAnswer((_) => Future.value(true));
 
     // Act
-    // TODO use internationalized version here.
-    await tester.tap(find.textContaining("I have read and agree to the", findRichText: true));
+    await tester.tap(find.textContaining(AppLocalizationsEn().read_and_agree, findRichText: true));
 
     // Assert
     verify(() => launcher.launch(uri)).called(1);

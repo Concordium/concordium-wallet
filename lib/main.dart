@@ -11,6 +11,7 @@ import 'package:concordium_wallet/theme.dart';
 import 'package:concordium_wallet/types/future_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const App());
@@ -55,10 +56,13 @@ class App extends StatelessWidget {
       child: _WithSelectedNetwork(
         initialNetwork: initialNetwork,
         child: _WithTermsAndConditionAcceptance(
-            child: MaterialApp(
-          routes: appRoutes,
-          theme: concordiumTheme(),
-        )),
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routes: appRoutes,
+            theme: concordiumTheme(),
+          ),
+        ),
       ),
     );
   }
@@ -202,8 +206,8 @@ class _Initializing extends StatelessWidget {
       children: [
         CircularProgressIndicator(),
         SizedBox(height: 16),
-        // Setting text direction is required because we're outside 'MaterialApp' widget.
-        Text('Initializing...', textDirection: TextDirection.ltr),
+        // Setting hardcoded text and text direction is required because we're outside 'MaterialApp' widget.
+        Text("Initializing...", textDirection: TextDirection.ltr),
       ],
     );
   }

@@ -49,7 +49,7 @@ chromedriver --port=4444
 ```
 And then run the script:
 ```shell
-./integration_test/run_tests.sh
+./integration_test/run_web_tests.sh
 ```
 If the HEADER environment variable is set, the tests run with a header.
 
