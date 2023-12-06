@@ -2,8 +2,7 @@
     "initializing": "Initializing...",
     "cont": "Continue",
     "before_you_begin": "Before you begin",
-    "intro_text0": "Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.",
-    "intro_text1": "It is very important that you keep your passcode safe, because it is the only way to access your accounts. Concordium is not able to change your passcode or help you unlock your wallet if you lose your passcode.",
+    "intro_text": "Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.\n\nIt is very important that you keep your passcode safe, because it is the only way to access your accounts. Concordium is not able to change your passcode or help you unlock your wallet if you lose your passcode.",
     "read_and_agree": "I have read and agree to the ",
     "terms_and_conditions": "Terms and Conditions v{v}",
     "previously_accepted": " (you previously accepted v{v})."

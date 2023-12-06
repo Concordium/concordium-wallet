@@ -62,9 +62,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Text(AppLocalizations.of(context).intro_text0),
-                    const SizedBox(height: 9),
-                    Text(AppLocalizations.of(context).intro_text1),
+                    Text(AppLocalizations.of(context).intro_text),
                   ],
                 ),
               ),
