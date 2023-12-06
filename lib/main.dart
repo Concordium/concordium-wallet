@@ -200,14 +200,14 @@ class _Initializing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const CircularProgressIndicator(),
-        const SizedBox(height: 16),
+        CircularProgressIndicator(),
+        SizedBox(height: 16),
         // Setting hardcoded text and text direction is required because we're outside 'MaterialApp' widget.
-        const Text("Initializing...", textDirection: TextDirection.ltr),
+        Text("Initializing...", textDirection: TextDirection.ltr),
       ],
     );
   }
