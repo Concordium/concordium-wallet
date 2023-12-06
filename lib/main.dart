@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:concordium_wallet/providers/storage.dart';
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
@@ -33,13 +31,11 @@ Future<Config> loadConfig(HttpService http) async {
 class BootstrapData {
   final ServiceRepository services;
   final SelectedNetwork selectedNetwork;
-  final ValidTermsAndConditions validTermsAndConditions;
   final TermsAndConditionsAcceptance termsAndConditionsAcceptance;
 
   const BootstrapData({
     required this.services,
     required this.selectedNetwork,
-    required this.validTermsAndConditions,
     required this.termsAndConditionsAcceptance,
   });
 }
@@ -71,43 +67,37 @@ Future<NetworkServices> startSelectedNetwork(NetworkName initialNetworkName, Ser
   return services.activateNetwork(initialNetworkName);
 }
 
-Future<TermsAndConditionsAcceptance> loadAcceptedTermsAndConditions(StorageProvider storage) async {
-  final repo = TermsAndConditionsRepository(storageProvider: storage);
-  final tac = await repo.getAcceptedTermsAndConditions();
-  return TermsAndConditionsAcceptance(repo, tac);
-}
-
 Stream<BootstrapProgress> bootstrap(NetworkName initialNetworkName) async* {
   const http = HttpService();
   yield BootstrapProgress.incomplete(progressPercentage: 0);
 
   final startingGlobalServices = startGlobalServices(http);
-  await Future.delayed(const Duration(milliseconds: 1500)); // add concurrent delay to let the user see that something's happening
+  await Future.delayed(const Duration(milliseconds: 1500)); // add concurrent delay to allow the user see that something's happening
   final services = await startingGlobalServices;
   yield BootstrapProgress.incomplete(progressPercentage: 20);
 
   final activatingNetwork = services.activateNetwork(initialNetwork);
-  await Future.delayed(const Duration(milliseconds: 500));
+  await Future.delayed(const Duration(milliseconds: 500)); // concurrent delay
   final activatedNetworkServices = await activatingNetwork;
   yield BootstrapProgress.incomplete(progressPercentage: 70);
 
   // Loading valid T&C. This is necessary if the user hasn't previously accepted.
-  // If this wasn't loaded via some global config instead of Wallet Proxy there would be no need for activating a network yet.
+  // Note that if this was loaded via some global config instead of Wallet Proxy there would be no need for activating a network yet.
   final fetchingValidTac = activatedNetworkServices.walletProxy.fetchTermsAndConditions();
-  final loadingAcceptedTac = loadAcceptedTermsAndConditions(services.storage);
-  await Future.delayed(const Duration(milliseconds: 1000));
+  final tacRepo = TermsAndConditionsRepository(storageProvider: services.storage);
+  final loadingAcceptedTac = tacRepo.getAcceptedTermsAndConditions();
+  await Future.delayed(const Duration(milliseconds: 1000)); // concurrent delay
   final validTac = await fetchingValidTac;
   final acceptedTac = await loadingAcceptedTac;
+  final tac = TermsAndConditionsAcceptance(tacRepo, acceptedTac, ValidTermsAndConditions.refreshedNow(termsAndConditions: validTac),);
   yield BootstrapProgress.incomplete(progressPercentage: 100);
 
-  await Future.delayed(const Duration(milliseconds: 1000));
-
+  await Future.delayed(const Duration(milliseconds: 500)); // delay
   yield BootstrapProgress.complete(
     result: BootstrapData(
       services: services,
       selectedNetwork: SelectedNetwork(activatedNetworkServices),
-      validTermsAndConditions: ValidTermsAndConditions.refreshedNow(termsAndConditions: validTac),
-      termsAndConditionsAcceptance: acceptedTac,
+      termsAndConditionsAcceptance: tac,
     ),
   );
 }
@@ -135,6 +125,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     final data = _data;
     if (data == null) {
+      print('data is null');
       return MaterialApp(
         home: StartScreen(
           onContinue: (data) {
@@ -146,6 +137,7 @@ class _AppState extends State<App> {
         theme: globalTheme(),
       );
     }
+    print('data is not null');
     // App is ready and T&C has been accepted. Load landing page...
     return RepositoryProvider.value(
       value: data.services,
@@ -221,11 +213,8 @@ class _BootstrappingState extends State<Bootstrapping> {
           return _Initializing(progressPercentage: data.progressPercentage);
         }
         // Bootstrapping completed.
-        var acceptedTac = result.termsAndConditionsAcceptance.state.accepted;
         return BootstrapCompletion(
-          acceptedTermsAndConditions: acceptedTac,
-          validTermsAndConditions: result.validTermsAndConditions,
-          // TODO: Ensure that accepted T&C is persisted!
+          termsAndConditionsAcceptance: result.termsAndConditionsAcceptance,
           onContinue: () => widget.onContinue(result),
         );
       },
@@ -234,14 +223,12 @@ class _BootstrappingState extends State<Bootstrapping> {
 }
 
 class BootstrapCompletion extends StatefulWidget {
-  final AcceptedTermsAndConditions? acceptedTermsAndConditions;
-  final ValidTermsAndConditions validTermsAndConditions;
+  final TermsAndConditionsAcceptance termsAndConditionsAcceptance;
   final Function() onContinue;
 
   const BootstrapCompletion({
     super.key,
-    required this.acceptedTermsAndConditions,
-    required this.validTermsAndConditions,
+    required this.termsAndConditionsAcceptance,
     required this.onContinue,
   });
 
@@ -259,21 +246,31 @@ class _BootstrapCompletionState extends State<BootstrapCompletion> {
   }
 
   Function()? _onContinuePressed() {
-    if (widget.acceptedTermsAndConditions == null && !_tacAccepted) {
-      // No terms are already accepted and switch isn't toggled: Disable button.
+    var tac = widget.termsAndConditionsAcceptance;
+    if (tac.state.isAnyAccepted()) {
+      // Terms have already been accepted: Button is enabled.
+      return widget.onContinue;
+    }
+    // No terms have been previously accepted: Require acceptance before enabling continue button.
+    if (!_tacAccepted) {
+      // Switch isn't toggled: Disable button.
       return null;
     }
-    return widget.onContinue;
+    // Switch is toggled: Continue will accept terms.
+    return () {
+      tac.userAccepted(AcceptedTermsAndConditions.acceptedNow(tac.state.valid.termsAndConditions.version));
+      widget.onContinue();
+    };
   }
 
   @override
   Widget build(BuildContext context) {
-    var acceptedTac = widget.acceptedTermsAndConditions;
+    var acceptedTac = widget.termsAndConditionsAcceptance.state.accepted;
     return Column(
       children: [
         if (acceptedTac == null)
           TermsAndConditionsAcceptanceToggle(
-            validTermsAndConditions: widget.validTermsAndConditions,
+            validTermsAndConditions: widget.termsAndConditionsAcceptance.state.valid,
             isAccepted: _tacAccepted,
             setAccepted: _setTacAccepted,
           ),
@@ -307,40 +304,47 @@ class TermsAndConditionsAcceptanceToggle extends StatelessWidget {
                 isScrollControlled: true,
                 useSafeArea: true,
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.9,
+                  maxHeight: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.9,
                 ),
-                builder: (context) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                builder: (context) =>
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
                         children: [
-                          const Text(
-                            'Terms and Conditions',
-                            style: TextStyle(
-                              fontSize: 18.0,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Terms and Conditions',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(context),
+                          Expanded(
+                            child: TermsAndConditionsContentWidget(
+                              url: validTermsAndConditions.termsAndConditions.url,
+                            ),
                           ),
                         ],
                       ),
-                      Expanded(
-                        child: TermsAndConditionsContentWidget(
-                          url: validTermsAndConditions.termsAndConditions.url,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
               );
             },
             child: RichText(
               text: TextSpan(
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .bodySmall,
                 children: const [
                   TextSpan(text: 'I agree with the '),
                   TextSpan(

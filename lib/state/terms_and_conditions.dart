@@ -48,14 +48,12 @@ class TermsAndConditionsAcceptanceState {
   final AcceptedTermsAndConditions? accepted;
 
   /// Currently valid T&C.
-  final ValidTermsAndConditions? valid;
+  final ValidTermsAndConditions valid;
 
   const TermsAndConditionsAcceptanceState({required this.accepted, required this.valid});
 
-  bool isValidAccepted() {
-    final acceptedTac = accepted;
-    final validTac = valid?.termsAndConditions;
-    return acceptedTac != null && validTac != null && acceptedTac.isValid(validTac);
+  bool isAnyAccepted() {
+    return accepted != null;
   }
 }
 
@@ -64,12 +62,11 @@ class TermsAndConditionsAcceptance extends Cubit<TermsAndConditionsAcceptanceSta
   /// Service used to persist the accepted T&C version.
   final TermsAndConditionsRepository _termsAndConditionRepo;
 
-  TermsAndConditionsAcceptance(this._termsAndConditionRepo, AcceptedTermsAndConditions? acceptedVersion)
-      : super(const TermsAndConditionsAcceptanceState(accepted: null, valid: null)) {
-    if (acceptedVersion != null) {
-      userAccepted(acceptedVersion);
-    }
-  }
+  TermsAndConditionsAcceptance(
+    this._termsAndConditionRepo,
+    AcceptedTermsAndConditions? accepted,
+    ValidTermsAndConditions valid,
+  ) : super(TermsAndConditionsAcceptanceState(accepted: accepted, valid: valid));
 
   /// Update the currently accepted T&C and persist the new value.
   ///
@@ -86,28 +83,6 @@ class TermsAndConditionsAcceptance extends Cubit<TermsAndConditionsAcceptanceSta
   /// Revokes T&C acceptance and delete it from persistence.
   void resetAccepted() {
     emit(TermsAndConditionsAcceptanceState(accepted: null, valid: state.valid));
-  }
-
-  /// Resets the valid T&C.
-  ///
-  /// This should trigger a reload and re-verification of the validity of the acceptance.
-  void resetValid() {
-    emit(TermsAndConditionsAcceptanceState(accepted: state.accepted, valid: null));
-  }
-
-  /// Resets the update time of the currently valid T&C (if present).
-  ///
-  /// This method is not likely to have any uses besides maybe testing.
-  void testResetValidTime() {
-    final valid = state.valid;
-    if (valid != null) {
-      validVersionUpdated(
-        ValidTermsAndConditions(
-          termsAndConditions: valid.termsAndConditions,
-          refreshedAt: DateTime.fromMicrosecondsSinceEpoch(0),
-        ),
-      );
-    }
   }
 
   @override

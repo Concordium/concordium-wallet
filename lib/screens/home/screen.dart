@@ -24,19 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: [
                       Text('Accepted T&C version: ${tacState.accepted?.version}'),
-                      Text('Valid T&C last refreshed at ${tacState.valid?.refreshedAt}.'),
+                      Text('Valid T&C last refreshed at ${tacState.valid.refreshedAt}.'),
                     ],
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionsAcceptance>().testResetValidTime(),
-                  child: const Text('Reset update time of valid T&C'),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => context.read<TermsAndConditionsAcceptance>().resetValid(),
-                  // NOTE: This resets the valid T&C which is picked up by the BlocConsumer's listener above to automatically trigger a re-fetch.
-                  child: const Text('Reset valid T&C'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
