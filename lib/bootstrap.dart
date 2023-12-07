@@ -37,14 +37,13 @@ class BootstrapProgress {
 /// Load fundamental configuration from the source of truth.
 Future<Config> loadConfig(HttpService http) async {
   // In the future, this will be loaded from a proper source rather than being hardcoded.
-  const testnetNetwork = Network(
-    name: NetworkName.testnet,
-    walletProxyConfig: WalletProxyConfig(
-      baseUrl: 'https://wallet-proxy.testnet.concordium.com',
-    ),
-  );
   return Config.ofNetworks([
-    testnetNetwork,
+    const Network(
+      name: NetworkName.testnet,
+      walletProxyConfig: WalletProxyConfig(
+        baseUrl: 'https://wallet-proxy.testnet.concordium.com',
+      ),
+    ),
   ]);
 }
 
@@ -60,12 +59,13 @@ Future<NetworkServices> startSelectedNetwork(NetworkName initialNetworkName, Ser
   return services.activateNetwork(initialNetworkName);
 }
 
+/// Bootstraps the core app services and activates the network with the provided name.
 Stream<BootstrapProgress> bootstrap(NetworkName initialNetworkName) async* {
   const http = HttpService();
   yield BootstrapProgress.incomplete(progressPercentage: 0);
 
   final startingGlobalServices = startGlobalServices(http);
-  await Future.delayed(const Duration(milliseconds: 1500)); // add concurrent delay to allow the user see that something's happening
+  await Future.delayed(const Duration(milliseconds: 1000)); // add concurrent delay to allow the user see that something's happening
   final services = await startingGlobalServices;
   yield BootstrapProgress.incomplete(progressPercentage: 20);
 
@@ -89,7 +89,7 @@ Stream<BootstrapProgress> bootstrap(NetworkName initialNetworkName) async* {
   );
   yield BootstrapProgress.incomplete(progressPercentage: 100);
 
-  await Future.delayed(const Duration(milliseconds: 500)); // delay
+  await Future.delayed(const Duration(milliseconds: 500)); // final delay
   yield BootstrapProgress.complete(
     result: BootstrapData(
       services: services,
@@ -98,4 +98,3 @@ Stream<BootstrapProgress> bootstrap(NetworkName initialNetworkName) async* {
     ),
   );
 }
-

@@ -43,7 +43,7 @@ class _ProgressSpinnerState extends State<ProgressSpinner> with SingleTickerProv
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 }

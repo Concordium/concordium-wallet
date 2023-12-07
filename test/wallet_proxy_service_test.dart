@@ -1,4 +1,3 @@
-import 'package:concordium_wallet/main.dart';
 import 'package:concordium_wallet/services/http.dart';
 import 'package:concordium_wallet/services/wallet_proxy/service.dart';
 import 'package:mocktail/mocktail.dart';
@@ -35,8 +34,9 @@ void main() {
     expect(tac.version, tacVersion);
   });
 
-  test('WalletProxyConfig for testnet merges base and path correctly for terms and conditions', () {
-    expect(testnetNetwork.walletProxyConfig.urlOf(WalletProxyEndpoint.termsAndConditionsVersion).toString(),
-        'https://wallet-proxy.testnet.concordium.com/v0/termsAndConditionsVersion');
+  test('WalletProxyConfig merges base and path correctly for terms and conditions', () {
+    const cfg = WalletProxyConfig(baseUrl: 'https://test.com');
+    final url = cfg.urlOf(WalletProxyEndpoint.termsAndConditionsVersion);
+    expect(url.toString(), 'https://test.com/v0/termsAndConditionsVersion');
   });
 }
