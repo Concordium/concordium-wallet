@@ -24,14 +24,23 @@ abstract class SecretStorage {
   /// Read value at [key] in storage.
   /// 
   /// Throws [SecretStorageException] if no password exist in storage to compare with.
+  ///
+  /// Throws [TODO] if [kIsWeb] and neither [setPassword] or [unlock] has been called
+  /// since then the encrypted storage hasn't been opened.
   Future<String?> read(String key);
   /// Delete value at [key] in storage.
   /// 
   /// Throws [SecretStorageException] if no password exist in storage to compare with.
+  ///
+  /// Throws [TODO] if [kIsWeb] and neither [setPassword] or [unlock] has been called
+  /// since then the encrypted storage hasn't been opened.
   Future<void> delete(String key);
   /// Write [value] at [key] in storage.
   /// 
   /// Throws [SecretStorageException] if no password exist in storage to compare with.
+  ///
+  /// Throws [TODO] if [kIsWeb] and neither [setPassword] or [unlock] has been called
+  /// since then the encrypted storage hasn't been opened.
   Future<void> set(String key, String value);
   /// Checks if password has been set and throws exception if none is present.
   Future<void> _validatePasswordPresent() async {

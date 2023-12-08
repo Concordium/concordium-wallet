@@ -91,4 +91,24 @@ void main() {
     // Act & Assert
     await expectLater(storage.unlock("password"), throwsA(isA<SecretStorageException>()));
   });
+
+  if (kIsWeb) {
+    testWidgets("Given no password, when set, read and delete from storage, then throw exception", (widgetTester) async {
+    // Arrange
+    // TODO
+    const String key = "foo";
+    const String value = "bar";
+
+    // Act
+    await storage.set(key, value);
+    final beforeDelete = await storage.read(key);
+    await storage.delete(key);
+    final afterDelete = await storage.read(key);
+
+    // Assert
+    expect(beforeDelete, isNotNull);
+    expect(afterDelete, isNull);
+    expect(beforeDelete, value);
+  });
+  }
 }
