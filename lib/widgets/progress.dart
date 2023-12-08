@@ -31,9 +31,8 @@ class _ProgressSpinnerState extends State<ProgressSpinner> with SingleTickerProv
           AnimatedBuilder(
             animation: _controller,
             builder: (_, __) {
-              final v = _controller.value;
               // Render as spinner (i.e. indeterminate value) when complete instead of being stuck at full circle.
-              return CircularProgressIndicator(value: v > .99 ? null : v);
+              return CircularProgressIndicator(value: _controller.value);
             },
           ),
         ],

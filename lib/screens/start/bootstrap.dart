@@ -4,6 +4,7 @@ import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/widgets/progress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class Bootstrapping extends StatefulWidget {
   final NetworkName initialNetwork;
@@ -42,6 +43,13 @@ class _BootstrappingState extends State<Bootstrapping> {
           return ProgressSpinner(progressPercentage: data.progressPercentage);
         }
         // Bootstrapping completed.
+        // Check if any version of T&C have been already accepted.
+        if (result.termsAndConditionsAcceptance.state.isAnyAccepted()) {
+          // Invoke continuation to navigate to the home screen.
+          SchedulerBinding.instance.addPostFrameCallback((_) => widget.onContinue(result));
+          return const ProgressSpinner(progressPercentage: 100);
+        }
+        // Bootstrapping completed.
         return BootstrapCompletion(
           termsAndConditionsAcceptance: result.termsAndConditionsAcceptance,
           onContinue: () => widget.onContinue(result),
@@ -74,20 +82,16 @@ class _BootstrapCompletionState extends State<BootstrapCompletion> {
     });
   }
 
-  Function()? _onContinuePressed() {
-    var tac = widget.termsAndConditionsAcceptance;
-    if (tac.state.isAnyAccepted()) {
-      // Terms have already been accepted: Button is enabled.
-      // TODO: Navigate directly to home screen.
-      return widget.onContinue;
-    }
-    // No terms have been previously accepted: Require acceptance before enabling continue button.
+  Function()? _createOnContinuePressed() {
+    // No terms have been previously accepted (as we ):
+    // Require acceptance before enabling continue button.
     if (!_tacAccepted) {
       // Switch isn't toggled: Disable button.
       return null;
     }
     // Switch is toggled: Continue will accept terms.
     return () {
+      final tac = widget.termsAndConditionsAcceptance;
       tac.userAccepted(AcceptedTermsAndConditions.acceptedNow(tac.state.valid.termsAndConditions.version));
       widget.onContinue();
     };
@@ -95,16 +99,14 @@ class _BootstrapCompletionState extends State<BootstrapCompletion> {
 
   @override
   Widget build(BuildContext context) {
-    var acceptedTac = widget.termsAndConditionsAcceptance.state.accepted;
     return Column(
       children: [
-        if (acceptedTac == null)
-          TermsAndConditionsAcceptanceToggle(
-            validTermsAndConditions: widget.termsAndConditionsAcceptance.state.valid,
-            isAccepted: _tacAccepted,
-            setAccepted: _setTacAccepted,
-          ),
-        ElevatedButton(onPressed: _onContinuePressed(), child: const Text('Continue')),
+        TermsAndConditionsAcceptanceToggle(
+          validTermsAndConditions: widget.termsAndConditionsAcceptance.state.valid,
+          isAccepted: _tacAccepted,
+          setAccepted: _setTacAccepted,
+        ),
+        ElevatedButton(onPressed: _createOnContinuePressed(), child: const Text('Continue')),
       ],
     );
   }
