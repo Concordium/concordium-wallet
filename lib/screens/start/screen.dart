@@ -15,17 +15,20 @@ class StartScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/graphics/concordium-logo.svg',
-                  semanticsLabel: 'Concordium Logo',
-                ),
+            Center(
+              child: SvgPicture.asset(
+                'assets/graphics/concordium-logo.svg',
+                semanticsLabel: 'Concordium Logo',
               ),
             ),
-            Bootstrapping(initialNetwork: initialNetwork, onContinue: onContinue),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Bootstrapping(initialNetwork: initialNetwork, onContinue: onContinue),
+              ],
+            ),
           ],
         ),
       ),
