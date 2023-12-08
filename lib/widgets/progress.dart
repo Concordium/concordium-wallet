@@ -18,7 +18,7 @@ class _ProgressSpinnerState extends State<ProgressSpinner> with SingleTickerProv
     _controller.animateTo(
       widget.progressPercentage / 100.0,
       duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
+      curve: Curves.linear,
     );
   }
 

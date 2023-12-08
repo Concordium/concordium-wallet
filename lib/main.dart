@@ -38,7 +38,7 @@ class _AppState extends State<App> {
             });
           },
         ),
-        theme: globalTheme(),
+        theme: startTheme(),
       );
     }
     // App is ready and T&C has been accepted. Load landing page...
