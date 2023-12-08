@@ -11,4 +11,3 @@ find integration_test -type f -name '*_test.dart' | while read -r filename; do
     [ -e "$filename" ] || continue
     flutter drive --driver=integration_test/test_driver.dart --target=$filename -d $DEVICE
 done
-
