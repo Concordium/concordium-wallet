@@ -124,7 +124,7 @@ class MobileSecretStorage extends SecretStorage {
   }
 
   Argon2id _getHashAlgorithm() {
-    return Argon2id(memory: 10 * 1000, parallelism: 2, iterations: 1, hashLength: 32);
+    return Argon2id(memory: 19 * 1000, parallelism: 1, iterations: 2, hashLength: 32);
   }
 
   List<int> _createSalt() {
