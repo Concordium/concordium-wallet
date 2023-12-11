@@ -107,7 +107,7 @@ class MobileSecretStorage extends SecretStorage {
 
     final passwordHash = PasswordHashEntity(passwordHash: await secret.extractBytes(), salt: salt);
     final passwordHashJson = jsonEncode(passwordHash.toJson());
-    return set(SecretStorage.passwordObfuscationKey, passwordHashJson);
+    return await storage.write(key: SecretStorage.passwordObfuscationKey, value: passwordHashJson);
   }
 
   @override
