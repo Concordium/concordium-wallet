@@ -5,7 +5,6 @@ part 'password_hash.g.dart';
 
 @JsonSerializable()
 class PasswordHashEntity {
-
   final List<int> passwordHash;
   final List<int> salt;
 

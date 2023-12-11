@@ -40,8 +40,5 @@ class SecretBoxEntityAdapter extends TypeAdapter<SecretBoxEntity> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SecretBoxEntityAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is SecretBoxEntityAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

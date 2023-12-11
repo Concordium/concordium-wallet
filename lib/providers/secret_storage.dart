@@ -14,37 +14,41 @@ abstract class SecretStorage {
 
   /// Set an user password.
   Future<void> setPassword(String password);
+
   /// Checks if the users has set a password.
   Future<bool> hasPassword();
+
   /// From given user password validates if it is correct and unlocks
   /// any encrypted storages.
-  /// 
+  ///
   /// Throws [SecretStorageException] if no password exist in storage to compare with.
-  Future<bool>  unlock(String password);
+  Future<bool> unlock(String password);
+
   /// Read value at [key] in storage.
-  /// 
-  /// Throws [SecretStorageException] if no password exist in storage to compare with.
   ///
-  /// Throws [TODO] if [kIsWeb] and neither [setPassword] or [unlock] has been called
-  /// since then the encrypted storage hasn't been opened.
+  /// Throws [SecretStorageException] with error [SecretStorageError.noPassword] if no password exist in storage to compare with.
+  ///
+  /// If [kIsWeb] and neither [setPassword] or [unlock] has been called then [SecretStorageError.encryptedBoxNotOpened]
+  /// is returned in exception.
   Future<String?> read(String key);
+
   /// Delete value at [key] in storage.
-  /// 
+  ///
   /// Throws [SecretStorageException] if no password exist in storage to compare with.
   ///
-  /// Throws [TODO] if [kIsWeb] and neither [setPassword] or [unlock] has been called
-  /// since then the encrypted storage hasn't been opened.
+  /// If [kIsWeb] and neither [setPassword] or [unlock] has been called then [SecretStorageError.encryptedBoxNotOpened]
+  /// is returned in exception.
   Future<void> delete(String key);
+
   /// Write [value] at [key] in storage.
-  /// 
-  /// Throws [SecretStorageException] if no password exist in storage to compare with.
   ///
-  /// Throws [TODO] if [kIsWeb] and neither [setPassword] or [unlock] has been called
-  /// since then the encrypted storage hasn't been opened.
+  /// Throws [SecretStorageException] if [kIsWeb] and neither [setPassword] or [unlock] has been called then [SecretStorageError.encryptedBoxNotOpened]
+  /// is returned in exception.
   Future<void> set(String key, String value);
+
   /// Checks if password has been set and throws exception if none is present.
   Future<void> _validatePasswordPresent() async {
-    if(!(await hasPassword())) {
+    if (!(await hasPassword())) {
       throw SecretStorageException.noPassword();
     }
   }
@@ -83,8 +87,7 @@ class MobileSecretStorage extends SecretStorage {
 
   @override
   Future<void> set(String key, String value) async {
-    await _validatePasswordPresent();
-    return await storage.write(key: key, value: value);
+    return storage.write(key: key, value: value);
   }
 
   @override
@@ -96,7 +99,7 @@ class MobileSecretStorage extends SecretStorage {
   Future<void> setPassword(String password) async {
     final algorithm = _getHashAlgorithm();
     final salt = _createSalt();
-    
+
     final secret = await algorithm.deriveKeyFromPassword(password: password, nonce: salt);
 
     final passwordHash = PasswordHashEntity(passwordHash: await secret.extractBytes(), salt: salt);
@@ -107,8 +110,8 @@ class MobileSecretStorage extends SecretStorage {
   @override
   Future<bool> unlock(String password) async {
     final storedPassword = await read(SecretStorage.passwordObfuscationKey);
-    
-    if(storedPassword == null) {
+
+    if (storedPassword == null) {
       throw SecretStorageException.noPassword();
     }
     final passwordHash = PasswordHashEntity.fromJson(jsonDecode(storedPassword));
@@ -116,7 +119,7 @@ class MobileSecretStorage extends SecretStorage {
     final algorithm = _getHashAlgorithm();
     final passwordHashGiven = await algorithm.deriveKeyFromPassword(password: password, nonce: passwordHash.salt);
     final passwordHashGivenBytes = await passwordHashGiven.extractBytes();
-    
+
     return listEquals(passwordHashGivenBytes, passwordHash.passwordHash);
   }
 
@@ -131,14 +134,14 @@ class MobileSecretStorage extends SecretStorage {
       randomBytes[i] = secureRandom.nextInt(256);
     }
     return randomBytes;
-  }  
+  }
 }
 
 class WebSecretStorage extends SecretStorage {
   static String encryptedBoxTable = "encryptedBox";
 
   final LazyBox<SecretBoxEntity> nonEcryptedStorage;
-  LazyBox? encryptedBox;
+  LazyBox<String>? encryptedBox;
 
   WebSecretStorage._({required this.nonEcryptedStorage});
 
@@ -161,13 +164,12 @@ class WebSecretStorage extends SecretStorage {
   @override
   Future<String?> read(String key) async {
     await _validatePasswordPresent();
-    return await encryptedBox!.get(key);
+    return encryptedBox!.get(key);
   }
 
   @override
   Future<void> set(String key, String value) async {
-    await _validatePasswordPresent();
-    return await encryptedBox!.put(key, value);
+    return encryptedBox!.put(key, value);
   }
 
   @override
@@ -199,10 +201,18 @@ class WebSecretStorage extends SecretStorage {
   }
 
   @override
+  Future<void> _validatePasswordPresent() async {
+    if (encryptedBox == null) {
+      throw SecretStorageException.encryptedBoxNotOpened();
+    }
+    super._validatePasswordPresent();
+  }
+
+  @override
   Future<void> setPassword(String password) async {
     final key = Hive.generateSecureKey();
     final secretKey = await _generateCorrectLengthSecretKey(password);
-    
+
     final algorithm = AesGcm.with256bits();
     final secretBox = await algorithm.encrypt(key, secretKey: secretKey);
 
@@ -212,8 +222,8 @@ class WebSecretStorage extends SecretStorage {
     encryptedBox = await _openEncryptionBox(key);
   }
 
-  Future<LazyBox> _openEncryptionBox(List<int> key) {
-    return Hive.openLazyBox(encryptedBoxTable, encryptionCipher: HiveAesCipher(key));
+  Future<LazyBox<String>> _openEncryptionBox(List<int> key) {
+    return Hive.openLazyBox<String>(encryptedBoxTable, encryptionCipher: HiveAesCipher(key));
   }
 
   SecretBox _mapFromSecretBoxEntity(SecretBoxEntity entity) {

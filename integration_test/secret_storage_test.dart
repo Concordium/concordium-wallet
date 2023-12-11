@@ -8,30 +8,52 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:integration_test/integration_test.dart';
 
 /// Integration test class for secrect storage usages.
-/// 
+///
 /// Test are implemented as integration test since implementation differs on web and
 /// mobile and integration test are run on all supported platforms in our CI.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
+  
   late SecretStorage storage;
 
   setUpAll(() async {
-    await Hive.initFlutter();
-    storage = await SecretStorageFactory.create();
+    try {
+      await Hive.initFlutter();
+      storage = await SecretStorageFactory.create();
+      // ignore: empty_catches
+    } catch (e) {}
   });
 
   tearDown(() async {
-    if (kIsWeb) {
-      await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
-      await Hive.lazyBox(WebSecretStorage.encryptedBoxTable).clear();
-    } else {
-      const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
-      await mobileStorage.deleteAll();
-    }
+    try {
+      if (kIsWeb) {
+        await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
+        await Hive.lazyBox(WebSecretStorage.encryptedBoxTable).clear();
+      } else {
+        const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
+        await mobileStorage.deleteAll();
+      }
+    } catch (_) {}
   });
 
-  tearDownAll(() => Hive.deleteFromDisk());
+  // Runs before other test since box should 
+  if (kIsWeb) {
+    testWidgets("Given no password, when read, then throw exception", (widgetTester) async {
+      // Arrange
+      const String key = "foo";
+
+      // Act
+      try {
+        await storage.read(key);
+        fail("Read should have triggered exception");
+      } on SecretStorageException catch (e) {
+        // Assert
+        expect(e.error, SecretStorageError.encryptedBoxNotOpened);
+      } catch (e) {
+        fail("Exception should not be of type ${e.runtimeType}");
+      }
+    });
+  }
 
   testWidgets("When set, read and delete from storage, then update storage correctly", (widgetTester) async {
     // Arrange
@@ -84,31 +106,11 @@ void main() {
     final unlocked = await storage.unlock("somethingElse");
 
     // Assert
-    expect(unlocked, false);    
+    expect(unlocked, false);
   });
 
   testWidgets("Given no password set, when trying to unlock, then throw exception", (widgetTester) async {
     // Act & Assert
     await expectLater(storage.unlock("password"), throwsA(isA<SecretStorageException>()));
   });
-
-  if (kIsWeb) {
-    testWidgets("Given no password, when set, read and delete from storage, then throw exception", (widgetTester) async {
-    // Arrange
-    // TODO
-    const String key = "foo";
-    const String value = "bar";
-
-    // Act
-    await storage.set(key, value);
-    final beforeDelete = await storage.read(key);
-    await storage.delete(key);
-    final afterDelete = await storage.read(key);
-
-    // Assert
-    expect(beforeDelete, isNotNull);
-    expect(afterDelete, isNull);
-    expect(beforeDelete, value);
-  });
-  }
 }

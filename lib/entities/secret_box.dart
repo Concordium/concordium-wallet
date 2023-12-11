@@ -1,4 +1,3 @@
-
 import 'package:hive/hive.dart';
 
 part 'secret_box.g.dart';
