@@ -13,30 +13,25 @@ import 'package:integration_test/integration_test.dart';
 /// mobile and integration test are run on all supported platforms in our CI.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  
+
   late SecretStorage storage;
 
   setUpAll(() async {
-    try {
-      await Hive.initFlutter();
-      storage = await SecretStorageFactory.create();
-      // ignore: empty_catches
-    } catch (e) {}
+    await Hive.initFlutter();
+    storage = await SecretStorageFactory.create();
   });
 
   tearDown(() async {
-    try {
-      if (kIsWeb) {
-        await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
-        await Hive.lazyBox(WebSecretStorage.encryptedBoxTable).clear();
-      } else {
-        const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
-        await mobileStorage.deleteAll();
-      }
-    } catch (_) {}
+    if (kIsWeb) {
+      await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
+      await Hive.lazyBox(WebSecretStorage.encryptedBoxTable).clear();
+    } else {
+      const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
+      await mobileStorage.deleteAll();
+    }
   });
 
-  // Runs before other test since box should 
+  // Runs before other test since box should
   if (kIsWeb) {
     testWidgets("Given no password, when read, then throw exception", (widgetTester) async {
       // Arrange
