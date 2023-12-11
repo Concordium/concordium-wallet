@@ -22,13 +22,27 @@ void main() {
   });
 
   tearDown(() async {
-    if (kIsWeb) {
-      await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
-      await Hive.lazyBox(WebSecretStorage.encryptedBoxTable).clear();
-    } else {
-      const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
-      await mobileStorage.deleteAll();
-    }
+    try {
+      if (kIsWeb) {
+        if (Hive.isBoxOpen(SecretBoxEntity.table)) {
+          await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
+        }
+        if (Hive.isBoxOpen(WebSecretStorage.encryptedBoxTable)) {
+          await Hive.lazyBox(WebSecretStorage.encryptedBoxTable).clear();
+        }
+      } else {
+        const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
+        await mobileStorage.deleteAll();
+      }
+    } catch (_) {}
+  });
+
+  tearDownAll(() async {
+    try {
+      // [Hive.deleteFromDisk] doesn't close by itself on
+      // web https://github.com/isar/hive/pull/734.
+      await Hive.deleteFromDisk().timeout(const Duration(seconds: 2));
+    } catch (_) {}
   });
 
   // Runs before other test since box should
@@ -105,7 +119,18 @@ void main() {
   });
 
   testWidgets("Given no password set, when trying to unlock, then throw exception", (widgetTester) async {
-    // Act & Assert
-    await expectLater(storage.unlock("password"), throwsA(isA<SecretStorageException>()));
+    try {
+      // Acts
+      await storage.unlock("password");
+      fail("Should throw exception");
+    } on SecretStorageException catch (e) {
+      // Assert
+      expect(e.error, SecretStorageError.noPassword);
+    } catch (e) {
+      if (e is TestFailure) {
+        rethrow;
+      }
+      fail("Exception should not be of type ${e.runtimeType}");
+    }
   });
 }

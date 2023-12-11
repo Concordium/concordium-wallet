@@ -138,7 +138,7 @@ class MobileSecretStorage extends SecretStorage {
 }
 
 class WebSecretStorage extends SecretStorage {
-  static String encryptedBoxTable = "encryptedBox";
+  static String encryptedBoxTable = "encrypted_box";
 
   final LazyBox<SecretBoxEntity> nonEcryptedStorage;
   LazyBox<String>? encryptedBox;
@@ -179,6 +179,8 @@ class WebSecretStorage extends SecretStorage {
 
   @override
   Future<bool> unlock(String password) async {
+    await _validatePasswordPresent();
+
     final secretBoxEntity = await nonEcryptedStorage.get(SecretStorage.passwordObfuscationKey);
     if (secretBoxEntity == null) {
       throw SecretStorageException.noPassword();
@@ -205,7 +207,7 @@ class WebSecretStorage extends SecretStorage {
     if (encryptedBox == null) {
       throw SecretStorageException.encryptedBoxNotOpened();
     }
-    super._validatePasswordPresent();
+    await super._validatePasswordPresent();
   }
 
   @override
