@@ -41,8 +41,10 @@ abstract class SecretStorage {
   Future<void> delete(String key);
 
   /// Write [value] at [key] in storage.
+  /// 
+  /// Throws [SecretStorageException] if no password exist in storage to compare with.
   ///
-  /// Throws [SecretStorageException] if [kIsWeb] and neither [setPassword] or [unlock] has been called then [SecretStorageError.encryptedBoxNotOpened]
+  /// If [kIsWeb] and neither [setPassword] or [unlock] has been called then [SecretStorageError.encryptedBoxNotOpened]
   /// is returned in exception.
   Future<void> set(String key, String value);
 
@@ -87,7 +89,8 @@ class MobileSecretStorage extends SecretStorage {
 
   @override
   Future<void> set(String key, String value) async {
-    return storage.write(key: key, value: value);
+    await _validatePasswordPresent();
+    return await storage.write(key: key, value: value);
   }
 
   @override
