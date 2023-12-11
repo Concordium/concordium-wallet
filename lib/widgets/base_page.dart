@@ -70,32 +70,3 @@ class BasePageCustomAppBar extends StatelessWidget {
     );
   }
 }
-
-// class BasePageCustomAppBar extends StatelessWidget {
-//   final Widget child;
-//   final Widget? pageHeaderWidget;
-//   final Widget? appBar;
-//   const BasePageCustomAppBar({super.key, required this.child, this.pageHeaderWidget, this.appBar});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Container(
-//           decoration: BoxDecoration(
-//               border: Border.all(color: Colors.purple, width: 3),
-//               gradient: const LinearGradient(colors: [Color(0xFFF2F2F2), Color(0xFFFFFFFF)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-//           child: Column(
-//             children: [
-//               if (appBar != null) Padding(padding: const EdgeInsets.all(8), child: appBar),
-//               if (pageHeaderWidget != null) pageHeaderWidget!,
-//               Expanded(
-//                 child: Padding(
-//                   padding: const EdgeInsets.all(8),
-//                   child: child,
-//                 ),
-//               )
-//             ],
-//           )),
-//     );
-//   }
-// }
