@@ -41,7 +41,7 @@ abstract class SecretStorage {
   Future<void> delete(String key);
 
   /// Write [value] at [key] in storage.
-  /// 
+  ///
   /// Throws [SecretStorageException] if no password exist in storage to compare with.
   ///
   /// If [kIsWeb] and neither [setPassword] or [unlock] has been called then [SecretStorageError.encryptedBoxNotOpened]
