@@ -1,5 +1,5 @@
-import 'package:concordium_wallet/shared_components/account_summary_card/card_decorations.dart';
-import 'package:concordium_wallet/theme.dart';
+import 'package:concordium_wallet/design_system/components/account_summary_card/card_decorations.dart';
+import 'package:concordium_wallet/design_system/theme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
