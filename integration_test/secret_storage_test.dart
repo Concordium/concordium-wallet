@@ -22,27 +22,27 @@ void main() {
   });
 
   tearDown(() async {
-    try {
-      if (kIsWeb) {
-        if (Hive.isBoxOpen(SecretBoxEntity.table)) {
-          await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
-        }
-        if (Hive.isBoxOpen(WebSecretStorageProvider.encryptedBoxTable)) {
-          await Hive.lazyBox(WebSecretStorageProvider.encryptedBoxTable).clear();
-        }
-      } else {
-        const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
-        await mobileStorage.deleteAll();
+    if (kIsWeb) {
+      if (Hive.isBoxOpen(SecretBoxEntity.table)) {
+        await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
       }
-    } catch (_) {}
+      if (Hive.isBoxOpen(WebSecretStorageProvider.encryptedBoxTable)) {
+        await Hive.lazyBox(WebSecretStorageProvider.encryptedBoxTable).clear();
+      }
+    } else {
+      const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
+      await mobileStorage.deleteAll();
+    }
   });
 
   tearDownAll(() async {
-    try {
-      // [Hive.deleteFromDisk] doesn't close by itself on
-      // web https://github.com/isar/hive/pull/734.
-      await Hive.deleteFromDisk().timeout(const Duration(seconds: 2));
-    } catch (_) {}
+    if (kIsWeb) {
+      try {
+        // [Hive.deleteFromDisk] doesn't close by itself on
+        // web https://github.com/isar/hive/pull/734.
+        await Hive.deleteFromDisk().timeout(const Duration(seconds: 2));
+      } catch (_) {}
+    }
   });
 
   // Runs before other test since box should
