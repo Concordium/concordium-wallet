@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-abstract class SecretStorage {
+abstract class SecretStorageProvider {
   static String passwordObfuscationKey = "password_obfuscation";
 
   /// Set an user password.
@@ -56,23 +56,23 @@ abstract class SecretStorage {
   }
 }
 
-class SecretStorageFactory {
-  static Future<SecretStorage> create() async {
+class SecretStorageProviderFactory {
+  static Future<SecretStorageProvider> create() async {
     if (kIsWeb) {
-      return await WebSecretStorage.create();
+      return await WebSecretStorageProvider.create();
     }
-    return MobileSecretStorage.create();
+    return MobileSecretStorageProvider.create();
   }
 }
 
-class MobileSecretStorage extends SecretStorage {
+class MobileSecretStorageProvider extends SecretStorageProvider {
   final FlutterSecureStorage storage;
 
-  MobileSecretStorage._({required this.storage});
+  MobileSecretStorageProvider._({required this.storage});
 
-  factory MobileSecretStorage.create() {
+  factory MobileSecretStorageProvider.create() {
     const storage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
-    return MobileSecretStorage._(storage: storage);
+    return MobileSecretStorageProvider._(storage: storage);
   }
 
   @override
@@ -95,7 +95,7 @@ class MobileSecretStorage extends SecretStorage {
 
   @override
   Future<bool> hasPassword() {
-    return storage.containsKey(key: SecretStorage.passwordObfuscationKey);
+    return storage.containsKey(key: SecretStorageProvider.passwordObfuscationKey);
   }
 
   @override
@@ -107,12 +107,12 @@ class MobileSecretStorage extends SecretStorage {
 
     final passwordHash = PasswordHashEntity(passwordHash: await secret.extractBytes(), salt: salt);
     final passwordHashJson = jsonEncode(passwordHash.toJson());
-    return await storage.write(key: SecretStorage.passwordObfuscationKey, value: passwordHashJson);
+    return await storage.write(key: SecretStorageProvider.passwordObfuscationKey, value: passwordHashJson);
   }
 
   @override
   Future<bool> unlock(String password) async {
-    final storedPassword = await read(SecretStorage.passwordObfuscationKey);
+    final storedPassword = await read(SecretStorageProvider.passwordObfuscationKey);
 
     if (storedPassword == null) {
       throw SecretStorageException.noPassword();
@@ -140,18 +140,18 @@ class MobileSecretStorage extends SecretStorage {
   }
 }
 
-class WebSecretStorage extends SecretStorage {
+class WebSecretStorageProvider extends SecretStorageProvider {
   static String encryptedBoxTable = "encrypted_box";
 
   final LazyBox<SecretBoxEntity> nonEcryptedStorage;
   LazyBox<String>? encryptedBox;
 
-  WebSecretStorage._({required this.nonEcryptedStorage});
+  WebSecretStorageProvider._({required this.nonEcryptedStorage});
 
-  static Future<WebSecretStorage> create() async {
+  static Future<WebSecretStorageProvider> create() async {
     _registerAdapters();
     final nonEcryptedStorage = await Hive.openLazyBox<SecretBoxEntity>(SecretBoxEntity.table);
-    return WebSecretStorage._(nonEcryptedStorage: nonEcryptedStorage);
+    return WebSecretStorageProvider._(nonEcryptedStorage: nonEcryptedStorage);
   }
 
   static _registerAdapters() {
@@ -177,14 +177,14 @@ class WebSecretStorage extends SecretStorage {
 
   @override
   Future<bool> hasPassword() async {
-    return nonEcryptedStorage.containsKey(SecretStorage.passwordObfuscationKey);
+    return nonEcryptedStorage.containsKey(SecretStorageProvider.passwordObfuscationKey);
   }
 
   @override
   Future<bool> unlock(String password) async {
     await _validatePasswordPresent();
 
-    final secretBoxEntity = await nonEcryptedStorage.get(SecretStorage.passwordObfuscationKey);
+    final secretBoxEntity = await nonEcryptedStorage.get(SecretStorageProvider.passwordObfuscationKey);
     if (secretBoxEntity == null) {
       throw SecretStorageException.noPassword();
     }
@@ -222,7 +222,7 @@ class WebSecretStorage extends SecretStorage {
     final secretBox = await algorithm.encrypt(key, secretKey: secretKey);
 
     final secretBoxEntity = _mapFromSecretBox(secretBox);
-    await nonEcryptedStorage.put(SecretStorage.passwordObfuscationKey, secretBoxEntity);
+    await nonEcryptedStorage.put(SecretStorageProvider.passwordObfuscationKey, secretBoxEntity);
 
     encryptedBox = await _openEncryptionBox(key);
   }

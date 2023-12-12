@@ -14,11 +14,11 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late SecretStorage storage;
+  late SecretStorageProvider storage;
 
   setUpAll(() async {
     await Hive.initFlutter();
-    storage = await SecretStorageFactory.create();
+    storage = await SecretStorageProviderFactory.create();
   });
 
   tearDown(() async {
@@ -27,8 +27,8 @@ void main() {
         if (Hive.isBoxOpen(SecretBoxEntity.table)) {
           await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
         }
-        if (Hive.isBoxOpen(WebSecretStorage.encryptedBoxTable)) {
-          await Hive.lazyBox(WebSecretStorage.encryptedBoxTable).clear();
+        if (Hive.isBoxOpen(WebSecretStorageProvider.encryptedBoxTable)) {
+          await Hive.lazyBox(WebSecretStorageProvider.encryptedBoxTable).clear();
         }
       } else {
         const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
