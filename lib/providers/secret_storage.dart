@@ -66,9 +66,9 @@ class SecretStorageProviderFactory {
 }
 
 class MobileSecretStorageProvider extends SecretStorageProvider {
-  final FlutterSecureStorage storage;
+  final FlutterSecureStorage _storage;
 
-  MobileSecretStorageProvider._({required this.storage});
+  MobileSecretStorageProvider._({required FlutterSecureStorage storage}) : _storage = storage;
 
   factory MobileSecretStorageProvider.create() {
     const storage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
@@ -78,24 +78,24 @@ class MobileSecretStorageProvider extends SecretStorageProvider {
   @override
   Future<void> delete(String key) async {
     await _validatePasswordPresent();
-    return await storage.delete(key: key);
+    return await _storage.delete(key: key);
   }
 
   @override
   Future<String?> read(String key) async {
     await _validatePasswordPresent();
-    return await storage.read(key: key);
+    return await _storage.read(key: key);
   }
 
   @override
   Future<void> set(String key, String value) async {
     await _validatePasswordPresent();
-    return await storage.write(key: key, value: value);
+    return await _storage.write(key: key, value: value);
   }
 
   @override
   Future<bool> hasPassword() {
-    return storage.containsKey(key: SecretStorageProvider.passwordObfuscationKey);
+    return _storage.containsKey(key: SecretStorageProvider.passwordObfuscationKey);
   }
 
   @override
@@ -107,7 +107,7 @@ class MobileSecretStorageProvider extends SecretStorageProvider {
 
     final passwordHash = PasswordHashEntity(passwordHash: await secret.extractBytes(), salt: salt);
     final passwordHashJson = jsonEncode(passwordHash.toJson());
-    return await storage.write(key: SecretStorageProvider.passwordObfuscationKey, value: passwordHashJson);
+    return await _storage.write(key: SecretStorageProvider.passwordObfuscationKey, value: passwordHashJson);
   }
 
   @override
@@ -143,10 +143,10 @@ class MobileSecretStorageProvider extends SecretStorageProvider {
 class WebSecretStorageProvider extends SecretStorageProvider {
   static String encryptedBoxTable = "encrypted_box";
 
-  final LazyBox<SecretBoxEntity> nonEcryptedStorage;
-  LazyBox<String>? encryptedBox;
+  final LazyBox<SecretBoxEntity> _nonEcryptedStorage;
+  LazyBox<String>? _encryptedBox;
 
-  WebSecretStorageProvider._({required this.nonEcryptedStorage});
+  WebSecretStorageProvider._({required LazyBox<SecretBoxEntity> nonEcryptedStorage}) : _nonEcryptedStorage = nonEcryptedStorage;
 
   static Future<WebSecretStorageProvider> create() async {
     _registerAdapters();
@@ -161,30 +161,30 @@ class WebSecretStorageProvider extends SecretStorageProvider {
   @override
   Future<void> delete(String key) async {
     await _validatePasswordPresent();
-    return await encryptedBox!.delete(key);
+    return await _encryptedBox!.delete(key);
   }
 
   @override
   Future<String?> read(String key) async {
     await _validatePasswordPresent();
-    return encryptedBox!.get(key);
+    return _encryptedBox!.get(key);
   }
 
   @override
   Future<void> set(String key, String value) async {
-    return encryptedBox!.put(key, value);
+    return _encryptedBox!.put(key, value);
   }
 
   @override
   Future<bool> hasPassword() async {
-    return nonEcryptedStorage.containsKey(SecretStorageProvider.passwordObfuscationKey);
+    return _nonEcryptedStorage.containsKey(SecretStorageProvider.passwordObfuscationKey);
   }
 
   @override
   Future<bool> unlock(String password) async {
     await _validatePasswordPresent();
 
-    final secretBoxEntity = await nonEcryptedStorage.get(SecretStorageProvider.passwordObfuscationKey);
+    final secretBoxEntity = await _nonEcryptedStorage.get(SecretStorageProvider.passwordObfuscationKey);
     if (secretBoxEntity == null) {
       throw SecretStorageException.noPassword();
     }
@@ -195,7 +195,7 @@ class WebSecretStorageProvider extends SecretStorageProvider {
       final decryption = await algorithm.decrypt(secretBox, secretKey: secretKey);
 
       if (!Hive.isBoxOpen(encryptedBoxTable)) {
-        encryptedBox = await _openEncryptionBox(decryption);
+        _encryptedBox = await _openEncryptionBox(decryption);
       }
     } catch (_) {
       // wrong password since decryption failed.
@@ -207,7 +207,7 @@ class WebSecretStorageProvider extends SecretStorageProvider {
 
   @override
   Future<void> _validatePasswordPresent() async {
-    if (encryptedBox == null) {
+    if (_encryptedBox == null) {
       throw SecretStorageException.encryptedBoxNotOpened();
     }
     await super._validatePasswordPresent();
@@ -222,9 +222,9 @@ class WebSecretStorageProvider extends SecretStorageProvider {
     final secretBox = await algorithm.encrypt(key, secretKey: secretKey);
 
     final secretBoxEntity = _mapFromSecretBox(secretBox);
-    await nonEcryptedStorage.put(SecretStorageProvider.passwordObfuscationKey, secretBoxEntity);
+    await _nonEcryptedStorage.put(SecretStorageProvider.passwordObfuscationKey, secretBoxEntity);
 
-    encryptedBox = await _openEncryptionBox(key);
+    _encryptedBox = await _openEncryptionBox(key);
   }
 
   Future<LazyBox<String>> _openEncryptionBox(List<int> key) {
