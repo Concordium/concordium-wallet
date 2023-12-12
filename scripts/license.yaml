@@ -1,0 +1,31 @@
+# Please check that licenses are appropiate before adding them here, and never add any that are already in rejectedLicenses
+# If a license is found to not be appropiate please add it to rejectedLicenses
+permittedLicenses:
+  - MIT
+  - BSD-3-Clause
+  - Apache-2.0
+  - MIT-Modern-Variant
+  - Zlib
+  - ECL-2.0
+
+# List of licenses that we are sure should not be used
+rejectedLicenses:
+  - GPL
+  - GPL-1
+  - GPL-2
+  - GPL-3
+
+packageLicenseOverride:
+  hive_flutter: Apache-2.0
+  hive_generator: Apache-2.0
+  # All of flutter SDK uses BSD-3-Clause
+  flutter_test: BSD-3-Clause
+  flutter_web_plugins: BSD-3-Clause
+  flutter_driver: BSD-3-Clause
+  integration_test: BSD-3-Clause
+  fuchsia_remote_debug_protocol: BSD-3-Clause
+
+omitDisclaimer:
+  - flutter_test
+  - flutter_web_plugins
+

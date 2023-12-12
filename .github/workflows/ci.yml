@@ -1,0 +1,68 @@
+name: Analyze, format and test
+
+on:
+    # Trigger the workflow on pushes to the main and feature branches as well as PRs targeting them.
+    push:
+        branches: [main, feature/**]
+    pull_request:
+        branches: [main, feature/**]
+
+    # Allows us to run the workflow manually from the Actions tab
+    workflow_dispatch:
+
+env:
+    flutter_version: 3.13.6
+
+jobs:
+    check-licenses:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: ${{ env.flutter_version }}
+                channel: 'stable'
+                cache: true
+
+            - run: dart pub get
+
+            - name: Check licenses
+              run: dart run scripts/check_license.dart
+
+    analyze-format:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: ${{ env.flutter_version }}
+                channel: 'stable'
+                cache: true
+            - name: Analyze (lint)
+              run: flutter analyze
+
+            - name: Check format
+              run: dart format --output=none --set-exit-if-changed . -l 150
+
+    test:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: ${{ env.flutter_version }}
+                channel: 'stable'
+                cache: true
+
+            - name: Test
+              run: flutter test
+            
