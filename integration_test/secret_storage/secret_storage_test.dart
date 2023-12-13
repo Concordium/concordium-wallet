@@ -16,6 +16,28 @@ void main() {
 
   late SecretStorageProvider storage;
 
+  Future<void> clearHiveBox() async {
+    if (Hive.isBoxOpen(SecretBoxEntity.table)) {
+      await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
+    }
+    if (Hive.isBoxOpen(WebSecretStorageProvider.encryptedBoxTable)) {
+      await Hive.lazyBox(WebSecretStorageProvider.encryptedBoxTable).clear();
+    }
+  }
+
+  Future<void> deleteHiveFromDisk() async {
+    try {
+      // [Hive.deleteFromDisk] doesn't close by itself on
+      // web https://github.com/isar/hive/pull/734.
+      await Hive.deleteFromDisk().timeout(const Duration(seconds: 2));
+    } catch (_) {}
+  }
+
+  Future<void> clearMobileStorage() async {
+    const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
+    await mobileStorage.deleteAll();
+  }
+
   setUpAll(() async {
     await Hive.initFlutter();
     storage = await SecretStorageProviderFactory.create();
@@ -23,46 +45,17 @@ void main() {
 
   tearDown(() async {
     if (kIsWeb) {
-      if (Hive.isBoxOpen(SecretBoxEntity.table)) {
-        await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
-      }
-      if (Hive.isBoxOpen(WebSecretStorageProvider.encryptedBoxTable)) {
-        await Hive.lazyBox(WebSecretStorageProvider.encryptedBoxTable).clear();
-      }
+      await clearHiveBox();
     } else {
-      const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
-      await mobileStorage.deleteAll();
+      await clearMobileStorage();
     }
   });
 
   tearDownAll(() async {
     if (kIsWeb) {
-      try {
-        // [Hive.deleteFromDisk] doesn't close by itself on
-        // web https://github.com/isar/hive/pull/734.
-        await Hive.deleteFromDisk().timeout(const Duration(seconds: 2));
-      } catch (_) {}
+      await deleteHiveFromDisk();
     }
   });
-
-  // Runs before other test since box should
-  if (kIsWeb) {
-    testWidgets("Given no password, when read, then throw exception", (widgetTester) async {
-      // Arrange
-      const String key = "foo";
-
-      // Act
-      try {
-        await storage.read(key);
-        fail("Read should have triggered exception");
-      } on SecretStorageException catch (e) {
-        // Assert
-        expect(e.error, SecretStorageError.encryptedBoxNotOpened);
-      } catch (e) {
-        fail("Exception should not be of type ${e.runtimeType}");
-      }
-    });
-  }
 
   testWidgets("When set, read and delete from storage, then update storage correctly", (widgetTester) async {
     // Arrange
@@ -77,7 +70,6 @@ void main() {
     final afterDelete = await storage.read(key);
 
     // Assert
-    expect(beforeDelete, isNotNull);
     expect(afterDelete, isNull);
     expect(beforeDelete, value);
   });
@@ -90,7 +82,7 @@ void main() {
     expect(actual, false);
   });
 
-  testWidgets("When set password, then password set and one can unlock", (widgetTester) async {
+  testWidgets("When set password, then password is set and one can unlock", (widgetTester) async {
     // Arrange
     const String password = "foobar";
 
@@ -119,18 +111,35 @@ void main() {
   });
 
   testWidgets("Given no password set, when trying to unlock, then throw exception", (widgetTester) async {
+    // Arrange
+    dynamic actualError;
+    
+    // Acts
     try {
-      // Acts
       await storage.unlock("password");
-      fail("Should throw exception");
     } on SecretStorageException catch (e) {
-      // Assert
-      expect(e.error, SecretStorageError.noPassword);
-    } catch (e) {
-      if (e is TestFailure) {
-        rethrow;
-      }
-      fail("Exception should not be of type ${e.runtimeType}");
+      actualError = e;
     }
+
+    // Assert
+    expect(actualError, isA<SecretStorageException>());
+    expect((actualError as SecretStorageException).error, SecretStorageError.noPassword);
   });
+
+  if (kIsWeb) {
+    testWidgets("Given web, when not unlocked, then throw exception box hasn't been opened", (widgetTester) async {
+      // Arrange
+      const String key = "foo";
+      dynamic actualError;
+
+      // Act
+      try {
+        await storage.read(key);
+      } on SecretStorageException catch (e) {
+        actualError = e;
+      }
+      expect(actualError, isA<SecretStorageException>());
+      expect((actualError as SecretStorageException).error, SecretStorageError.encryptedBoxNotOpened);
+    });
+  }
 }
