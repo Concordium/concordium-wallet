@@ -29,7 +29,7 @@ void main() {
     try {
       // [Hive.deleteFromDisk] doesn't close by itself on
       // web https://github.com/isar/hive/pull/734.
-      await Hive.deleteFromDisk().timeout(const Duration(seconds: 2));
+      await Hive.deleteFromDisk().timeout(const Duration(seconds: 1));
     } catch (_) {}
   }
 
@@ -38,22 +38,38 @@ void main() {
     await mobileStorage.deleteAll();
   }
 
+  // setUpAll(() async {
+  //   await Hive.initFlutter();
+  //   storage = await SecretStorageProviderFactory.create();
+  // });
+
+  // tearDown(() async {
+  //   if (kIsWeb) {
+  //     await clearHiveBox();
+  //   } else {
+  //     await clearMobileStorage();
+  //   }
+  // });
+
+  // tearDownAll(() async {
+  //   if (kIsWeb) {
+  //     await deleteHiveFromDisk();
+  //   }
+  // });
+
   setUpAll(() async {
     await Hive.initFlutter();
-    storage = await SecretStorageProviderFactory.create();
   });
+
+  setUp(() async {
+    storage = await SecretStorageProviderFactory.create();
+  });  
 
   tearDown(() async {
     if (kIsWeb) {
-      await clearHiveBox();
+      await deleteHiveFromDisk();
     } else {
       await clearMobileStorage();
-    }
-  });
-
-  tearDownAll(() async {
-    if (kIsWeb) {
-      await deleteHiveFromDisk();
     }
   });
 
