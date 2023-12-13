@@ -1,7 +1,7 @@
 import 'package:concordium_wallet/design_system/foundation/colors/color_container.dart';
 import 'package:concordium_wallet/design_system/foundation/colors/color_icon.dart';
 import 'package:concordium_wallet/design_system/foundation/colors/color_text.dart';
-import 'package:concordium_wallet/design_system/foundation/typography/CcdTypography.dart';
+import 'package:concordium_wallet/design_system/foundation/typography/ccd_typography.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
