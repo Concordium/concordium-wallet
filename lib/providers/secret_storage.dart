@@ -18,7 +18,7 @@ abstract class SecretStorageProvider {
   /// Checks if the users has set a password.
   Future<bool> hasPassword();
 
-  /// From given user password validates if it is correct and unlocks
+  /// Validates [password] and unlocks any encrypted storages if the password is correct. Otherwise it returns false.
   /// any encrypted storages.
   ///
   /// Throws [SecretStorageException] if no password exist in storage to compare with.
