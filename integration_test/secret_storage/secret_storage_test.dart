@@ -16,15 +16,6 @@ void main() {
 
   late SecretStorageProvider storage;
 
-  Future<void> clearHiveBox() async {
-    if (Hive.isBoxOpen(SecretBoxEntity.table)) {
-      await Hive.lazyBox<SecretBoxEntity>(SecretBoxEntity.table).clear();
-    }
-    if (Hive.isBoxOpen(WebSecretStorageProvider.encryptedBoxTable)) {
-      await Hive.lazyBox(WebSecretStorageProvider.encryptedBoxTable).clear();
-    }
-  }
-
   Future<void> deleteHiveFromDisk() async {
     try {
       // [Hive.deleteFromDisk] doesn't close by itself on
@@ -37,25 +28,6 @@ void main() {
     const mobileStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
     await mobileStorage.deleteAll();
   }
-
-  // setUpAll(() async {
-  //   await Hive.initFlutter();
-  //   storage = await SecretStorageProviderFactory.create();
-  // });
-
-  // tearDown(() async {
-  //   if (kIsWeb) {
-  //     await clearHiveBox();
-  //   } else {
-  //     await clearMobileStorage();
-  //   }
-  // });
-
-  // tearDownAll(() async {
-  //   if (kIsWeb) {
-  //     await deleteHiveFromDisk();
-  //   }
-  // });
 
   setUpAll(() async {
     await Hive.initFlutter();
