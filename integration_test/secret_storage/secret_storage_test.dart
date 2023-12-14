@@ -125,6 +125,8 @@ void main() {
       } on SecretStorageException catch (e) {
         actualError = e;
       }
+
+      // Assert
       expect(actualError, isA<SecretStorageException>());
       expect((actualError as SecretStorageException).error, SecretStorageError.encryptedBoxNotOpened);
     });
