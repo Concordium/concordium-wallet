@@ -4,16 +4,31 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AccountSummaryCard extends StatelessWidget {
+  // TODO(RHA): Move this to a const file
+  static const ccdSymbol = '\u03FE';
+
+  final String accountLabel;
+  final String atDisposalLabel;
+  final String balanceLabel;
+
   final int accounts;
   final double atDisposal;
-  final double totalAmount;
-  final double dollarAmount;
+  final double ccdAmount;
+  final double fiatAmount;
   final CardDecorations decoration;
   static const double height = 170;
   static const double width = 343;
 
   const AccountSummaryCard(
-      {required this.accounts, required this.atDisposal, required this.totalAmount, required this.dollarAmount, required this.decoration, super.key});
+      {required this.accounts,
+      required this.atDisposal,
+      required this.ccdAmount,
+      required this.fiatAmount,
+      required this.decoration,
+      super.key,
+      required this.accountLabel,
+      required this.atDisposalLabel,
+      required this.balanceLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +37,16 @@ class AccountSummaryCard extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text("$accounts accounts", style: bodyS),
+              Text("$accounts $accountLabel", style: bodyS),
               const Spacer(),
-              Text("At disposal", style: bodyS),
+              Text(atDisposalLabel, style: bodyS),
               Text("Ͼ $atDisposal", style: heading5),
             ]),
             const Spacer(),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text("Total Wallet Balance", style: bodyS),
-              Text("\u03FE $totalAmount", style: heading2),
-              Text("\$ $dollarAmount", style: bodyL),
+              Text(balanceLabel, style: bodyS),
+              Text("$ccdSymbol $ccdAmount", style: heading2),
+              Text("\$ $fiatAmount", style: bodyL),
               const Spacer(),
               SvgPicture.asset('assets/graphics/CCD.svg')
             ]),
