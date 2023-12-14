@@ -1,4 +1,3 @@
-import 'package:concordium_wallet/entities/secret_box.dart';
 import 'package:concordium_wallet/exceptions/secret_storage_exception.dart';
 import 'package:concordium_wallet/providers/secret_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -35,7 +34,7 @@ void main() {
 
   setUp(() async {
     storage = await SecretStorageProviderFactory.create();
-  });  
+  });
 
   tearDown(() async {
     if (kIsWeb) {
@@ -101,7 +100,7 @@ void main() {
   testWidgets("Given no password set, when trying to unlock, then throw exception", (widgetTester) async {
     // Arrange
     dynamic actualError;
-    
+
     // Acts
     try {
       await storage.unlock("password");
