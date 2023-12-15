@@ -10,7 +10,7 @@ class ViewAccountSummaryCard extends DefaultComponent {
   @override
   Widget buildDefault(BuildContext context) => AccountSummaryCard(
         accounts: 1,
-        accountLabel: context.knobs.string(label: 'accounts'),
+        accountLabel: context.knobs.string(label: 'accounts', initialValue: 'Account'),
         atDisposalLabel: context.knobs.string(label: 'At disposal'),
         atDisposal: context.knobs.double.input(label: 'At disposal', initialValue: 100),
         ccdAmount: context.knobs.double.input(label: 'total amount', initialValue: 200),
