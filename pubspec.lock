@@ -1080,10 +1080,10 @@ packages:
     dependency: "direct dev"
     description:
       name: widgetbook
-      sha256: e3e4d710f0348da28209b8ec35617b0a425542a3c61889199dddf2b531b159bb
+      sha256: bdbfdc517923218394f11ad4e004a7e3d45672047e9d87f52833ac294366232d
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1"
+    version: "3.7.0"
   win32:
     dependency: transitive
     description:
