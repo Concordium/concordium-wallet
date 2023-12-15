@@ -15,7 +15,7 @@ env:
     iphone_model: iPhone 8
     android_profile: Nexus 6
     android_api_level: 27
-    android_target: google_apis
+    android_target: default
 
 jobs:
   android-integration-tests:
