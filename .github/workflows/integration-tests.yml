@@ -14,7 +14,7 @@ env:
     flutter_version: 3.13.6
     iphone_model: iPhone 8
     android_profile: Nexus 6
-    android_api_level: 26
+    android_api_level: 25
     android_target: default
 
 jobs:
