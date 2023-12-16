@@ -1,11 +1,9 @@
 import 'package:concordium_wallet/design_system/ccd_theme.dart';
 import 'package:concordium_wallet/design_system/foundation/spacing/ccd_spacing.dart';
 import 'package:concordium_wallet/design_system/graphics/icons/ccd_icon.dart';
-import 'package:concordium_wallet/design_system/graphics/icons/icon_container.dart';
 import 'package:concordium_wallet/design_system/graphics/icons/icon_size.dart';
 import 'package:concordium_wallet/widgetbook/helpers/default_component.dart';
 import 'package:flutter/material.dart';
-import 'package:widgetbook/widgetbook.dart';
 
 class ViewIcons extends DefaultComponent {
   ViewIcons() : super(name: 'Icons');
