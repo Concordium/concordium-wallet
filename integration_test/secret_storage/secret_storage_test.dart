@@ -44,7 +44,7 @@ void main() {
     }
   });
 
-  testWidgets("When set, read and delete from storage, then update storage correctly", (widgetTester) async {
+  test("When set, read and delete from storage, then update storage correctly", () async {
     // Arrange
     await storage.setPassword("password");
     const String key = "foo";
@@ -61,7 +61,7 @@ void main() {
     expect(beforeDelete, value);
   });
 
-  testWidgets("Given no password set, when check if exist, then return false", (widgetTester) async {
+  test("Given no password set, when check if exist, then return false", () async {
     // Act
     final actual = await storage.hasPassword();
 
@@ -69,7 +69,7 @@ void main() {
     expect(actual, false);
   });
 
-  testWidgets("When set password, then password is set and one can unlock", (widgetTester) async {
+  test("When set password, then password is set and one can unlock", () async {
     // Arrange
     const String password = "foobar";
 
@@ -85,7 +85,7 @@ void main() {
     expect(succeeded, true);
   });
 
-  testWidgets("When unlock with wrong password, then return false", (widgetTester) async {
+  test("When unlock with wrong password, then return false", () async {
     // Arrange
     const String password = "foobar";
     await storage.setPassword(password);
@@ -97,7 +97,7 @@ void main() {
     expect(unlocked, false);
   });
 
-  testWidgets("Given no password set, when trying to unlock, then throw exception", (widgetTester) async {
+  test("Given no password set, when trying to unlock, then throw exception", () async {
     // Arrange
     dynamic actualError;
 
@@ -113,22 +113,20 @@ void main() {
     expect((actualError as SecretStorageException).error, SecretStorageError.noPassword);
   });
 
-  if (kIsWeb) {
-    testWidgets("Given web, when not unlocked, then throw exception box hasn't been opened", (widgetTester) async {
-      // Arrange
-      const String key = "foo";
-      dynamic actualError;
+  test("Given web, when not unlocked, then throw exception box hasn't been opened", () async {
+    // Arrange
+    const String key = "foo";
+    dynamic actualError;
 
-      // Act
-      try {
-        await storage.read(key);
-      } on SecretStorageException catch (e) {
-        actualError = e;
-      }
+    // Act
+    try {
+      await storage.read(key);
+    } on SecretStorageException catch (e) {
+      actualError = e;
+    }
 
-      // Assert
-      expect(actualError, isA<SecretStorageException>());
-      expect((actualError as SecretStorageException).error, SecretStorageError.encryptedBoxNotOpened);
-    });
-  }
+    // Assert
+    expect(actualError, isA<SecretStorageException>());
+    expect((actualError as SecretStorageException).error, SecretStorageError.encryptedBoxNotOpened);
+  }, skip: !kIsWeb);
 }
