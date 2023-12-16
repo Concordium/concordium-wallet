@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/design_system/ccd_theme.dart';
 import 'package:concordium_wallet/widgetbook/components/component_folder.dart';
 import 'package:concordium_wallet/widgetbook/foundation/foundation_folder.dart';
 import 'package:flutter/material.dart';

@@ -1,10 +1,6 @@
-enum CcdSpacing {
-  s8(value: 8.0),
-  s16(value: 16.0),
-  s24(value: 24.0),
-  s32(value: 32.0);
-
-  final double value;
-
-  const CcdSpacing({required this.value});
+abstract class CcdSpacing {
+  static const pt8 = 8.0;
+  static const pt16 = 16.0;
+  static const pt24 = 24.0;
+  static const pt32 = 32.0;
 }

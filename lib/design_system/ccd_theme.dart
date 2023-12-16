@@ -2,10 +2,12 @@ import 'package:concordium_wallet/design_system/foundation/colors/color_containe
 import 'package:concordium_wallet/design_system/foundation/colors/color_icon.dart';
 import 'package:concordium_wallet/design_system/foundation/colors/color_text.dart';
 import 'package:concordium_wallet/design_system/foundation/typography/ccd_typography.dart';
+import 'package:concordium_wallet/design_system/graphics/icons/icon_container.dart';
 import 'package:flutter/material.dart';
 
 abstract class CcdTheme extends ThemeExtension<CcdTheme> {
   final CcdTypography typography = CcdTypography();
+  final IconContainer icon = IconContainer();
   late ColorContainer color;
 
   static CcdTheme of(BuildContext context) {

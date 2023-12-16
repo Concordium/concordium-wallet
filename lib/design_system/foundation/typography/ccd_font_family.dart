@@ -3,7 +3,7 @@ enum CcdFontFamily {
   semibold(name: "${_prefix}Semibold"),
   medium(name: "${_prefix}Medium"),
   regular(name: "${_prefix}Regular"),
-  light(name: "${_prefix}Regular");
+  light(name: "${_prefix}Light");
 
   final String name;
 
