@@ -1,10 +1,13 @@
 import 'package:concordium_wallet/bootstrap.dart';
+import 'package:concordium_wallet/designsystem/theme/ThemeState.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/screens/start/screen.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'designsystem/theme/AppTheme.dart';
 
 // TODO: We can probably defer network activation until we hit the landing page.
 const _initialNetwork = NetworkName.testnet;
