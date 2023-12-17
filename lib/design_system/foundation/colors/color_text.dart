@@ -1,28 +1,16 @@
+import 'package:concordium_wallet/design_system/foundation/colors/internal_color.dart';
 import 'package:flutter/material.dart';
 
 abstract class ColorText {
   Color get primary;
-  Color get secondary;
 }
 
 class ColorTextDark implements ColorText {
   @override
-  // TODO: implement primary
-  Color get primary => throw UnimplementedError();
-
-  @override
-  // TODO: implement secondary
-  Color get secondary => throw UnimplementedError();
+  Color get primary => InternalColor.white;
 }
 
 class ColorTextLight implements ColorText {
-
   @override
-  // TODO: implement primary
-  Color get primary => throw UnimplementedError();
-
-  @override
-  // TODO: implement secondary
-  Color get secondary => throw UnimplementedError();
-
+  Color get primary => InternalColor.black;
 }

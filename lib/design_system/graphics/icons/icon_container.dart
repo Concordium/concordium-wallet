@@ -31,4 +31,16 @@ class IconContainer {
     Key? key,
   }) =>
       CcdIcon(filename: 'cancel.svg', size: size, color: color, key: key);
+
+  CcdIcon circleAdd({
+    required IconSize size,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'circle_add.svg', size: size, key: key);
+
+  CcdIcon circleSubtract({
+    required IconSize size,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'circle_subtract.svg', size: size, key: key);
 }

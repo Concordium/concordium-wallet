@@ -8,16 +8,14 @@ class CcdIcon extends StatelessWidget {
     super.key,
     required this.filename,
     required this.size,
-    required this.color,
+    this.color,
   });
 
   final String filename;
   final IconSize size;
-  final Color color;
+  final Color? color;
 
-  // IMPORTANT: If we later move the icons to a separate package project, then we need to set the _packageName to the name of the package in order for icons to be shown.
-  static const _packageName = '';
-  static const _imageFolder = 'design_system/graphics/icons/';
+  static const _imageFolder = 'assets/design_system/graphics/icons/';
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +24,7 @@ class CcdIcon extends StatelessWidget {
       key: Key(filename),
       height: size.value,
       width: size.value,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-      package: _packageName,
+      colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
     );
   }
 

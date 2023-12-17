@@ -5,10 +5,15 @@ import 'package:concordium_wallet/design_system/foundation/typography/ccd_typogr
 import 'package:concordium_wallet/design_system/graphics/icons/icon_container.dart';
 import 'package:flutter/material.dart';
 
+enum CcdThemeMode {
+  light, dark
+}
+
 abstract class CcdTheme extends ThemeExtension<CcdTheme> {
   final CcdTypography typography = CcdTypography();
   final IconContainer icon = IconContainer();
   late ColorContainer color;
+  late CcdThemeMode mode;
 
   static CcdTheme of(BuildContext context) {
     final theme = Theme.of(context).extension<CcdTheme>();
@@ -25,6 +30,7 @@ class CcdThemeDark extends CcdTheme {
       icon: ColorIconDark(),
       text: ColorTextDark(),
     );
+    mode = CcdThemeMode.dark;
   }
 
   @override
@@ -47,6 +53,7 @@ class CcdThemeLight extends CcdTheme {
       icon: ColorIconLight(),
       text: ColorTextLight(),
     );
+    mode = CcdThemeMode.light;
   }
 
   @override
