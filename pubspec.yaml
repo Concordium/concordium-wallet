@@ -90,15 +90,15 @@ flutter:
   fonts:
     - family: IBMPlexSans
       fonts:
-        - asset: assets/fonts/IBMPlexSans-Bold.ttf
+        - asset: assets/design_system/fonts/IBMPlexSans-Bold.ttf
           weight: 700
-        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
+        - asset: assets/design_system/fonts/IBMPlexSans-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/IBMPlexSans-Medium.ttf
+        - asset: assets/design_system/fonts/IBMPlexSans-Medium.ttf
           weight: 500
-        - asset: assets/fonts/IBMPlexSans-Regular.ttf
+        - asset: assets/design_system/fonts/IBMPlexSans-Regular.ttf
           weight: 400
-        - asset: assets/fonts/IBMPlexSans-Light.ttf
+        - asset: assets/design_system/fonts/IBMPlexSans-Light.ttf
           weight: 300
   assets:
     - assets/design_system/graphics/icons/

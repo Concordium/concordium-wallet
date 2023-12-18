@@ -1,4 +1,4 @@
-import 'package:concordium_wallet/design_system/ccd_theme.dart';
+import 'package:concordium_wallet/design_system/app_theme.dart';
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
@@ -55,16 +55,18 @@ class App extends StatelessWidget {
       child: _WithSelectedNetwork(
         initialNetwork: initialNetwork,
         child: _WithTermsAndConditionAcceptance(
-            child: MaterialApp(
-          routes: appRoutes,
-          theme: ThemeData.light().copyWith(extensions: <ThemeExtension<dynamic>>[
-            CcdThemeLight(),
-          ]),
-          darkTheme: ThemeData.dark().copyWith(extensions: <ThemeExtension<dynamic>>[
-            CcdThemeDark(),
-          ]),
-          themeMode: ThemeMode.light,
-        )),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider<AppTheme>(create: (_) => AppTheme()),
+            ],
+            child: Builder(
+              builder: (context) => MaterialApp(
+                routes: appRoutes,
+                theme: context.read<AppTheme>().state.themeData,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

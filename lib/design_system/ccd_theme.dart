@@ -67,6 +67,7 @@ class CcdThemeLight extends CcdTheme {
   @override
   ThemeExtension<CcdTheme> lerp(covariant ThemeExtension<CcdTheme>? other, double t) {
     if (other is! CcdThemeLight) {
+
       return this;
     }
     return CcdThemeLight();
