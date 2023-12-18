@@ -6,16 +6,34 @@ import 'package:concordium_wallet/design_system/foundation/typography/ccd_typogr
 import 'package:concordium_wallet/design_system/graphics/icons/icon_container.dart';
 import 'package:flutter/material.dart';
 
-enum CcdThemeMode {
-  light, dark
+enum CcdThemeMode { light, dark }
+
+/// Convenience getter to allow us to get the CcdTheme via `context.theme`
+/// instead of `CcdTheme.of(context)`
+extension ThemeGetter on BuildContext {
+  CcdTheme get theme => CcdTheme.of(this);
 }
 
+/// Defines the theme in accordance with the Figma design system
+///
+/// The theme is intended to be a 1:1 representation of the design system,
+/// which means that both the structure and naming should be consistent with the design system.
 abstract class CcdTheme extends ThemeExtension<CcdTheme> {
   final CcdTypography typography = CcdTypography();
   final IconContainer icon = IconContainer();
   late ColorContainer color;
   late CcdThemeMode mode;
 
+  /// Gets the theme
+  ///
+  /// In order for this to work, the theme (or rather the specific themed subclasses) must have been registered beforehand as a theme extension.
+  /// Otherwise, a [MissingCcdThemeError] is thrown
+  ///
+  /// Here's how to register the light theme as an extension:
+  /// ```dart
+  ///   ThemeState(ThemeData.light().copyWith(extensions: [ CcdThemeLight() ])
+  /// ```
+  ///
   static CcdTheme of(BuildContext context) {
     final theme = Theme.of(context).extension<CcdTheme>();
     if (theme == null) {
@@ -67,7 +85,6 @@ class CcdThemeLight extends CcdTheme {
   @override
   ThemeExtension<CcdTheme> lerp(covariant ThemeExtension<CcdTheme>? other, double t) {
     if (other is! CcdThemeLight) {
-
       return this;
     }
     return CcdThemeLight();
