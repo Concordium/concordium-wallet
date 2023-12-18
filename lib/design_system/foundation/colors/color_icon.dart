@@ -1,6 +1,7 @@
 import 'package:concordium_wallet/design_system/foundation/colors/internal_color.dart';
 import 'package:flutter/material.dart';
 
+/// Colors used for icons
 abstract class ColorIcon {
   Color get primary;
 }

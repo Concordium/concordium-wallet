@@ -1,5 +1,6 @@
 import 'package:concordium_wallet/design_system/foundation/colors/color_container.dart';
 import 'package:concordium_wallet/design_system/foundation/colors/color_icon.dart';
+import 'package:concordium_wallet/design_system/foundation/colors/color_layer.dart';
 import 'package:concordium_wallet/design_system/foundation/colors/color_text.dart';
 import 'package:concordium_wallet/design_system/foundation/typography/ccd_typography.dart';
 import 'package:concordium_wallet/design_system/graphics/icons/icon_container.dart';
@@ -29,6 +30,7 @@ class CcdThemeDark extends CcdTheme {
     color = ColorContainer(
       icon: ColorIconDark(),
       text: ColorTextDark(),
+      layer: ColorLayerDark(),
     );
     mode = CcdThemeMode.dark;
   }
@@ -52,6 +54,7 @@ class CcdThemeLight extends CcdTheme {
     color = ColorContainer(
       icon: ColorIconLight(),
       text: ColorTextLight(),
+      layer: ColorLayerLight(),
     );
     mode = CcdThemeMode.light;
   }

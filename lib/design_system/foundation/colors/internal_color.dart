@@ -14,8 +14,10 @@ class InternalColor {
   static const darkBlue = Color(0xFF052535);
   //endregion
 
-  //region Primitive
+  //region Neutral
   static const black = Color(0xFF000000);
   static const white = Color(0xFFFFFFFF);
+  static const black50 = Color(0xFF7F7F7F);
+  static const black05 = Color(0xFFF2F2F2);
   //endregion
 }

@@ -14,8 +14,9 @@ class ViewIcons extends DefaultComponent {
 
   Widget buildIconsList(BuildContext context) {
     final theme = CcdWidgetbookTheme.of(context);
-    return Padding(
+    return Container(
         padding: const EdgeInsets.all(CcdSpacing.pt16),
+        color: theme.color.layer.layer01,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: [for (final icon in allIcons(theme)) _buildIconWithName(theme, icon)],
