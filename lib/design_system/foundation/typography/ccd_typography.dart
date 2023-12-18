@@ -1,10 +1,17 @@
-import 'package:concordium_wallet/design_system/foundation/typography/ccd_font_family.dart';
 import 'package:flutter/material.dart';
 
 /// Design system typography
 ///
 /// Figma link: https://www.figma.com/file/AXkkkw8sIWE9IUfA5upaeN/New-Concordium-Design-System?type=design&node-id=88-68&mode=design&t=YaiOkFszZzHLPJGB-0
 class CcdTypography with _Display, _Heading, _Body, _BodyLight, _Button {}
+
+TextStyle _createStyle({required Color color, required double fontSize, required double lineHeight, required FontWeight fontWeight}) => TextStyle(
+      color: color,
+      fontSize: fontSize,
+      height: lineHeight / fontSize,
+      fontWeight: fontWeight,
+      fontFamily: 'IBMPlexSans',
+    );
 
 mixin _Display {
   TextStyle display1({required Color color}) => _createDisplay(color: color, fontSize: 40, lineHeight: 47);
@@ -19,13 +26,8 @@ mixin _Display {
 
   TextStyle display6({required Color color}) => _createDisplay(color: color, fontSize: 14, lineHeight: 17);
 
-  TextStyle _createDisplay({required Color color, required double fontSize, required double lineHeight}) => TextStyle(
-        color: color,
-        fontSize: fontSize,
-        height: lineHeight / fontSize,
-        fontWeight: FontWeight.w700,
-        fontFamily: CcdFontFamily.bold.name,
-      );
+  TextStyle _createDisplay({required Color color, required double fontSize, required double lineHeight}) =>
+      _createStyle(color: color, fontSize: fontSize, lineHeight: lineHeight, fontWeight: FontWeight.w700);
 }
 
 mixin _Heading {
@@ -43,13 +45,8 @@ mixin _Heading {
 
   TextStyle heading7({required Color color}) => _createHeading(color: color, fontSize: 12, lineHeight: 16);
 
-  TextStyle _createHeading({required Color color, required double fontSize, required double lineHeight}) => TextStyle(
-        color: color,
-        fontSize: fontSize,
-        height: lineHeight / fontSize,
-        fontWeight: FontWeight.w500,
-        fontFamily: CcdFontFamily.medium.name,
-      );
+  TextStyle _createHeading({required Color color, required double fontSize, required double lineHeight}) =>
+      _createStyle(color: color, fontSize: fontSize, lineHeight: lineHeight, fontWeight: FontWeight.w500);
 }
 
 mixin _Body {
@@ -63,13 +60,8 @@ mixin _Body {
 
   TextStyle bodyXS({required Color color}) => _createBody(color: color, fontSize: 11, lineHeight: 14);
 
-  TextStyle _createBody({required Color color, required double fontSize, required double lineHeight}) => TextStyle(
-        color: color,
-        fontSize: fontSize,
-        height: lineHeight / fontSize,
-        fontWeight: FontWeight.w400,
-        fontFamily: CcdFontFamily.regular.name,
-      );
+  TextStyle _createBody({required Color color, required double fontSize, required double lineHeight}) =>
+      _createStyle(color: color, fontSize: fontSize, lineHeight: lineHeight, fontWeight: FontWeight.w400);
 }
 
 mixin _BodyLight {
@@ -83,23 +75,13 @@ mixin _BodyLight {
 
   TextStyle bodyLightXS({required Color color}) => _createBodyLight(color: color, fontSize: 11, lineHeight: 14);
 
-  TextStyle _createBodyLight({required Color color, required double fontSize, required double lineHeight}) => TextStyle(
-        color: color,
-        fontSize: fontSize,
-        height: lineHeight / fontSize,
-        fontWeight: FontWeight.w300,
-        fontFamily: CcdFontFamily.light.name,
-      );
+  TextStyle _createBodyLight({required Color color, required double fontSize, required double lineHeight}) =>
+      _createStyle(color: color, fontSize: fontSize, lineHeight: lineHeight, fontWeight: FontWeight.w300);
 }
 
 mixin _Button {
   TextStyle button({required Color color}) => _createButton(color: color, fontSize: 16, lineHeight: 20);
 
-  TextStyle _createButton({required Color color, required double fontSize, required double lineHeight}) => TextStyle(
-        color: color,
-        fontSize: fontSize,
-        height: lineHeight / fontSize,
-        fontWeight: FontWeight.w600,
-        fontFamily: CcdFontFamily.light.name,
-      );
+  TextStyle _createButton({required Color color, required double fontSize, required double lineHeight}) =>
+      _createStyle(color: color, fontSize: fontSize, lineHeight: lineHeight, fontWeight: FontWeight.w600);
 }
