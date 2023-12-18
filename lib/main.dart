@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/design_system/ccd_theme.dart';
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
@@ -57,7 +58,13 @@ class App extends StatelessWidget {
         child: _WithTermsAndConditionAcceptance(
             child: MaterialApp(
           routes: appRoutes,
-          theme: concordiumTheme(),
+          theme: ThemeData.light().copyWith(extensions: <ThemeExtension<dynamic>>[
+            CcdThemeLight(),
+          ]),
+          darkTheme: ThemeData.dark().copyWith(extensions: <ThemeExtension<dynamic>>[
+            CcdThemeDark(),
+          ]),
+          themeMode: ThemeMode.light,
         )),
       ),
     );

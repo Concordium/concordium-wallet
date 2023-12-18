@@ -3,6 +3,8 @@ import 'package:concordium_wallet/design_system/graphics/icons/icon_size.dart';
 import 'package:flutter/material.dart';
 
 /// Container for all the official design system icons
+///
+/// Figma link to icons: https://www.figma.com/file/AXkkkw8sIWE9IUfA5upaeN/New-Concordium-Design-System?type=design&node-id=3852-25424&mode=design&t=YaiOkFszZzHLPJGB-0
 class IconContainer {
   CcdIcon accordionOpen({
     required IconSize size,
