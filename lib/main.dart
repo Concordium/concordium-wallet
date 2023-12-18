@@ -62,7 +62,7 @@ class App extends StatelessWidget {
             child: Builder(
               builder: (context) => MaterialApp(
                 routes: appRoutes,
-                theme: context.read<AppTheme>().state.themeData,
+                theme: context.watch<AppTheme>().state.themeData,
               ),
             ),
           ),
