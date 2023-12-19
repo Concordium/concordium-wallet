@@ -1,4 +1,3 @@
-import 'package:concordium_wallet/design_system/foundation/colors/internal_color.dart';
 import 'package:flutter/material.dart';
 
 /// These are 'primitive' gradients that should never be referenced directly from code.
