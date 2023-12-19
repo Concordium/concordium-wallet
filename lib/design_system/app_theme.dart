@@ -16,6 +16,7 @@ class ThemeState {
       ]));
 }
 
+/// Sets the theme of the app
 class AppTheme extends Cubit<ThemeState> {
   AppTheme() : super(ThemeState.lightTheme);
 

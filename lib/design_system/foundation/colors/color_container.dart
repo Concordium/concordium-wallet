@@ -2,7 +2,7 @@ import 'package:concordium_wallet/design_system/foundation/colors/color_icon.dar
 import 'package:concordium_wallet/design_system/foundation/colors/color_layer.dart';
 import 'package:concordium_wallet/design_system/foundation/colors/color_text.dart';
 
-///
+/// Groups the different types of colors
 class ColorContainer {
   ColorContainer({
     required this.icon,

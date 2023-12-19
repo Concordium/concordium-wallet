@@ -1,7 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:widgetbook/widgetbook.dart';
 
-/// In most cases we should use knobs to view different variants, and so a single (default) use case will suffice
+/// In most cases we should use knobs to view different variants, so this is a convenience
+/// class to create a component with a default use case
+///
+///
 abstract class DefaultComponent {
   final String name;
 

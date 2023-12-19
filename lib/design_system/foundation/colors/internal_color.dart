@@ -52,27 +52,22 @@ class InternalColor {
   //endregion
 
   //region State
-  //region State - Negative
   static const negativeDark = Color(0xFFab2b2b);
   static const negativeBase = Color(0xFFDC5050);
   static const negativeLight = Color(0xFFE87E90);
-  //endregion
-  //State - Positive
+
   static const positiveDark = Color(0xFF189e46);
   static const positiveBase = Color(0xFF33C364);
   static const positiveLight = Color(0xFF8BE7AA);
 
-  //State - Warning
   static const warningDark = Color(0xFFc89e0a);
   static const warningBase = Color(0xFFFBCD29);
   static const warningLight = Color(0xFFF6DB9A);
 
-  //State - Info
   static const infoDark = Color(0xFF075cab);
   static const infoBase = Color(0xFF2485DF);
   static const infoLight = Color(0xFF65A4DD);
 
-  //State - Help
   static const helpDark = Color(0xFF53198e);
   static const helpBase = Color(0xFF7939BA);
   static const helpLight = Color(0xFFB37CDF);

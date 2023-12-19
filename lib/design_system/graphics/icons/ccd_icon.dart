@@ -2,7 +2,10 @@ import 'package:concordium_wallet/design_system/graphics/icons/icon_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-/// Use this class whenever you need to use an 'official' design system icon
+/// Represents an 'official' design system icon
+///
+/// It ensures that we only use 'valid' svgs as stored in the appropriate design system asset folder
+/// and it ensures that the icons adhere to the allowed icon sizes
 class CcdIcon extends StatelessWidget {
   const CcdIcon({
     super.key,

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 /// Colors used for icons
 ///
-/// Figma link: Missing - as the semantic tokens are not yet ready
+/// NOTE: Guillermo is currently working on creating semantic color tokens,
+/// so for now we have just added a single primary token (with some more or less random colors)
 abstract class ColorIcon {
   Color get primary;
 }
