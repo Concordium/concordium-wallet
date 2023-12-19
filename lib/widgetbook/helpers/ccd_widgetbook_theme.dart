@@ -1,6 +1,10 @@
 import 'package:concordium_wallet/design_system/ccd_theme.dart';
 import 'package:flutter/widgets.dart';
 
+extension ThemeGetter on BuildContext {
+  CcdTheme get widgetBookTheme => CcdWidgetbookTheme.of(this);
+}
+
 class CcdWidgetbookTheme extends InheritedWidget {
   const CcdWidgetbookTheme({
     super.key,

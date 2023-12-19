@@ -21,6 +21,7 @@ class Button extends StatelessWidget {
   final BoxDecoration decoration;
   final double width;
   final double height;
+  final CcdTheme? theme;
 
   const Button({
     super.key,
@@ -29,6 +30,7 @@ class Button extends StatelessWidget {
     this.decoration = _defaultButtonDecoration,
     this.width = double.infinity,
     this.height = 40,
+    this.theme,
   });
 
   @override
@@ -38,7 +40,7 @@ class Button extends StatelessWidget {
       boxShadow: _boxShadow,
     );
     final enabled = onTap != null;
-    final theme = context.theme;
+    final theme = this.theme ?? context.theme;
 
     return GestureDetector(
       onTap: onTap,
