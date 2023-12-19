@@ -1,12 +1,5 @@
+import 'package:concordium_wallet/design_system/ccd_theme.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-final buttonStyle = GoogleFonts.getFont(
-  "IBM Plex Sans",
-  fontWeight: FontWeight.w600,
-  fontSize: 16,
-  color: const Color(0xFFFFFFFF),
-);
 
 const _defaultButtonDecoration = BoxDecoration(
   gradient: LinearGradient(begin: Alignment(1.00, -0.08), end: Alignment(-1, 0.08), colors: [Color(0xFF48A2AE), Color(0xFF005A78)]),
@@ -45,6 +38,7 @@ class Button extends StatelessWidget {
       boxShadow: _boxShadow,
     );
     final enabled = onTap != null;
+    final theme = context.theme;
 
     return GestureDetector(
       onTap: onTap,
@@ -58,7 +52,7 @@ class Button extends StatelessWidget {
               // TODO allow choosing the disabled styling (Also this doesn't like anything from the design)
               : buttonDecoration.copyWith(color: const Color(0x3348A2AE)),
           child: Center(
-            child: Text(text, style: buttonStyle),
+            child: Text(text, style: theme.typography.button(color: theme.color.text.primary)),
           ),
         ),
       ),
