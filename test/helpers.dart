@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Wrap MaterialApp and Scaffold around the given widget.
 /// The theme is also registered in order to be able to make use of the CcdTheme
-Widget wrapMaterial({required Widget? child}) =>
-    MultiBlocProvider(
+Widget wrapMaterial({required Widget? child}) => MultiBlocProvider(
       providers: [
         BlocProvider<AppTheme>(create: (_) => AppTheme()),
       ],
