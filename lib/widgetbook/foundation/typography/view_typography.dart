@@ -1,5 +1,4 @@
 import 'package:concordium_wallet/design_system/ccd_theme.dart';
-import 'package:concordium_wallet/design_system/foundation/colors/internal_color.dart';
 import 'package:concordium_wallet/design_system/foundation/spacing/ccd_spacing.dart';
 import 'package:concordium_wallet/widgetbook/helpers/ccd_widgetbook_theme.dart';
 import 'package:concordium_wallet/widgetbook/helpers/default_component.dart';
