@@ -67,3 +67,12 @@ To get a (readable) list of the licenses of dependencies run:
 ```
 dart run license_checker check-licenses --config scripts/license.yaml
 ```
+
+
+## Widget Book
+
+To open widgetbook, the widget library, run:
+
+```shell
+flutter run -t example/widgetbook.dart
+```
