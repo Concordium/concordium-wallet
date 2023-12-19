@@ -11,11 +11,9 @@ abstract class ColorLayer {
 class ColorLayerLight extends ColorLayer {
   @override
   Color get layer01 => InternalColor.black05;
-
 }
 
 class ColorLayerDark extends ColorLayer {
   @override
   Color get layer01 => InternalColor.black50;
-
 }
