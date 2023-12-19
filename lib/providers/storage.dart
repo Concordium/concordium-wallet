@@ -8,7 +8,6 @@ class StorageProvider {
   const StorageProvider._(this._acceptedTermsAndConditionBox);
 
   static Future<StorageProvider> init() async {
-    await Hive.initFlutter();
     _registerAdapters();
     await _openBoxes();
 

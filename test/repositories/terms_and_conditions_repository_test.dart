@@ -4,7 +4,7 @@ import 'package:concordium_wallet/repositories/terms_and_conditions_repository.d
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() {
   /// Mock getApplicationDocumentsDirectory on channel plugins.flutter.io/path_provider
@@ -20,6 +20,7 @@ void main() {
 
   setUpAll(() async {
     mockPathProvider();
+    await Hive.initFlutter();
     final storage = await StorageProvider.init();
     repository = TermsAndConditionsRepository(storageProvider: storage);
   });

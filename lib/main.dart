@@ -11,6 +11,7 @@ import 'package:concordium_wallet/state/terms_and_conditions.dart';
 import 'package:concordium_wallet/types/future_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() {
   runApp(const App());
@@ -32,6 +33,7 @@ Future<Config> loadConfig(HttpService http) async {
 }
 
 Future<ServiceRepository> bootstrap() async {
+  await Hive.initFlutter();
   const http = HttpService();
   final configFuture = loadConfig(http);
   final storageFuture = StorageProvider.init();
