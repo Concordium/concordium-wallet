@@ -47,6 +47,12 @@ class ViewIcons extends DefaultComponent {
       icon.cancel(size: size, color: color),
       icon.circleAdd(size: size),
       icon.circleSubtract(size: size),
+      icon.close(size: size, color: color),
+      icon.extra(size: size, color: color),
+      icon.faceId(size: size, color: color),
+      icon.help(size: size, color: color),
+      icon.warning(size: size, color: color),
+      icon.warning2(size: size, color: color),
     ];
   }
 }

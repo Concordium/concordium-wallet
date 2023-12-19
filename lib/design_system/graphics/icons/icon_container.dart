@@ -45,4 +45,46 @@ class IconContainer {
     Key? key,
   }) =>
       CcdIcon(filename: 'circle_subtract.svg', size: size, key: key);
+
+  CcdIcon close({
+    required IconSize size,
+    required Color color,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'close.svg', size: size, color: color, key: key);
+
+  CcdIcon extra({
+    required IconSize size,
+    required Color color,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'extra.svg', size: size, color: color, key: key);
+
+  CcdIcon faceId({
+    required IconSize size,
+    required Color color,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'face_id.svg', size: size, color: color, key: key);
+
+  CcdIcon help({
+    required IconSize size,
+    required Color color,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'help.svg', size: size, color: color, key: key);
+
+  CcdIcon warning({
+    required IconSize size,
+    required Color color,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'warning.svg', size: size, color: color, key: key);
+
+  CcdIcon warning2({
+    required IconSize size,
+    required Color color,
+    Key? key,
+  }) =>
+      CcdIcon(filename: 'warning2.svg', size: size, color: color, key: key);
 }
