@@ -1,15 +1,16 @@
-import 'package:concordium_wallet/design_system/ccd_theme.dart';
 import 'package:concordium_wallet/design_system/foundation/colors/internal_color.dart';
 import 'package:concordium_wallet/design_system/foundation/spacing/ccd_spacing.dart';
+import 'package:concordium_wallet/widgetbook/foundation/colors/color_builder_helper.dart';
 import 'package:concordium_wallet/widgetbook/helpers/ccd_widgetbook_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 
-class ViewInternalColors {
+class ViewInternalColors with ColorBuilderHelper {
   WidgetbookComponent get component => WidgetbookComponent(name: 'Internal colors', useCases: [
         primary,
         secondary,
         darkMode,
+        state,
       ]);
 
   WidgetbookUseCase get primary => WidgetbookUseCase(
@@ -68,28 +69,26 @@ class ViewInternalColors {
         ]);
       });
 
-  Widget buildColors(BuildContext context, List<Widget> colors) {
-    final theme = context.widgetBookTheme;
-
-    return Container(
-        padding: const EdgeInsets.all(CcdSpacing.pt16),
-        color: theme.color.layer.layer01,
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [
-            ...colors,
-          ],
-        ));
-  }
-
-  Widget buildColorRow(CcdTheme theme, Color color, String name) => Padding(
-        padding: const EdgeInsets.only(bottom: CcdSpacing.pt8),
-        child: Row(
-          children: [
-            Container(color: color, width: 50.0, height: 50.0),
-            const SizedBox(width: CcdSpacing.pt16),
-            Text(name, style: theme.typography.heading1(color: theme.color.text.primary)),
-          ],
-        ),
-      );
+  WidgetbookUseCase get state => WidgetbookUseCase(
+      name: 'State',
+      builder: (context) {
+        final theme = context.widgetBookTheme;
+        return buildColors(context, [
+          buildColorRow(theme, InternalColor.negativeDark, 'Negative - Dark'),
+          buildColorRow(theme, InternalColor.negativeBase, 'Negative - Base'),
+          buildColorRow(theme, InternalColor.negativeLight, 'Negative - Light'),
+          buildColorRow(theme, InternalColor.positiveDark, 'Positive - Dark'),
+          buildColorRow(theme, InternalColor.positiveBase, 'Positive - Base'),
+          buildColorRow(theme, InternalColor.positiveDark, 'Positive - Light'),
+          buildColorRow(theme, InternalColor.warningDark, 'Warning - Dark'),
+          buildColorRow(theme, InternalColor.warningBase, 'Warning - Base'),
+          buildColorRow(theme, InternalColor.warningLight, 'Warning - Light'),
+          buildColorRow(theme, InternalColor.infoDark, 'Info - Dark'),
+          buildColorRow(theme, InternalColor.infoBase, 'Info - Base'),
+          buildColorRow(theme, InternalColor.infoLight, 'Info - Light'),
+          buildColorRow(theme, InternalColor.helpDark, 'Help - Dark'),
+          buildColorRow(theme, InternalColor.helpBase, 'Help - Base'),
+          buildColorRow(theme, InternalColor.helpLight, 'Help - Light'),
+        ]);
+      });
 }
