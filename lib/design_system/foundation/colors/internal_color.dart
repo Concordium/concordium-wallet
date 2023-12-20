@@ -22,7 +22,7 @@ class InternalColor {
   static const ocean120 = Color(0xFF01475F);
   static const oceanBlue = Color(0xFF005A78);
   static const ocean80 = Color(0xFF337B93);
-  static const ocean160 = Color(0xFF7FACBB);
+  static const ocean60 = Color(0xFF7FACBB);
   static const eggShellWhite = Color(0xFFFFFDE4);
   static const offWhite = Color(0xFFEBF0F0);
 
