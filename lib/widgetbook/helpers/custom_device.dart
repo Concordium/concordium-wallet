@@ -8,6 +8,6 @@ abstract class CustomDevice {
         name: 'Web Extension',
         screenSize: const Size(1280, 800),
         // TODO(RHA): Check up on the extension dimensions
-        windowPosition: const Rect.fromLTRB( 0.0, 0.0, 360.0, 780.0 ),
+        windowPosition: const Rect.fromLTRB(0.0, 0.0, 360.0, 780.0),
       );
 }

@@ -20,8 +20,8 @@ class ViewColors extends DefaultComponent {
           children: [
             // TODO(RHA): Replace with semantic color tokens
             buildColorRow(theme, InternalColor.mineralBlue, 'Mineral Blue'),
-            buildColorRow(theme, InternalColor.mineralBlue80, 'Mineral 80'),
-            buildColorRow(theme, InternalColor.mineralBlue60, 'Mineral 60'),
+            buildColorRow(theme, InternalColor.mineral80, 'Mineral 80'),
+            buildColorRow(theme, InternalColor.mineral60, 'Mineral 60'),
           ],
         ));
   }

@@ -7,12 +7,12 @@ import 'package:flutter/widgets.dart';
 class InternalColor {
   //region Primary
   static const mineralBlue = Color(0xFF48A2AE);
-  static const mineralBlue80 = Color(0xFF6DB5BE);
-  static const mineralBlue60 = Color(0xFF91C7CE);
-  static const mineralBlue40 = Color(0xFFB6DADF);
-  static const mineralBlue20 = Color(0xFFDAECEF);
-  static const mineralBlue10 = Color(0xFFECF6F7);
-  static const mineralBlue05 = Color(0xFFF6FAFB);
+  static const mineral80 = Color(0xFF6DB5BE);
+  static const mineral60 = Color(0xFF91C7CE);
+  static const mineral40 = Color(0xFFB6DADF);
+  static const mineral20 = Color(0xFFDAECEF);
+  static const mineral10 = Color(0xFFECF6F7);
+  static const mineral05 = Color(0xFFF6FAFB);
 
   //endregion
 
