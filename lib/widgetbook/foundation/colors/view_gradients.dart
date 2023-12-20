@@ -5,6 +5,8 @@ import 'package:widgetbook/widgetbook.dart';
 class ViewGradients {
   WidgetbookComponent get component => WidgetbookComponent(name: 'Gradients', useCases: [
         useCase('Disable', InternalGradient.disable),
+        useCase('Dark Mineral', InternalGradient.darkMineral),
+        useCase('Light Mode', InternalGradient.lightMode),
       ]);
 
   WidgetbookUseCase useCase(String name, Gradient gradient) => WidgetbookUseCase(
