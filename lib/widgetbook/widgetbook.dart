@@ -2,6 +2,7 @@ import 'package:concordium_wallet/design_system/ccd_theme.dart';
 import 'package:concordium_wallet/widgetbook/components/component_folder.dart';
 import 'package:concordium_wallet/widgetbook/foundation/foundation_folder.dart';
 import 'package:concordium_wallet/widgetbook/helpers/ccd_widgetbook_theme.dart';
+import 'package:concordium_wallet/widgetbook/helpers/custom_device.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 
@@ -17,6 +18,15 @@ class WidgetbookApp extends StatelessWidget {
     return Widgetbook.material(
       addons: [
         _buildThemeAddon(),
+        DeviceFrameAddon(
+          devices: [
+            Devices.ios.iPhone12,
+            Devices.ios.iPhone12ProMax,
+            Devices.ios.iPad12InchesGen4,
+            Devices.android.samsungGalaxyS20,
+            CustomDevice.webExtension,
+          ],
+        ),
         AlignmentAddon(),
       ],
       directories: [
