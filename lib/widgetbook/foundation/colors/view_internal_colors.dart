@@ -9,6 +9,7 @@ class ViewInternalColors {
   WidgetbookComponent get component => WidgetbookComponent(name: 'Internal colors', useCases: [
         primary,
         secondary,
+        darkMode,
       ]);
 
   WidgetbookUseCase get primary => WidgetbookUseCase(
@@ -38,6 +39,32 @@ class ViewInternalColors {
           buildColorRow(theme, InternalColor.ocean60, 'Ocean 60'),
           buildColorRow(theme, InternalColor.eggShellWhite, 'Egg Shell White'),
           buildColorRow(theme, InternalColor.offWhite, 'Off White'),
+        ]);
+      });
+
+  WidgetbookUseCase get neutral => WidgetbookUseCase(
+      name: 'Neutral',
+      builder: (context) {
+        final theme = context.widgetBookTheme;
+        return buildColors(context, [
+          buildColorRow(theme, InternalColor.black, 'Black'),
+          buildColorRow(theme, InternalColor.black90, 'Black 90'),
+          buildColorRow(theme, InternalColor.black80, 'Black 80'),
+          buildColorRow(theme, InternalColor.black70, 'Black 70'),
+          buildColorRow(theme, InternalColor.black60, 'Black 60'),
+          buildColorRow(theme, InternalColor.black50, 'Black 50'),
+          buildColorRow(theme, InternalColor.black40, 'Black 40'),
+        ]);
+      });
+
+  WidgetbookUseCase get darkMode => WidgetbookUseCase(
+      name: 'Dark Mode',
+      builder: (context) {
+        final theme = context.widgetBookTheme;
+        return buildColors(context, [
+          buildColorRow(theme, InternalColor.midnightDark, 'Midnight Dark'),
+          buildColorRow(theme, InternalColor.midnight, 'Midnight'),
+          buildColorRow(theme, InternalColor.midnightLight, 'Midnight Light'),
         ]);
       });
 
