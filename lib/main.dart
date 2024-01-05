@@ -1,3 +1,4 @@
+import 'package:concordium_wallet/design_system/app_theme.dart';
 import 'package:concordium_wallet/repositories/terms_and_conditions_repository.dart';
 import 'package:concordium_wallet/screens/routes.dart';
 import 'package:concordium_wallet/services/http.dart';
@@ -7,7 +8,6 @@ import 'package:concordium_wallet/state/config.dart';
 import 'package:concordium_wallet/state/network.dart';
 import 'package:concordium_wallet/state/services.dart';
 import 'package:concordium_wallet/state/terms_and_conditions.dart';
-import 'package:concordium_wallet/theme.dart';
 import 'package:concordium_wallet/types/future_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,10 +57,18 @@ class App extends StatelessWidget {
       child: _WithSelectedNetwork(
         initialNetwork: initialNetwork,
         child: _WithTermsAndConditionAcceptance(
-            child: MaterialApp(
-          routes: appRoutes,
-          theme: concordiumTheme(),
-        )),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider<AppTheme>(create: (_) => AppTheme()),
+            ],
+            child: Builder(
+              builder: (context) => MaterialApp(
+                routes: appRoutes,
+                theme: context.watch<AppTheme>().state.themeData,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
